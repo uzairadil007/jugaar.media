@@ -6,8 +6,6 @@
 <title>Jugaar Media — From idea to influence</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,700;0,800;0,900;1,700;1,800;1,900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg:#0a0a0a;
@@ -19,8 +17,8 @@
     --white:#f5f6f2;
     --muted:#8b8f86;
     --muted-2:#5f645b;
-    --ff-display:'Clash Display','Archivo',sans-serif;
-    --ff-body:'Space Grotesk',sans-serif;
+    --ff-display:'Helvetica Neue',Helvetica,Arial,sans-serif;
+    --ff-body:'Helvetica Neue',Helvetica,Arial,sans-serif;
   }
   *{margin:0;padding:0;box-sizing:border-box}
   html{scroll-behavior:smooth}
@@ -44,7 +42,7 @@
   .accent{color:var(--accent)}
   .ital{font-style:italic}
 
-  h1,h2,h3,h4{font-family:var(--ff-display);font-weight:900;line-height:.98;letter-spacing:-.02em}
+  h1,h2,h3,h4{font-family:var(--ff-display);font-weight:700;line-height:.98;letter-spacing:-.02em}
 
   /* ============ NAV ============ */
   header.nav{
@@ -56,7 +54,7 @@
   }
   header.nav.scrolled{background:rgba(10,10,10,.9);border-bottom:1px solid var(--line)}
   .nav-inner{max-width:1180px;margin:0 auto;padding:16px 24px;display:flex;align-items:center;justify-content:space-between}
-  .logo{display:flex;align-items:center;gap:10px;font-family:var(--ff-display);font-weight:900;font-size:20px;letter-spacing:-.03em}
+  .logo{display:flex;align-items:center;gap:0;font-family:var(--ff-display);font-weight:900;font-size:20px;letter-spacing:-.03em}
   .logo .mark{
     width:34px;height:34px;border-radius:8px;
     background:var(--accent);color:#0a0a0a;
@@ -309,6 +307,63 @@
   }
   .menu-open{display:flex !important;position:fixed;top:70px;left:0;right:0;flex-direction:column;gap:0;background:var(--bg);border-bottom:1px solid var(--line);padding:10px 24px 20px;z-index:49}
   .menu-open a{padding:14px 0;border-bottom:1px solid var(--line)}
+
+/* === Improved responsive layout === */
+img,svg,video{max-width:100%;height:auto}
+.wrap{width:min(1180px,100% - 32px)}
+.hero h1{max-width:12ch;word-break:normal}
+.hero-actions,.cta-actions{align-items:center}
+@media (max-width:1024px){
+  .proj-grid,.plans,.steps,.stats,.comm-grid,.podium{gap:20px}
+}
+@media (max-width:768px){
+  .nav-inner{padding:14px 18px}
+  .hero{text-align:center}
+  .hero h1{margin-inline:auto;font-size:clamp(42px,12vw,72px)}
+  .hero p.sub{margin:24px auto 36px}
+  .hero-actions,.cta-actions{justify-content:center}
+  .about-grid,.kpi-grid,.proj-grid,.plans,.comm-grid,.steps,.podium,.stats{
+    grid-template-columns:1fr!important;
+  }
+  .kpi-head,.chal-head,.foot{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+  .lb-row{
+    grid-template-columns:48px 1fr!important;
+  }
+  .lb-followers-h,.lb-eng-h,.foll,.lb-eng{display:none!important}
+  .cta-box{padding:48px 24px}
+}
+
+
+/* ==== Premium alignment fixes ==== */
+.wrap{width:min(1180px,calc(100% - 40px));margin-inline:auto}
+.hero .wrap,.about .wrap,.challenge .wrap{display:block}
+.hero h1{max-width:11ch}
+.hero-actions,.cta-actions{display:flex;justify-content:flex-start;align-items:center;gap:16px}
+.kpi-grid{align-items:center}
+.donut-wrap{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:28px;height:100%}
+.donut{position:relative;width:220px;height:220px;display:flex;align-items:center;justify-content:center;margin:auto}
+.donut .center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.donut .center .big{font-size:64px;font-weight:700;line-height:1;margin-bottom:12px}
+.donut .center .small{font-size:16px}
+.mini-metrics{display:flex;justify-content:center;gap:80px;width:100%}
+.mini-metrics div{display:flex;flex-direction:column;align-items:center}
+.mini-metrics .m{font-size:42px;font-weight:700;line-height:1}
+.mini-metrics .s{margin-top:10px}
+.proj,.plan,.comm,.step,.stat{display:flex;flex-direction:column;height:100%}
+.proj .body,.plan,.comm{flex:1}
+.foot{align-items:center}
+@media(max-width:768px){
+.hero{text-align:center}
+.hero-actions,.cta-actions{justify-content:center}
+.hero h1,.hero p.sub{margin-left:auto;margin-right:auto}
+.kpi-head,.chal-head,.foot{flex-direction:column;align-items:center;text-align:center}
+.mini-metrics{gap:40px;flex-wrap:wrap}
+.donut{width:190px;height:190px}
+}
+
 </style>
 </head>
 <body>
@@ -316,7 +371,7 @@
 <!-- NAV -->
 <header class="nav" id="nav">
   <div class="nav-inner">
-    <a href="#top" class="logo"><span class="mark">J</span> jugaar<span class="accent">.</span>media</a>
+    <a href="#top" class="logo">jugaar<span class="accent">.</span>media</a>
     <nav class="nav-links" id="navlinks">
       <a href="#about">About</a>
       <a href="#work">Work</a>
@@ -624,7 +679,7 @@
 <!-- FOOTER -->
 <footer>
   <div class="wrap foot">
-    <a href="#top" class="logo"><span class="mark">J</span> jugaar<span class="accent">.</span>media</a>
+    <a href="#top" class="logo">jugaar<span class="accent">.</span>media</a>
     <div class="foot-links">
       <a href="#work">Work</a>
       <a href="#plans">Plans</a>
