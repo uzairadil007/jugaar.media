@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jugaar Media — Content Dashboard</title>
+<style>
+  :root{
+    --bg:#0a0a0a; --panel:#111310; --panel-2:#15170f; --line:#232720;
+    --accent:#ceff00; --accent-dim:#9db300; --white:#f5f6f2; --muted:#8b8f86;
+    --down:#ff7a59; --ff:'Helvetica Neue',Helvetica,Arial,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--white);font-family:var(--ff);line-height:1.5}
+  a{color:inherit}
+  .app{display:flex;min-height:100vh}
+
+  /* ---- Sidebar ---- */
+  .side{width:230px;flex:none;background:var(--panel);border-right:1px solid var(--line);padding:20px 14px;position:sticky;top:0;height:100vh;overflow-y:auto}
+  .brand{display:flex;align-items:center;gap:8px;font-weight:900;font-size:17px;margin-bottom:26px;padding:0 6px}
+  .brand .mark{width:26px;height:26px;border-radius:6px;background:var(--accent);color:#0a0a0a;display:grid;place-items:center;font-weight:900;font-style:italic;transform:skewX(-8deg)}
+  .navitem{display:block;width:100%;text-align:left;background:none;border:none;color:var(--muted);font-family:var(--ff);font-size:14px;font-weight:600;padding:11px 12px;border-radius:8px;cursor:pointer;margin-bottom:2px}
+  .navitem:hover{color:var(--white);background:var(--panel-2)}
+  .navitem.active{color:#0a0a0a;background:var(--accent)}
+  .side-foot{margin-top:20px;padding-top:16px;border-top:1px solid var(--line)}
+  .status{font-size:11px;color:var(--muted);padding:0 12px}
+  .status.ok{color:var(--accent)}
+
+  /* ---- Main ---- */
+  .main{flex:1;padding:34px 40px 100px;max-width:880px}
+  h1{font-size:26px;font-weight:800;letter-spacing:-.02em}
+  .lead{color:var(--muted);font-size:14px;margin-top:6px;max-width:600px}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:26px;margin-top:26px}
+  .panel h2{font-size:16px;font-weight:800;margin-bottom:4px}
+  .panel .hint{color:var(--muted);font-size:12.5px;margin-bottom:18px}
+
+  /* ---- Upload dropzone ---- */
+  .drop{border:1.5px dashed var(--line);border-radius:14px;padding:40px 24px;text-align:center;cursor:pointer;transition:.2s}
+  .drop:hover,.drop.drag{border-color:var(--accent);background:rgba(206,255,0,.04)}
+  .drop .big{font-weight:800;font-size:15px}
+  .drop .small{color:var(--muted);font-size:12.5px;margin-top:6px}
+  .drop input{display:none}
+
+  /* ---- Fields ---- */
+  label{display:block;font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+  input[type=text],input[type=number],textarea,select{
+    width:100%;background:#0d0f0b;border:1px solid var(--line);border-radius:9px;color:var(--white);
+    font-family:var(--ff);font-size:14px;padding:10px 12px;transition:.15s;
+  }
+  input:focus,textarea:focus,select:focus{outline:none;border-color:var(--accent)}
+  textarea{resize:vertical;min-height:64px}
+  .field{margin-bottom:16px}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+  .check{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--white);font-weight:600;cursor:pointer}
+  .check input{width:auto}
+
+  /* ---- Cards / repeatables ---- */
+  .card{border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:14px;background:#0d0f0b;position:relative}
+  .card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+  .card-head .tag{font-size:11px;color:var(--accent);font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+  .rmv{background:none;border:1px solid var(--line);color:var(--down);font-size:12px;font-weight:700;padding:5px 10px;border-radius:7px;cursor:pointer}
+  .rmv:hover{border-color:var(--down)}
+  .add-btn{background:var(--panel-2);border:1px dashed var(--line);color:var(--accent);font-weight:700;font-size:13px;padding:11px;width:100%;border-radius:10px;cursor:pointer;margin-top:4px}
+  .add-btn:hover{border-color:var(--accent)}
+  .subgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+  .sub-label{font-size:10px;color:var(--muted);margin-bottom:3px}
+  .list-item{display:flex;gap:8px;margin-bottom:8px;align-items:flex-start}
+  .list-item input{flex:1}
+  .ic{width:30px;height:30px;flex:none;border:1px solid var(--line);border-radius:7px;background:none;color:var(--muted);cursor:pointer;font-size:14px}
+  .ic:hover{color:var(--white);border-color:var(--white)}
+
+  /* ---- Toolbar ---- */
+  .toolbar{position:fixed;bottom:0;left:230px;right:0;background:rgba(10,10,10,.92);backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:14px 40px;display:flex;justify-content:space-between;align-items:center;gap:16px;z-index:20}
+  .btn{font-weight:700;font-size:14px;padding:11px 20px;border-radius:999px;border:1px solid transparent;cursor:pointer;font-family:var(--ff)}
+  .btn-primary{background:var(--accent);color:#0a0a0a}
+  .btn-primary:hover{box-shadow:0 0 0 4px rgba(206,255,0,.18)}
+  .btn-ghost{background:none;border:1px solid var(--line);color:var(--white)}
+  .btn-ghost:hover{border-color:var(--accent)}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+  .toolbar .msg{font-size:12px;color:var(--muted)}
+
+  .hidden{display:none !important}
+  .locked{opacity:.35;pointer-events:none}
+  ::-webkit-scrollbar{width:8px}::-webkit-scrollbar-thumb{background:var(--line);border-radius:8px}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- SIDEBAR -->
+  <div class="side">
+    <div class="brand"><span class="mark">j</span> Jugaar CMS</div>
+    <button class="navitem active" data-sec="upload">1. Load site</button>
+    <button class="navitem" data-sec="brand">Contact & hero</button>
+    <button class="navitem" data-sec="stats">Stats & KPI bars</button>
+    <button class="navitem" data-sec="growth">Growth index</button>
+    <button class="navitem" data-sec="projects">Campaigns / portfolio</button>
+    <button class="navitem" data-sec="plans">Pricing plans</button>
+    <button class="navitem" data-sec="community">Community</button>
+    <button class="navitem" data-sec="leaderboard">Leaderboard</button>
+    <div class="side-foot">
+      <div class="status" id="fileStatus">No file loaded yet</div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- STEP 1: CONNECT -->
+    <section id="sec-upload">
+      <h1>Connect your site</h1>
+      <p class="lead">Connect once to your GitHub repo and every change you publish here goes straight to your live site — GitHub Pages rebuilds automatically, usually within about a minute.</p>
+
+      <div class="panel">
+        <h2>Connect via GitHub</h2>
+        <div class="hint">Reads and writes <code>index.html</code> directly in your repo using GitHub's API. Nothing passes through any server but GitHub's.</div>
+        <div class="row">
+          <div class="field"><label>GitHub username / org</label><input type="text" id="gh-owner" placeholder="e.g. jugaarmedia"></div>
+          <div class="field"><label>Repository name</label><input type="text" id="gh-repo" placeholder="e.g. jugaarmedia.github.io"></div>
+        </div>
+        <div class="row">
+          <div class="field"><label>Branch</label><input type="text" id="gh-branch" value="main"></div>
+          <div class="field"><label>File path</label><input type="text" id="gh-path" value="index.html"></div>
+        </div>
+        <div class="field">
+          <label>Personal access token</label>
+          <input type="password" id="gh-token" placeholder="github_pat_...">
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;margin-top:4px">
+          <button class="btn btn-primary" id="ghConnectBtn">Connect</button>
+          <button class="btn btn-ghost" id="ghForgetBtn">Forget saved token</button>
+          <span class="msg" id="ghStatus" style="font-size:12.5px;color:var(--muted)"></span>
+        </div>
+        <details style="margin-top:16px">
+          <summary style="cursor:pointer;color:var(--accent);font-size:13px;font-weight:700">How do I get a token?</summary>
+          <ol style="margin:10px 0 0 18px;color:var(--muted);font-size:13px;line-height:1.8">
+            <li>On GitHub: Settings → Developer settings → Fine-grained tokens → Generate new token</li>
+            <li>Repository access → Only select repositories → pick this repo</li>
+            <li>Permissions → Contents → set to <b>Read and write</b></li>
+            <li>Set an expiration date, generate, and paste the token above</li>
+          </ol>
+          <p style="margin-top:10px;color:var(--muted);font-size:12.5px">This token stays only in this browser's local storage and is sent only to GitHub's API — never anywhere else. Treat it like a password: don't share this page's local storage, and set an expiration when you create it.</p>
+        </details>
+      </div>
+
+      <div class="panel">
+        <h2>Or load a local file</h2>
+        <div class="hint">No GitHub connection needed — edit offline and download the updated file to re-upload yourself.</div>
+        <div class="drop" id="dropzone">
+          <div class="big">Drop index.html here, or click to browse</div>
+          <div class="small">Works with the file exported from this dashboard, or the original site file.</div>
+          <input type="file" id="fileInput" accept=".html">
+        </div>
+        <div id="draftPrompt" class="hidden" style="margin-top:16px;padding:14px;border:1px solid var(--line);border-radius:10px;font-size:13px;color:var(--muted)">
+          Found unsaved edits from your last session. <button class="btn btn-ghost" id="restoreDraft" style="padding:6px 14px;font-size:12px;margin-left:6px">Restore draft</button>
+          <button class="btn btn-ghost" id="discardDraft" style="padding:6px 14px;font-size:12px">Discard</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT & HERO -->
+    <section id="sec-brand" class="hidden">
+      <h1>Contact & hero</h1>
+      <p class="lead">Your WhatsApp/Instagram links everywhere on the site, plus the top hero banner text.</p>
+      <div class="panel">
+        <h2>Contact</h2>
+        <div class="hint">Just the number/handle — no symbols or URLs.</div>
+        <div class="row">
+          <div class="field"><label>WhatsApp number (with country code, no +)</label><input type="text" id="f-wa" placeholder="923100056684"></div>
+          <div class="field"><label>Instagram handle (no @)</label><input type="text" id="f-ig" placeholder="jugaar.media"></div>
+        </div>
+      </div>
+      <div class="panel">
+        <h2>Hero banner</h2>
+        <div class="field"><label>Availability pill</label><input type="text" id="f-pill" placeholder="Available for projects — Q3 slots open"></div>
+        <div class="field"><label>Subheading</label><textarea id="f-sub"></textarea></div>
+      </div>
+      <div class="panel">
+        <h2>Leaderboard season</h2>
+        <div class="field" style="max-width:200px"><label>Season length (days)</label><input type="number" id="f-days" min="1"></div>
+      </div>
+    </section>
+
+    <!-- STATS & BARS -->
+    <section id="sec-stats" class="hidden">
+      <h1>Stats & performance bars</h1>
+      <p class="lead">The four big numbers under "About us", and the five progress bars in the performance index.</p>
+      <div class="panel">
+        <h2>Top stats</h2>
+        <div class="hint">Four fixed cards — value, suffix (e.g. "+", "M+", "x"), decimal places, and label.</div>
+        <div id="statsFields"></div>
+      </div>
+      <div class="panel">
+        <h2>Performance bars</h2>
+        <div class="hint">Label, the text shown next to it, and the bar fill percent (0–100).</div>
+        <div id="barsFields"></div>
+      </div>
+    </section>
+
+    <!-- GROWTH INDEX -->
+    <section id="sec-growth" class="hidden">
+      <h1>Growth index</h1>
+      <p class="lead">The candlestick card's headline number and the two metrics beside it.</p>
+      <div class="panel">
+        <div class="row3">
+          <div class="field"><label>Index value (%)</label><input type="number" id="f-gval"></div>
+          <div class="field"><label>Monthly reach</label><input type="text" id="f-greach"></div>
+          <div class="field"><label>Avg. turnaround</label><input type="text" id="f-gturn"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJECTS / CAMPAIGNS -->
+    <section id="sec-projects" class="hidden">
+      <h1>Campaigns / portfolio</h1>
+      <p class="lead">The case-study cards in "Selected work". Add, remove, or edit any campaign.</p>
+      <div class="panel">
+        <div id="projectsFields"></div>
+        <button class="add-btn" id="addProject">+ Add campaign</button>
+      </div>
+    </section>
+
+    <!-- PLANS -->
+    <section id="sec-plans" class="hidden">
+      <h1>Pricing plans</h1>
+      <p class="lead">The three plan cards. Kept to three to match the layout.</p>
+      <div class="panel">
+        <div id="plansFields"></div>
+      </div>
+    </section>
+
+    <!-- COMMUNITY -->
+    <section id="sec-community" class="hidden">
+      <h1>Community</h1>
+      <p class="lead">The two cards under "Community access" — the Creator League and the Insider's Club.</p>
+      <div class="panel">
+        <h2>The Creator League</h2>
+        <div id="commInfFields"></div>
+      </div>
+      <div class="panel">
+        <h2>Insider's Club</h2>
+        <div id="commClubFields"></div>
+      </div>
+    </section>
+
+    <!-- LEADERBOARD -->
+    <section id="sec-leaderboard" class="hidden">
+      <h1>Leaderboard</h1>
+      <p class="lead">Creator rankings. The top 3 (by rank number) automatically appear on the podium.</p>
+      <div class="panel">
+        <div id="lbFields"></div>
+        <button class="add-btn" id="addCreator">+ Add creator</button>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<div class="toolbar">
+  <div class="msg" id="toolbarMsg">Load a file to start editing.</div>
+  <div style="display:flex;gap:10px">
+    <button class="btn btn-ghost" id="resetBtn" disabled>Discard changes</button>
+    <button class="btn btn-ghost" id="downloadBtn" disabled>Download file</button>
+    <button class="btn btn-primary" id="publishBtn" disabled>Publish to GitHub</button>
+  </div>
+</div>
+
+<script>
+  const DEFAULT_DATA = {
+    "brand": { "waNumber": "923100056684", "igHandle": "jugaar.media" },
+    "hero": {
+      "pill": "Available for projects — Q3 slots open",
+      "sub": "Creative campaigns, sharp content, and influencer marketing that actually moves numbers. No fluff. No vanity metrics. Just jugaar that works."
+    },
+    "stats": [
+      { "value": 63, "suffix": "", "decimals": 0, "label": "Campaigns shipped" },
+      { "value": 34, "suffix": "+", "decimals": 0, "label": "Happy clients" },
+      { "value": 120, "suffix": "M+", "decimals": 0, "label": "Views generated" },
+      { "value": 4.7, "suffix": "x", "decimals": 1, "label": "Avg. ROAS" }
+    ],
+    "kpiBars": [
+      { "label": "Engagement rate", "display": "8.4%", "value": 84 },
+      { "label": "Content approval on first draft", "display": "91%", "value": 91 },
+      { "label": "Campaigns hitting KPI target", "display": "88%", "value": 88 },
+      { "label": "Client retention", "display": "76%", "value": 76 },
+      { "label": "On-time delivery", "display": "96%", "value": 96 }
+    ],
+    "growth": { "value": 92, "monthlyReach": "2.1M", "avgTurnaround": "18h" },
+    "projects": [],
+    "plans": [],
+    "community": {
+      "influencers": { "tag": "", "title": "", "desc": "", "items": [], "meta": [], "ctaLabel": "", "ctaHref": "#leaderboard" },
+      "club": { "tag": "", "title": "", "desc": "", "items": [], "meta": [], "ctaLabel": "", "waText": "" }
+    },
+    "leaderboard": [],
+    "countdownDays": 30
+  };
+
+  let data = null;
+  let rawHtml = null;
+  let ghConfig = null;   // { owner, repo, branch, path, token }
+  let ghSha = null;      // current file sha, needed to publish
+  let source = null;     // 'github' | 'local'
+  const DRAFT_KEY = 'jugaar_admin_draft_v1';
+  const GH_CFG_KEY = 'jugaar_gh_config_v1';
+
+  // ---------------- GitHub API ----------------
+  function b64EncodeUnicode(str){
+    return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (m, p1) => String.fromCharCode('0x' + p1)));
+  }
+  function b64DecodeUnicode(str){
+    return decodeURIComponent(atob(str).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+  }
+  async function ghRequest(url, options){
+    const res = await fetch(url, options);
+    if (!res.ok){
+      let msg = res.statusText;
+      try { const j = await res.json(); if (j.message) msg = j.message; } catch(e){}
+      const err = new Error(msg); err.status = res.status; throw err;
+    }
+    return res.json();
+  }
+  async function ghGetFile(cfg){
+    const url = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${cfg.path}?ref=${encodeURIComponent(cfg.branch)}`;
+    const json = await ghRequest(url, { headers: { 'Authorization': 'Bearer ' + cfg.token, 'Accept': 'application/vnd.github+json' } });
+    return { content: b64DecodeUnicode(json.content.replace(/\n/g, '')), sha: json.sha };
+  }
+  async function ghPutFile(cfg, content, sha){
+    const url = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${cfg.path}`;
+    return ghRequest(url, {
+      method: 'PUT',
+      headers: { 'Authorization': 'Bearer ' + cfg.token, 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: 'Update site content via admin dashboard', content: b64EncodeUnicode(content), sha, branch: cfg.branch })
+    });
+  }
+
+  // ---------------- Import / export ----------------
+  function extractData(html){
+    const m = html.match(/<script id="site-data" type="application\/json">([\s\S]*?)<\/script>/);
+    if (!m) throw new Error('No site-data block found in this file.');
+    return JSON.parse(m[1]);
+  }
+  function injectData(html, newData){
+    return html.replace(
+      /(<script id="site-data" type="application\/json">)[\s\S]*?(<\/script>)/,
+      (full, open, close) => open + '\n' + JSON.stringify(newData, null, 2) + '\n' + close
+    );
+  }
+
+  function loadFile(file){
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        rawHtml = reader.result;
+        data = extractData(rawHtml);
+        source = 'local';
+        onDataLoaded('Loaded from ' + file.name + ' (local file — publish downloads a new file)');
+      } catch (e) {
+        alert('Could not read this file: ' + e.message + '\n\nMake sure it\'s the index.html for this site.');
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  function onDataLoaded(msg){
+    document.getElementById('fileStatus').textContent = msg;
+    document.getElementById('fileStatus').classList.add('ok');
+    document.querySelectorAll('.navitem').forEach(b => b.classList.remove('locked'));
+    document.getElementById('downloadBtn').disabled = false;
+    document.getElementById('resetBtn').disabled = false;
+    document.getElementById('publishBtn').disabled = false;
+    document.getElementById('publishBtn').textContent = source === 'github' ? 'Publish to GitHub' : 'Publish (downloads file)';
+    document.getElementById('toolbarMsg').textContent = source === 'github'
+      ? 'Editing — connected to ' + ghConfig.owner + '/' + ghConfig.repo + '. Changes autosave locally as you type.'
+      : 'Editing — changes autosave locally as you type.';
+    renderAllForms();
+    goTo('brand');
+    saveDraft();
+  }
+
+  function saveDraft(){
+    if (!data) return;
+    localStorage.setItem(DRAFT_KEY, JSON.stringify({ data, rawHtml, source, ghSha, ghConfig: source === 'github' ? ghConfig : null, savedAt: Date.now() }));
+  }
+
+  // ---------------- Nav ----------------
+  document.querySelectorAll('.navitem').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (btn.dataset.sec !== 'upload' && !data) return;
+      goTo(btn.dataset.sec);
+    });
+  });
+  function goTo(sec){
+    document.querySelectorAll('.navitem').forEach(b => b.classList.toggle('active', b.dataset.sec === sec));
+    document.querySelectorAll('.main > section').forEach(s => s.classList.toggle('hidden', s.id !== 'sec-' + sec));
+  }
+
+  // ---------------- Upload UI ----------------
+  const dropzone = document.getElementById('dropzone');
+  const fileInput = document.getElementById('fileInput');
+  dropzone.addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', e => { if (e.target.files[0]) loadFile(e.target.files[0]); });
+  ['dragenter','dragover'].forEach(ev => dropzone.addEventListener(ev, e => { e.preventDefault(); dropzone.classList.add('drag'); }));
+  ['dragleave','drop'].forEach(ev => dropzone.addEventListener(ev, e => { e.preventDefault(); dropzone.classList.remove('drag'); }));
+  dropzone.addEventListener('drop', e => { if (e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0]); });
+
+  // draft restore prompt
+  (function checkDraft(){
+    const raw = localStorage.getItem(DRAFT_KEY);
+    if (!raw) return;
+    try {
+      const parsed = JSON.parse(raw);
+      if (parsed && parsed.data && parsed.rawHtml) {
+        document.getElementById('draftPrompt').classList.remove('hidden');
+        document.getElementById('restoreDraft').onclick = () => {
+          data = parsed.data; rawHtml = parsed.rawHtml; source = parsed.source || 'local';
+          ghSha = parsed.ghSha || null; ghConfig = parsed.ghConfig || null;
+          onDataLoaded('Restored from your last session');
+          document.getElementById('draftPrompt').classList.add('hidden');
+        };
+        document.getElementById('discardDraft').onclick = () => {
+          localStorage.removeItem(DRAFT_KEY);
+          document.getElementById('draftPrompt').classList.add('hidden');
+        };
+      }
+    } catch(e){}
+  })();
+
+  // ---------------- GitHub connect UI ----------------
+  (function restoreGhFields(){
+    try {
+      const saved = JSON.parse(localStorage.getItem(GH_CFG_KEY) || 'null');
+      if (saved){
+        document.getElementById('gh-owner').value = saved.owner || '';
+        document.getElementById('gh-repo').value = saved.repo || '';
+        document.getElementById('gh-branch').value = saved.branch || 'main';
+        document.getElementById('gh-path').value = saved.path || 'index.html';
+        document.getElementById('gh-token').value = saved.token || '';
+      }
+    } catch(e){}
+  })();
+
+  document.getElementById('ghConnectBtn').addEventListener('click', async () => {
+    const cfg = {
+      owner: document.getElementById('gh-owner').value.trim(),
+      repo: document.getElementById('gh-repo').value.trim(),
+      branch: document.getElementById('gh-branch').value.trim() || 'main',
+      path: document.getElementById('gh-path').value.trim() || 'index.html',
+      token: document.getElementById('gh-token').value.trim()
+    };
+    if (!cfg.owner || !cfg.repo || !cfg.token){
+      document.getElementById('ghStatus').textContent = 'Fill in owner, repo, and token first.';
+      return;
+    }
+    const statusEl = document.getElementById('ghStatus');
+    statusEl.textContent = 'Connecting…';
+    try {
+      const { content, sha } = await ghGetFile(cfg);
+      rawHtml = content;
+      data = extractData(rawHtml);
+      ghSha = sha;
+      ghConfig = cfg;
+      source = 'github';
+      localStorage.setItem(GH_CFG_KEY, JSON.stringify(cfg));
+      statusEl.textContent = 'Connected.';
+      onDataLoaded('Connected to ' + cfg.owner + '/' + cfg.repo + ' @ ' + cfg.branch);
+    } catch (e) {
+      statusEl.textContent = 'Failed: ' + e.message;
+    }
+  });
+  document.getElementById('ghForgetBtn').addEventListener('click', () => {
+    localStorage.removeItem(GH_CFG_KEY);
+    document.getElementById('gh-token').value = '';
+    document.getElementById('ghStatus').textContent = 'Saved token cleared from this browser.';
+  });
+
+  // ---------------- Toolbar actions ----------------
+  document.getElementById('downloadBtn').addEventListener('click', () => {
+    if (!data || !rawHtml) return;
+    const finalHtml = injectData(rawHtml, data);
+    const blob = new Blob([finalHtml], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'index.html';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    document.getElementById('toolbarMsg').textContent = 'Downloaded — upload this file to your host to go live.';
+  });
+  document.getElementById('publishBtn').addEventListener('click', async () => {
+    if (!data || !rawHtml) return;
+    const finalHtml = injectData(rawHtml, data);
+    const btn = document.getElementById('publishBtn');
+    if (source !== 'github'){
+      // no GitHub connection — fall back to a download
+      document.getElementById('downloadBtn').click();
+      return;
+    }
+    btn.disabled = true; btn.textContent = 'Publishing…';
+    try {
+      const result = await ghPutFile(ghConfig, finalHtml, ghSha);
+      ghSha = result.content.sha;
+      rawHtml = finalHtml;
+      document.getElementById('toolbarMsg').textContent = 'Published — GitHub Pages usually goes live within about a minute.';
+      saveDraft();
+    } catch (e) {
+      if (e.status === 409){
+        alert('This file changed on GitHub since you loaded it (maybe edited elsewhere). Reconnect to pull the latest version before publishing again, so you don\'t overwrite it.');
+      } else {
+        alert('Publish failed: ' + e.message);
+      }
+    } finally {
+      btn.disabled = false;
+      btn.textContent = source === 'github' ? 'Publish to GitHub' : 'Publish (downloads file)';
+    }
+  });
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    if (!confirm('Discard all changes and reload the last-loaded file?')) return;
+    data = extractData(rawHtml);
+    renderAllForms();
+    saveDraft();
+  });
+
+  // ---------------- Form helpers ----------------
+  function field(container, labelText, value, onChange, type){
+    const wrap = document.createElement('div'); wrap.className = 'field';
+    const lbl = document.createElement('label'); lbl.textContent = labelText;
+    const inp = document.createElement(type === 'textarea' ? 'textarea' : 'input');
+    if (type !== 'textarea') inp.type = type || 'text';
+    inp.value = value;
+    inp.addEventListener('input', () => { onChange(inp.value); saveDraft(); });
+    wrap.appendChild(lbl); wrap.appendChild(inp);
+    container.appendChild(wrap);
+    return inp;
+  }
+
+  // ---------------- Render: brand / hero ----------------
+  function renderBrandHero(){
+    document.getElementById('f-wa').value = data.brand.waNumber;
+    document.getElementById('f-wa').oninput = e => { data.brand.waNumber = e.target.value.trim(); saveDraft(); };
+    document.getElementById('f-ig').value = data.brand.igHandle;
+    document.getElementById('f-ig').oninput = e => { data.brand.igHandle = e.target.value.trim().replace(/^@/,''); saveDraft(); };
+    document.getElementById('f-pill').value = data.hero.pill;
+    document.getElementById('f-pill').oninput = e => { data.hero.pill = e.target.value; saveDraft(); };
+    document.getElementById('f-sub').value = data.hero.sub;
+    document.getElementById('f-sub').oninput = e => { data.hero.sub = e.target.value; saveDraft(); };
+    document.getElementById('f-days').value = data.countdownDays;
+    document.getElementById('f-days').oninput = e => { data.countdownDays = parseInt(e.target.value) || 1; saveDraft(); };
+  }
+
+  // ---------------- Render: stats & bars ----------------
+  function renderStats(){
+    const el = document.getElementById('statsFields'); el.innerHTML = '';
+    data.stats.forEach((s, i) => {
+      const card = document.createElement('div'); card.className = 'card';
+      card.innerHTML = `<div class="card-head"><span class="tag">Stat ${i+1}</span></div>`;
+      const grid = document.createElement('div'); grid.className = 'row';
+      field(grid, 'Value', s.value, v => s.value = parseFloat(v) || 0, 'number');
+      field(grid, 'Suffix (+, M+, x…)', s.suffix, v => s.suffix = v);
+      card.appendChild(grid);
+      const grid2 = document.createElement('div'); grid2.className = 'row';
+      field(grid2, 'Decimal places', s.decimals, v => s.decimals = parseInt(v) || 0, 'number');
+      field(grid2, 'Label', s.label, v => s.label = v);
+      card.appendChild(grid2);
+      el.appendChild(card);
+    });
+  }
+  function renderBars(){
+    const el = document.getElementById('barsFields'); el.innerHTML = '';
+    data.kpiBars.forEach((b, i) => {
+      const card = document.createElement('div'); card.className = 'card';
+      card.innerHTML = `<div class="card-head"><span class="tag">Bar ${i+1}</span></div>`;
+      field(card, 'Label', b.label, v => b.label = v);
+      const grid = document.createElement('div'); grid.className = 'row';
+      field(grid, 'Displayed text (e.g. 91%)', b.display, v => b.display = v);
+      field(grid, 'Fill percent (0–100)', b.value, v => b.value = parseFloat(v) || 0, 'number');
+      card.appendChild(grid);
+      el.appendChild(card);
+    });
+  }
+
+  // ---------------- Render: growth ----------------
+  function renderGrowth(){
+    document.getElementById('f-gval').value = data.growth.value;
+    document.getElementById('f-gval').oninput = e => { data.growth.value = parseFloat(e.target.value) || 0; saveDraft(); };
+    document.getElementById('f-greach').value = data.growth.monthlyReach;
+    document.getElementById('f-greach').oninput = e => { data.growth.monthlyReach = e.target.value; saveDraft(); };
+    document.getElementById('f-gturn').value = data.growth.avgTurnaround;
+    document.getElementById('f-gturn').oninput = e => { data.growth.avgTurnaround = e.target.value; saveDraft(); };
+  }
+
+  // ---------------- Render: projects ----------------
+  const THUMB_CLASSES = ['p1','p2','p3','p4','p5','p6'];
+  function renderProjects(){
+    const el = document.getElementById('projectsFields'); el.innerHTML = '';
+    data.projects.forEach((p, i) => {
+      const card = document.createElement('div'); card.className = 'card';
+      const head = document.createElement('div'); head.className = 'card-head';
+      head.innerHTML = `<span class="tag">Campaign ${i+1}</span>`;
+      const rmv = document.createElement('button'); rmv.className = 'rmv'; rmv.textContent = 'Remove';
+      rmv.onclick = () => { data.projects.splice(i,1); renderProjects(); saveDraft(); };
+      head.appendChild(rmv); card.appendChild(head);
+
+      const row = document.createElement('div'); row.className = 'row';
+      field(row, 'Category tag', p.category, v => p.category = v);
+      field(row, 'Title', p.title, v => p.title = v);
+      card.appendChild(row);
+
+      field(card, 'Description', p.desc, v => p.desc = v, 'textarea');
+
+      const row2 = document.createElement('div'); row2.className = 'row';
+      field(row2, 'Thumbnail letter', p.thumb, v => p.thumb = v.slice(0,2).toUpperCase());
+      const selWrap = document.createElement('div'); selWrap.className = 'field';
+      selWrap.innerHTML = '<label>Thumbnail color theme</label>';
+      const sel = document.createElement('select');
+      THUMB_CLASSES.forEach(c => { const o = document.createElement('option'); o.value = c; o.textContent = c; if (c===p.thumbClass) o.selected = true; sel.appendChild(o); });
+      sel.onchange = () => { p.thumbClass = sel.value; saveDraft(); };
+      selWrap.appendChild(sel); row2.appendChild(selWrap);
+      card.appendChild(row2);
+
+      const resLabel = document.createElement('div'); resLabel.className = 'sub-label'; resLabel.textContent = 'RESULT STATS (3)'; resLabel.style.marginTop='4px'; card.appendChild(resLabel);
+      const resGrid = document.createElement('div'); resGrid.className = 'subgrid';
+      p.results.forEach((r, ri) => {
+        const cell = document.createElement('div');
+        const v1 = document.createElement('input'); v1.type='text'; v1.value = r.value; v1.placeholder='Value'; v1.style.marginBottom='6px';
+        v1.oninput = () => { r.value = v1.value; saveDraft(); };
+        const v2 = document.createElement('input'); v2.type='text'; v2.value = r.label; v2.placeholder='Label';
+        v2.oninput = () => { r.label = v2.value; saveDraft(); };
+        cell.appendChild(v1); cell.appendChild(v2);
+        resGrid.appendChild(cell);
+      });
+      card.appendChild(resGrid);
+      el.appendChild(card);
+    });
+  }
+  document.getElementById('addProject').addEventListener('click', () => {
+    data.projects.push({ thumb: 'N', thumbClass: 'p1', category: 'Category · Type', title: 'New campaign', desc: 'Short description of the work.', results: [{value:'0',label:'Metric'},{value:'0',label:'Metric'},{value:'0',label:'Metric'}] });
+    renderProjects(); saveDraft();
+  });
+
+  // ---------------- Render: plans ----------------
+  function renderPlans(){
+    const el = document.getElementById('plansFields'); el.innerHTML = '';
+    data.plans.forEach((p, i) => {
+      const card = document.createElement('div'); card.className = 'card';
+      card.innerHTML = `<div class="card-head"><span class="tag">Plan ${i+1}</span></div>`;
+      const row = document.createElement('div'); row.className = 'row';
+      field(row, 'Name', p.name, v => p.name = v);
+      field(row, 'Badge (blank for none)', p.badge, v => p.badge = v);
+      card.appendChild(row);
+      field(card, 'Description', p.desc, v => p.desc = v, 'textarea');
+      const row2 = document.createElement('div'); row2.className = 'row3';
+      field(row2, 'Price', p.price, v => p.price = v);
+      field(row2, 'Period (e.g. /mo)', p.period, v => p.period = v);
+      const chkWrap = document.createElement('div'); chkWrap.className='field';
+      chkWrap.innerHTML = '<label>&nbsp;</label>';
+      const chkLabel = document.createElement('label'); chkLabel.className = 'check';
+      const chk = document.createElement('input'); chk.type = 'checkbox'; chk.checked = p.featured;
+      chk.onchange = () => { p.featured = chk.checked; saveDraft(); };
+      chkLabel.appendChild(chk); chkLabel.appendChild(document.createTextNode('Featured plan'));
+      chkWrap.appendChild(chkLabel);
+      row2.appendChild(chkWrap);
+      card.appendChild(row2);
+      const row3 = document.createElement('div'); row3.className = 'row';
+      field(row3, 'Button text', p.ctaLabel, v => p.ctaLabel = v);
+      field(row3, 'WhatsApp message on click', p.waText, v => p.waText = v);
+      card.appendChild(row3);
+
+      const listLabel = document.createElement('div'); listLabel.className = 'sub-label'; listLabel.textContent = 'FEATURES'; listLabel.style.marginTop='6px'; card.appendChild(listLabel);
+      const listWrap = document.createElement('div'); card.appendChild(listWrap);
+      function renderFeatures(){
+        listWrap.innerHTML = '';
+        p.features.forEach((f, fi) => {
+          const row = document.createElement('div'); row.className = 'list-item';
+          const inp = document.createElement('input'); inp.type = 'text'; inp.value = f;
+          inp.oninput = () => { p.features[fi] = inp.value; saveDraft(); };
+          const rm = document.createElement('button'); rm.className = 'ic'; rm.textContent = '×';
+          rm.onclick = () => { p.features.splice(fi,1); renderFeatures(); saveDraft(); };
+          row.appendChild(inp); row.appendChild(rm);
+          listWrap.appendChild(row);
+        });
+        const addRow = document.createElement('button'); addRow.className = 'add-btn'; addRow.textContent = '+ Add feature line';
+        addRow.style.marginTop = '0';
+        addRow.onclick = () => { p.features.push('New feature'); renderFeatures(); saveDraft(); };
+        listWrap.appendChild(addRow);
+      }
+      renderFeatures();
+      el.appendChild(card);
+    });
+  }
+
+  // ---------------- Render: community ----------------
+  function renderCommunityBlock(containerId, c, hasHref){
+    const el = document.getElementById(containerId); el.innerHTML = '';
+    const row = document.createElement('div'); row.className = 'row';
+    field(row, 'Tag', c.tag, v => c.tag = v);
+    field(row, 'Title', c.title, v => c.title = v);
+    el.appendChild(row);
+    field(el, 'Description', c.desc, v => c.desc = v, 'textarea');
+
+    const listLabel = document.createElement('div'); listLabel.className = 'sub-label'; listLabel.textContent = 'BULLET POINTS'; listLabel.style.marginTop='6px'; el.appendChild(listLabel);
+    const listWrap = document.createElement('div'); el.appendChild(listWrap);
+    function renderItems(){
+      listWrap.innerHTML = '';
+      c.items.forEach((it, ii) => {
+        const row = document.createElement('div'); row.className = 'list-item';
+        const b = document.createElement('input'); b.type='text'; b.value = it.b; b.placeholder = 'Bold lead-in'; b.style.maxWidth='160px';
+        b.oninput = () => { it.b = b.value; saveDraft(); };
+        const t = document.createElement('input'); t.type='text'; t.value = it.text; t.placeholder = 'Rest of the line';
+        t.oninput = () => { it.text = t.value; saveDraft(); };
+        const rm = document.createElement('button'); rm.className='ic'; rm.textContent='×';
+        rm.onclick = () => { c.items.splice(ii,1); renderItems(); saveDraft(); };
+        row.appendChild(b); row.appendChild(t); row.appendChild(rm);
+        listWrap.appendChild(row);
+      });
+      const addRow = document.createElement('button'); addRow.className = 'add-btn'; addRow.textContent = '+ Add bullet'; addRow.style.marginTop='0';
+      addRow.onclick = () => { c.items.push({b:'Label',text:'description'}); renderItems(); saveDraft(); };
+      listWrap.appendChild(addRow);
+    }
+    renderItems();
+
+    const metaLabel = document.createElement('div'); metaLabel.className = 'sub-label'; metaLabel.textContent = 'STAT CALLOUTS (2)'; metaLabel.style.marginTop='14px'; el.appendChild(metaLabel);
+    const metaGrid = document.createElement('div'); metaGrid.className = 'row'; el.appendChild(metaGrid);
+    c.meta.forEach(m => {
+      const cell = document.createElement('div');
+      const v1 = document.createElement('input'); v1.type='text'; v1.value=m.n; v1.placeholder='Number'; v1.style.marginBottom='6px';
+      v1.oninput = () => { m.n = v1.value; saveDraft(); };
+      const v2 = document.createElement('input'); v2.type='text'; v2.value=m.l; v2.placeholder='Label';
+      v2.oninput = () => { m.l = v2.value; saveDraft(); };
+      cell.appendChild(v1); cell.appendChild(v2);
+      metaGrid.appendChild(cell);
+    });
+
+    const ctaRow = document.createElement('div'); ctaRow.className = 'row'; ctaRow.style.marginTop='14px'; el.appendChild(ctaRow);
+    field(ctaRow, 'Button text', c.ctaLabel, v => c.ctaLabel = v);
+    if (hasHref) {
+      field(ctaRow, 'WhatsApp message on click', c.waText || '', v => c.waText = v);
+    } else {
+      field(ctaRow, 'Link target (e.g. #leaderboard)', c.ctaHref || '', v => c.ctaHref = v);
+    }
+  }
+  function renderCommunity(){
+    renderCommunityBlock('commInfFields', data.community.influencers, false);
+    renderCommunityBlock('commClubFields', data.community.club, true);
+  }
+
+  // ---------------- Render: leaderboard ----------------
+  function renderLeaderboard(){
+    const el = document.getElementById('lbFields'); el.innerHTML = '';
+    data.leaderboard.sort((a,b) => a.rank - b.rank).forEach((p, i) => {
+      const card = document.createElement('div'); card.className = 'card';
+      const head = document.createElement('div'); head.className = 'card-head';
+      head.innerHTML = `<span class="tag">Rank ${p.rank}${p.rank<=3 ? ' · podium' : ''}</span>`;
+      const rmv = document.createElement('button'); rmv.className = 'rmv'; rmv.textContent = 'Remove';
+      rmv.onclick = () => { data.leaderboard.splice(data.leaderboard.indexOf(p),1); renderLeaderboard(); saveDraft(); };
+      head.appendChild(rmv); card.appendChild(head);
+
+      const row = document.createElement('div'); row.className = 'row3';
+      field(row, 'Rank', p.rank, v => { p.rank = parseInt(v) || 1; }, 'number');
+      field(row, 'Name', p.name, v => p.name = v);
+      field(row, 'Handle', p.handle, v => p.handle = v);
+      card.appendChild(row);
+
+      const row2 = document.createElement('div'); row2.className = 'row3';
+      field(row2, 'Followers', p.followers, v => p.followers = v);
+      field(row2, 'Engagement', p.engagement, v => p.engagement = v);
+      field(row2, 'Points', p.points, v => p.points = parseInt(v) || 0, 'number');
+      card.appendChild(row2);
+
+      const row3 = document.createElement('div'); row3.className = 'row';
+      const selWrap = document.createElement('div'); selWrap.className = 'field';
+      selWrap.innerHTML = '<label>Trend</label>';
+      const sel = document.createElement('select');
+      ['up','down','flat'].forEach(t => { const o=document.createElement('option'); o.value=t; o.textContent=t; if(t===p.trend) o.selected=true; sel.appendChild(o); });
+      sel.onchange = () => { p.trend = sel.value; saveDraft(); };
+      selWrap.appendChild(sel); row3.appendChild(selWrap);
+
+      const colorWrap = document.createElement('div'); colorWrap.className = 'field';
+      colorWrap.innerHTML = '<label>Avatar color</label>';
+      const colorInp = document.createElement('input'); colorInp.type = 'text'; colorInp.value = p.color;
+      colorInp.oninput = () => { p.color = colorInp.value; saveDraft(); };
+      colorWrap.appendChild(colorInp); row3.appendChild(colorWrap);
+      card.appendChild(row3);
+
+      el.appendChild(card);
+    });
+  }
+  document.getElementById('addCreator').addEventListener('click', () => {
+    const nextRank = data.leaderboard.length + 1;
+    data.leaderboard.push({ rank: nextRank, name: 'New Creator', handle: '@handle', followers: '0', engagement: '0%', points: 0, trend: 'flat', color: '#ceff00' });
+    renderLeaderboard(); saveDraft();
+  });
+
+  function renderAllForms(){
+    renderBrandHero();
+    renderStats(); renderBars();
+    renderGrowth();
+    renderProjects();
+    renderPlans();
+    renderCommunity();
+    renderLeaderboard();
+  }
+</script>
+</body>
+</html>
