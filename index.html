@@ -787,65 +787,429 @@ img,svg,video{max-width:100%;height:auto}
 
 <script id="site-data" type="application/json">
 {
-  "brand": { "waNumber": "923100056684", "igHandle": "jugaar.media" },
+  "brand": {
+    "waNumber": "923100056684",
+    "igHandle": "jugaar.media"
+  },
   "hero": {
     "pill": "Available for projects — Q3 slots open",
     "sub": "Creative campaigns, sharp content, and influencer marketing that actually moves numbers. No fluff. No vanity metrics. Just jugaar that works."
   },
   "stats": [
-    { "value": 63, "suffix": "", "decimals": 0, "label": "Campaigns shipped" },
-    { "value": 34, "suffix": "+", "decimals": 0, "label": "Happy clients" },
-    { "value": 120, "suffix": "M+", "decimals": 0, "label": "Views generated" },
-    { "value": 4.7, "suffix": "x", "decimals": 1, "label": "Avg. ROAS" }
+    {
+      "value": 63,
+      "suffix": "",
+      "decimals": 0,
+      "label": "Campaigns shipped"
+    },
+    {
+      "value": 34,
+      "suffix": "+",
+      "decimals": 0,
+      "label": "Happy clients"
+    },
+    {
+      "value": 120,
+      "suffix": "M+",
+      "decimals": 0,
+      "label": "Views generated"
+    },
+    {
+      "value": 4.7,
+      "suffix": "x",
+      "decimals": 1,
+      "label": "Avg. ROAS"
+    }
   ],
   "kpiBars": [
-    { "label": "Engagement rate", "display": "8.4%", "value": 84 },
-    { "label": "Content approval on first draft", "display": "91%", "value": 91 },
-    { "label": "Campaigns hitting KPI target", "display": "88%", "value": 88 },
-    { "label": "Client retention", "display": "76%", "value": 76 },
-    { "label": "On-time delivery", "display": "96%", "value": 96 }
+    {
+      "label": "Engagement rate",
+      "display": "8.4%",
+      "value": 84
+    },
+    {
+      "label": "Content approval on first draft",
+      "display": "91%",
+      "value": 91
+    },
+    {
+      "label": "Campaigns hitting KPI target",
+      "display": "88%",
+      "value": 88
+    },
+    {
+      "label": "Client retention",
+      "display": "76%",
+      "value": 76
+    },
+    {
+      "label": "On-time delivery",
+      "display": "96%",
+      "value": 96
+    }
   ],
-  "growth": { "value": 92, "monthlyReach": "2.1M", "avgTurnaround": "18h" },
+  "growth": {
+    "value": 92,
+    "monthlyReach": "2.1M",
+    "avgTurnaround": "18h"
+  },
   "projects": [
-    { "thumb": "N", "thumbClass": "p1", "category": "D2C · Social", "title": "Noor Skincare", "desc": "Launch campaign + UGC engine for a clean-beauty brand.", "results": [ { "value": "3.2M", "label": "Reach" }, { "value": "5.1x", "label": "ROAS" }, { "value": "+240%", "label": "Followers" } ] },
-    { "thumb": "Z", "thumbClass": "p2", "category": "Fintech · Brand", "title": "Zaraah Pay", "desc": "Full rebrand and creator-led explainer series.", "results": [ { "value": "1.8M", "label": "Views" }, { "value": "12k", "label": "Signups" }, { "value": "6.4%", "label": "CTR" } ] },
-    { "thumb": "F", "thumbClass": "p3", "category": "F&B · Influencer", "title": "Fork & Flame", "desc": "City-wide foodie challenge with 40 micro-creators.", "results": [ { "value": "40", "label": "Creators" }, { "value": "890k", "label": "Reach" }, { "value": "+310%", "label": "Footfall" } ] },
-    { "thumb": "A", "thumbClass": "p4", "category": "SaaS · Content", "title": "Aether Tools", "desc": "Always-on content ops and thought-leadership.", "results": [ { "value": "220", "label": "Assets" }, { "value": "4.2x", "label": "Pipeline" }, { "value": "9.1%", "label": "Engmt" } ] },
-    { "thumb": "V", "thumbClass": "p5", "category": "Fashion · Paid", "title": "Vesta Label", "desc": "Seasonal drop with paid social + creator seeding.", "results": [ { "value": "7.0x", "label": "ROAS" }, { "value": "2.4M", "label": "Impr." }, { "value": "Sold out", "label": "Drop" } ] },
-    { "thumb": "B", "thumbClass": "p6", "category": "Beauty · TikTok", "title": "Blush Co.", "desc": "TikTok-first launch that went viral in week one.", "results": [ { "value": "14M", "label": "Views" }, { "value": "3", "label": "Viral hits" }, { "value": "+180%", "label": "Sales" } ] }
+    {
+      "thumb": "N",
+      "thumbClass": "p1",
+      "category": "D2C · Social",
+      "title": "Noor Skincare",
+      "desc": "Launch campaign + UGC engine for a clean-beauty brand.",
+      "results": [
+        {
+          "value": "3.2M",
+          "label": "Reach"
+        },
+        {
+          "value": "5.1x",
+          "label": "ROAS"
+        },
+        {
+          "value": "+240%",
+          "label": "Followers"
+        }
+      ]
+    },
+    {
+      "thumb": "Z",
+      "thumbClass": "p2",
+      "category": "Fintech · Brand",
+      "title": "Zaraah Pay",
+      "desc": "Full rebrand and creator-led explainer series.",
+      "results": [
+        {
+          "value": "1.8M",
+          "label": "Views"
+        },
+        {
+          "value": "12k",
+          "label": "Signups"
+        },
+        {
+          "value": "6.4%",
+          "label": "CTR"
+        }
+      ]
+    },
+    {
+      "thumb": "F",
+      "thumbClass": "p3",
+      "category": "F&B · Influencer",
+      "title": "Fork & Flame",
+      "desc": "City-wide foodie challenge with 40 micro-creators.",
+      "results": [
+        {
+          "value": "40",
+          "label": "Creators"
+        },
+        {
+          "value": "890k",
+          "label": "Reach"
+        },
+        {
+          "value": "+310%",
+          "label": "Footfall"
+        }
+      ]
+    },
+    {
+      "thumb": "A",
+      "thumbClass": "p4",
+      "category": "SaaS · Content",
+      "title": "Aether Tools",
+      "desc": "Always-on content ops and thought-leadership.",
+      "results": [
+        {
+          "value": "220",
+          "label": "Assets"
+        },
+        {
+          "value": "4.2x",
+          "label": "Pipeline"
+        },
+        {
+          "value": "9.1%",
+          "label": "Engmt"
+        }
+      ]
+    },
+    {
+      "thumb": "V",
+      "thumbClass": "p5",
+      "category": "Fashion · Paid",
+      "title": "Vesta Label",
+      "desc": "Seasonal drop with paid social + creator seeding.",
+      "results": [
+        {
+          "value": "7.0x",
+          "label": "ROAS"
+        },
+        {
+          "value": "2.4M",
+          "label": "Impr."
+        },
+        {
+          "value": "Sold out",
+          "label": "Drop"
+        }
+      ]
+    },
+    {
+      "thumb": "B",
+      "thumbClass": "p6",
+      "category": "Beauty · TikTok",
+      "title": "Blush Co.",
+      "desc": "TikTok-first launch that went viral in week one.",
+      "results": [
+        {
+          "value": "14M",
+          "label": "Views"
+        },
+        {
+          "value": "3",
+          "label": "Viral hits"
+        },
+        {
+          "value": "+180%",
+          "label": "Sales"
+        }
+      ]
+    }
   ],
   "plans": [
-    { "name": "Starter", "desc": "For brands finding their voice and testing the water.", "price": "$1,200", "period": "/mo", "featured": false, "badge": "", "ctaLabel": "Choose Starter", "waText": "Hi Jugaar, I'm interested in the Starter plan", "features": ["12 content pieces / month", "1 platform managed", "Monthly strategy call", "Basic KPI report", "48h turnaround"] },
-    { "name": "Growth", "desc": "For brands ready to scale content + paid + creators.", "price": "$3,400", "period": "/mo", "featured": true, "badge": "MOST POPULAR", "ctaLabel": "Choose Growth", "waText": "Hi Jugaar, I'm interested in the Growth plan", "features": ["30 content pieces / month", "3 platforms managed", "Paid media management", "Influencer seeding (5 creators)", "Live KPI dashboard", "Bi-weekly strategy sprints"] },
-    { "name": "Scale", "desc": "Full-service partner for brands going big.", "price": "$7,500", "period": "/mo", "featured": false, "badge": "", "ctaLabel": "Choose Scale", "waText": "Hi Jugaar, I'm interested in the Scale plan", "features": ["Unlimited content pipeline", "All platforms + community", "Dedicated creative team", "Influencer campaigns (15+ creators)", "Custom KPI + attribution", "Weekly war-room", "Priority 18h turnaround"] }
+    {
+      "name": "Starter",
+      "desc": "For brands finding their voice and testing the water.",
+      "price": "$1,200",
+      "period": "/mo",
+      "featured": false,
+      "badge": "",
+      "ctaLabel": "Choose Starter",
+      "waText": "Hi Jugaar, I'm interested in the Starter plan",
+      "features": [
+        "12 content pieces / month",
+        "1 platform managed",
+        "Monthly strategy call",
+        "Basic KPI report",
+        "48h turnaround"
+      ]
+    },
+    {
+      "name": "Growth",
+      "desc": "For brands ready to scale content + paid + creators.",
+      "price": "$3,400",
+      "period": "/mo",
+      "featured": true,
+      "badge": "MOST POPULAR",
+      "ctaLabel": "Choose Growth",
+      "waText": "Hi Jugaar, I'm interested in the Growth plan",
+      "features": [
+        "30 content pieces / month",
+        "3 platforms managed",
+        "Paid media management",
+        "Influencer seeding (5 creators)",
+        "Live KPI dashboard",
+        "Bi-weekly strategy sprints"
+      ]
+    },
+    {
+      "name": "Scale",
+      "desc": "Full-service partner for brands going big.",
+      "price": "$7,500",
+      "period": "/mo",
+      "featured": false,
+      "badge": "",
+      "ctaLabel": "Choose Scale",
+      "waText": "Hi Jugaar, I'm interested in the Scale plan",
+      "features": [
+        "Unlimited content pipeline",
+        "All platforms + community",
+        "Dedicated creative team",
+        "Influencer campaigns (15+ creators)",
+        "Custom KPI + attribution",
+        "Weekly war-room",
+        "Priority 18h turnaround"
+      ]
+    }
   ],
   "community": {
     "influencers": {
-      "tag": "Influencers only", "title": "The Creator League",
+      "tag": "Networking Community",
+      "title": "Influencers Club",
       "desc": "An invite-only network for creators who want paid brand deals, gear, and a shot at the top of the leaderboard.",
-      "items": [ { "b": "Brand deals", "text": "first access to paid campaigns" }, { "b": "Leaderboard challenge", "text": "climb the ranks, win bonuses" }, { "b": "Skill labs", "text": "editing, hooks, and growth workshops" }, { "b": "Collab pool", "text": "find creators to duet & feature" } ],
-      "meta": [ { "n": "210+", "l": "Verified creators" }, { "n": "Rs 0", "l": "To join (invite)" } ],
-      "ctaLabel": "See the leaderboard →", "ctaHref": "#leaderboard"
+      "items": [
+        {
+          "b": "Brand deals",
+          "text": "first access to paid campaigns"
+        },
+        {
+          "b": "Leaderboard challenge",
+          "text": "climb the ranks, win bonuses"
+        },
+        {
+          "b": "Skill labs",
+          "text": "editing, hooks, and growth workshops"
+        },
+        {
+          "b": "Collab pool",
+          "text": "find creators to duet & feature"
+        }
+      ],
+      "meta": [
+        {
+          "n": "210+",
+          "l": "Verified creators"
+        },
+        {
+          "n": "$1",
+          "l": "To join (invite)"
+        }
+      ],
+      "ctaLabel": "See the leaderboard →",
+      "ctaHref": "#leaderboard"
     },
     "club": {
-      "tag": "Membership", "title": "Insider's Club",
+      "tag": "Membership",
+      "title": "Insider's Club",
       "desc": "For founders and marketers who want the playbooks, templates, and network behind our campaigns.",
-      "items": [ { "b": "Playbook vault", "text": "every framework we use" }, { "b": "Monthly teardown", "text": "live campaign breakdowns" }, { "b": "Vetted vendor list", "text": "editors, ad buyers, PR" }, { "b": "Priority intros", "text": "creators, tools & partners" } ],
-      "meta": [ { "n": "$49", "l": "Per month" }, { "n": "500+", "l": "Members" } ],
-      "ctaLabel": "Join the club", "waText": "Hi Jugaar, I want to join the Insider's Club"
+      "items": [
+        {
+          "b": "Playbook vault",
+          "text": "every framework we use"
+        },
+        {
+          "b": "Monthly teardown",
+          "text": "live campaign breakdowns"
+        },
+        {
+          "b": "Vetted vendor list",
+          "text": "editors, ad buyers, PR"
+        },
+        {
+          "b": "Priority intros",
+          "text": "creators, tools & partners"
+        }
+      ],
+      "meta": [
+        {
+          "n": "Only 25 Slots",
+          "l": "Per month"
+        },
+        {
+          "n": "$30",
+          "l": "Members"
+        }
+      ],
+      "ctaLabel": "Join the club",
+      "waText": "Hi Jugaar, I want to join the Insider's Club"
     }
   },
   "leaderboard": [
-    { "rank": 1, "name": "Bilal Khan", "handle": "@bilalonreels", "followers": "842K", "engagement": "11.2%", "points": 9880, "trend": "up", "color": "#ceff00" },
-    { "rank": 2, "name": "Ayesha Haider", "handle": "@ayeshacreates", "followers": "910K", "engagement": "9.8%", "points": 9140, "trend": "up", "color": "#00e0b8" },
-    { "rank": 3, "name": "Zara Malik", "handle": "@zaravibes", "followers": "1.2M", "engagement": "7.4%", "points": 8760, "trend": "down", "color": "#ff7a59" },
-    { "rank": 4, "name": "Hamza Sheikh", "handle": "@hamzashoots", "followers": "605K", "engagement": "10.1%", "points": 8420, "trend": "up", "color": "#a78bfa" },
-    { "rank": 5, "name": "Mahnoor Ali", "handle": "@mahnoor.styles", "followers": "738K", "engagement": "8.6%", "points": 8090, "trend": "flat", "color": "#38bdf8" },
-    { "rank": 6, "name": "Usman Tariq", "handle": "@usmaneats", "followers": "520K", "engagement": "9.3%", "points": 7650, "trend": "up", "color": "#f472b6" },
-    { "rank": 7, "name": "Sana Iqbal", "handle": "@sana.creates", "followers": "688K", "engagement": "7.0%", "points": 7210, "trend": "down", "color": "#fbbf24" },
-    { "rank": 8, "name": "Danish Raza", "handle": "@danishdaily", "followers": "430K", "engagement": "8.9%", "points": 6980, "trend": "up", "color": "#34d399" },
-    { "rank": 9, "name": "Iqra Fatima", "handle": "@iqrafit", "followers": "512K", "engagement": "6.8%", "points": 6540, "trend": "flat", "color": "#60a5fa" },
-    { "rank": 10, "name": "Ali Hassan", "handle": "@alihassanhq", "followers": "395K", "engagement": "7.7%", "points": 6120, "trend": "up", "color": "#f87171" }
+    {
+      "rank": 1,
+      "name": "Bilal Khan",
+      "handle": "@bilalonreels",
+      "followers": "842K",
+      "engagement": "11.2%",
+      "points": 9880,
+      "trend": "up",
+      "color": "#ceff00"
+    },
+    {
+      "rank": 2,
+      "name": "Ayesha Haider",
+      "handle": "@ayeshacreates",
+      "followers": "910K",
+      "engagement": "9.8%",
+      "points": 9140,
+      "trend": "up",
+      "color": "#00e0b8"
+    },
+    {
+      "rank": 3,
+      "name": "Zara Malik",
+      "handle": "@zaravibes",
+      "followers": "1.2M",
+      "engagement": "7.4%",
+      "points": 8760,
+      "trend": "down",
+      "color": "#ff7a59"
+    },
+    {
+      "rank": 4,
+      "name": "Hamza Sheikh",
+      "handle": "@hamzashoots",
+      "followers": "605K",
+      "engagement": "10.1%",
+      "points": 8420,
+      "trend": "up",
+      "color": "#a78bfa"
+    },
+    {
+      "rank": 5,
+      "name": "Mahnoor Ali",
+      "handle": "@mahnoor.styles",
+      "followers": "738K",
+      "engagement": "8.6%",
+      "points": 8090,
+      "trend": "flat",
+      "color": "#38bdf8"
+    },
+    {
+      "rank": 6,
+      "name": "Usman Tariq",
+      "handle": "@usmaneats",
+      "followers": "520K",
+      "engagement": "9.3%",
+      "points": 7650,
+      "trend": "up",
+      "color": "#f472b6"
+    },
+    {
+      "rank": 7,
+      "name": "Sana Iqbal",
+      "handle": "@sana.creates",
+      "followers": "688K",
+      "engagement": "7.0%",
+      "points": 7210,
+      "trend": "down",
+      "color": "#fbbf24"
+    },
+    {
+      "rank": 8,
+      "name": "Danish Raza",
+      "handle": "@danishdaily",
+      "followers": "430K",
+      "engagement": "8.9%",
+      "points": 6980,
+      "trend": "up",
+      "color": "#34d399"
+    },
+    {
+      "rank": 9,
+      "name": "Iqra Fatima",
+      "handle": "@iqrafit",
+      "followers": "512K",
+      "engagement": "6.8%",
+      "points": 6540,
+      "trend": "flat",
+      "color": "#60a5fa"
+    },
+    {
+      "rank": 10,
+      "name": "Ali Hassan",
+      "handle": "@alihassanhq",
+      "followers": "395K",
+      "engagement": "7.7%",
+      "points": 6120,
+      "trend": "up",
+      "color": "#f87171"
+    }
   ],
   "countdownDays": 30
 }
