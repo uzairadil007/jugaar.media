@@ -16,9 +16,11 @@
   .app{display:flex;min-height:100vh}
 
   /* ---- Sidebar ---- */
-  .side{width:230px;flex:none;background:var(--panel);border-right:1px solid var(--line);padding:20px 14px;position:sticky;top:0;height:100vh;overflow-y:auto}
-  .brand{display:flex;align-items:center;gap:8px;font-weight:900;font-size:17px;margin-bottom:26px;padding:0 6px}
-  .brand .mark{width:26px;height:26px;border-radius:6px;background:var(--accent);color:#0a0a0a;display:grid;place-items:center;font-weight:900;font-style:italic;transform:skewX(-8deg)}
+  .side{width:230px;flex:none;background:var(--panel);border-right:1px solid var(--line);padding:20px 14px;position:sticky;top:0;height:100vh;overflow-y:auto;transition:transform .25s ease;z-index:40}
+  .brand{padding:0 6px;margin-bottom:2px}
+  .logo{display:inline-flex;align-items:center;gap:0;font-family:var(--ff-display,var(--ff));font-weight:900;font-size:19px;letter-spacing:-.03em;color:var(--white)}
+  .logo .accent{color:var(--accent)}
+  .brand-sub{padding:0 6px;color:var(--muted);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;margin-bottom:22px}
   .navitem{display:block;width:100%;text-align:left;background:none;border:none;color:var(--muted);font-family:var(--ff);font-size:14px;font-weight:600;padding:11px 12px;border-radius:8px;cursor:pointer;margin-bottom:2px}
   .navitem:hover{color:var(--white);background:var(--panel-2)}
   .navitem.active{color:#0a0a0a;background:var(--accent)}
@@ -83,14 +85,49 @@
   .hidden{display:none !important}
   .locked{opacity:.35;pointer-events:none}
   ::-webkit-scrollbar{width:8px}::-webkit-scrollbar-thumb{background:var(--line);border-radius:8px}
+
+  /* ---- Mobile topbar / drawer ---- */
+  .topbar{display:none}
+  .overlay{display:none}
+  @media(max-width:900px){
+    .topbar{display:flex;align-items:center;gap:14px;position:fixed;top:0;left:0;right:0;height:56px;background:var(--panel);border-bottom:1px solid var(--line);padding:0 16px;z-index:50}
+    .topbar .logo{font-size:17px}
+    .hamburger{width:36px;height:36px;flex:none;border:1px solid var(--line);border-radius:8px;background:none;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:4px;cursor:pointer}
+    .hamburger span{width:16px;height:2px;background:var(--white);border-radius:2px}
+    .side{position:fixed;top:0;left:0;height:100vh;transform:translateX(-100%);box-shadow:0 0 50px rgba(0,0,0,.55);z-index:46;width:250px}
+    .side.open{transform:translateX(0)}
+    .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:45}
+    .overlay.show{display:block}
+    .app{display:block}
+    .main{padding:76px 18px 150px;max-width:100%}
+    .toolbar{left:0;padding:12px 16px}
+  }
+  @media(max-width:640px){
+    .row,.row3,.subgrid{grid-template-columns:1fr}
+    .panel{padding:18px}
+    h1{font-size:22px}
+    .lead{font-size:13.5px}
+    .toolbar{flex-direction:column;align-items:stretch;gap:10px}
+    .toolbar .msg{text-align:center;order:2}
+    .toolbar > div:last-child{order:1;width:100%;flex-wrap:wrap}
+    .toolbar .btn{flex:1 1 auto;white-space:nowrap}
+    .card-head{flex-wrap:wrap;gap:8px}
+  }
 </style>
 </head>
 <body>
 
+<div class="topbar">
+  <button class="hamburger" id="hamburger" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+  <span class="logo">jugaar<span class="accent">.</span>media</span>
+</div>
+<div class="overlay" id="overlay"></div>
+
 <div class="app">
   <!-- SIDEBAR -->
-  <div class="side">
-    <div class="brand"><span class="mark">j</span> Jugaar CMS</div>
+  <div class="side" id="sideNav">
+    <div class="brand"><span class="logo">jugaar<span class="accent">.</span>media</span></div>
+    <div class="brand-sub">Admin dashboard</div>
     <button class="navitem active" data-sec="upload">1. Load site</button>
     <button class="navitem" data-sec="brand">Contact & hero</button>
     <button class="navitem" data-sec="stats">Stats & KPI bars</button>
@@ -389,12 +426,23 @@
     btn.addEventListener('click', () => {
       if (btn.dataset.sec !== 'upload' && !data) return;
       goTo(btn.dataset.sec);
+      closeNav();
     });
   });
   function goTo(sec){
     document.querySelectorAll('.navitem').forEach(b => b.classList.toggle('active', b.dataset.sec === sec));
     document.querySelectorAll('.main > section').forEach(s => s.classList.toggle('hidden', s.id !== 'sec-' + sec));
   }
+
+  // ---------------- Mobile drawer ----------------
+  const sideNav = document.getElementById('sideNav');
+  const overlayEl = document.getElementById('overlay');
+  function openNav(){ sideNav.classList.add('open'); overlayEl.classList.add('show'); }
+  function closeNav(){ sideNav.classList.remove('open'); overlayEl.classList.remove('show'); }
+  document.getElementById('hamburger').addEventListener('click', () => {
+    sideNav.classList.contains('open') ? closeNav() : openNav();
+  });
+  overlayEl.addEventListener('click', closeNav);
 
   // ---------------- Upload UI ----------------
   const dropzone = document.getElementById('dropzone');
