@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>VA KPI Tracker</title>
+<style>
+:root{
+  --lime:#d8ff29; --ink:#0a0a0a; --paper:#ffffff; --line:#e8e8e8; --sub:#6b6b6b;
+}
+:root:not([data-theme="light"]){ }
+*{box-sizing:border-box;}
+html,body{height:100%;}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Inter",Segoe UI,Arial,sans-serif;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);}
+header{position:sticky;top:0;z-index:10;background:var(--ink);color:#fff;padding:14px 20px;padding-top:calc(14px + env(safe-area-inset-top,0px));
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.02em;}
+.brand .dot{width:12px;height:12px;background:var(--lime);border-radius:3px;}
+nav{display:flex;gap:4px;background:#161616;border-radius:10px;padding:4px;flex-wrap:wrap;}
+nav button{background:none;border:0;color:#bbb;padding:8px 14px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;}
+nav button.active{background:var(--lime);color:var(--ink);}
+.admin-toggle{display:flex;align-items:center;gap:8px;}
+.admin-toggle input{width:90px;padding:7px 8px;border-radius:7px;border:1px solid #333;background:#161616;color:#fff;font-size:12px;}
+.admin-toggle button{background:transparent;border:1px solid #444;color:#eee;border-radius:7px;padding:7px 10px;font-size:12px;cursor:pointer;}
+.admin-pill{font-size:11px;background:var(--lime);color:var(--ink);padding:5px 9px;border-radius:20px;font-weight:700;}
+main{max-width:980px;margin:0 auto;padding:22px 20px 60px;}
+.banner{background:#fff7e0;border:1px solid #f0dca0;color:#6b5400;font-size:12.5px;padding:10px 14px;border-radius:10px;margin-bottom:18px;}
+.card{border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:18px;background:#fff;}
+.row{display:flex;gap:14px;flex-wrap:wrap;}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;}
+.stat{border:1px solid var(--line);border-radius:12px;padding:14px;}
+.stat b{display:block;font-size:24px;margin-bottom:2px;}
+.stat span{font-size:11.5px;color:var(--sub);text-transform:uppercase;letter-spacing:.06em;}
+h2{font-size:18px;margin:0 0 4px;}
+h3{font-size:14px;margin:0 0 12px;color:var(--sub);text-transform:uppercase;letter-spacing:.06em;}
+.muted{color:var(--sub);font-size:13px;}
+.clock{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;}
+.clock-time{font-size:34px;font-weight:800;}
+.clock-status{font-size:12.5px;color:var(--sub);margin-top:4px;}
+.tag{display:inline-block;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;margin-left:8px;}
+.tag.ok{background:var(--lime);color:var(--ink);}
+.tag.warn{background:#111;color:#fff;}
+.tag.off{background:#f2f2f2;color:#777;}
+button.btn{background:var(--ink);color:#fff;border:0;border-radius:10px;padding:12px 20px;font-weight:700;font-size:13.5px;cursor:pointer;}
+button.btn.lime{background:var(--lime);color:var(--ink);}
+button.btn:disabled{opacity:.4;cursor:not-allowed;}
+button.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line);}
+.form-row{display:grid;grid-template-columns:1.2fr 1fr .8fr .8fr auto;gap:10px;margin-bottom:12px;align-items:end;}
+label{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--sub);display:block;margin-bottom:6px;}
+select,input[type=number],input[type=text]{width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;font-size:13.5px;background:#fff;color:var(--ink);}
+select:disabled,input:disabled{background:#f7f7f7;color:#999;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line);}
+th{color:var(--sub);font-size:11px;text-transform:uppercase;letter-spacing:.05em;}
+td.num{text-align:right;font-variant-numeric:tabular-nums;}
+.rm{background:none;border:0;color:#b00;cursor:pointer;font-size:12px;}
+.lock-note{font-size:12.5px;color:var(--sub);margin-top:10px;}
+.overflow{overflow-x:auto;}
+footer.actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;align-items:center;}
+@media (max-width:640px){ .form-row{grid-template-columns:1fr 1fr; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><span class="dot"></span> VA KPI Tracker</div>
+  <nav id="tabs"></nav>
+  <div class="admin-toggle" id="adminBox"></div>
+</header>
+<main id="app"></main>
+
+<script>
+const CAP = { db:true };
+const VAS = [
+  { id:'va1', name:'VA 1' },
+  { id:'va2', name:'VA 2' },
+  { id:'va3', name:'VA 3' },
+];
+const PLATFORMS = ['YouTube','Instagram','Facebook','TikTok'];
+const ACCOUNTS = ['Account 1','Account 2','Account 3'];
+const ADMIN_PIN = '2029';
+const DAY_START = 9, DAY_END = 17;
+
+let db = null, dbAvailable = false;
+let entries = {};          // key: vaId_date -> {signIn,signOut,logs[],submitted}
+let adminMode = false;
+let activeTab = 'dashboard';
+const todayKey = () => new Date().toISOString().slice(0,10);
+const fmtTime = iso => iso ? new Date(iso).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) : '—';
+const hoursBetween = (a,b) => a && b ? Math.max(0,(new Date(b)-new Date(a))/3600000) : 0;
+const entryKey = (va,d) => va+'_'+d;
+
+function getEntry(va, date){
+  return entries[entryKey(va,date)] || { vaId:va, date, signIn:null, signOut:null, logs:[], submitted:false };
+}
+function totals(e){
+  return e.logs.reduce((a,l)=>({appts:a.appts+Number(l.appts||0), dms:a.dms+Number(l.dms||0)}), {appts:0,dms:0});
+}
+
+// ---------- persistence ----------
+function localSave(){ try{ localStorage.setItem('kpi_fallback', JSON.stringify(entries)); }catch(e){} }
+function localLoad(){ try{ return JSON.parse(localStorage.getItem('kpi_fallback')||'{}'); }catch(e){ return {}; } }
+
+async function writeEntry(va, date, patch){
+  const key = entryKey(va,date);
+  const current = getEntry(va,date);
+  const next = { ...current, ...patch };
+  entries[key] = next;
+  if(dbAvailable && db){
+    try{ await db.collection('entries').doc(key).set(next); }
+    catch(err){ /* rejected write: keep local state, re-render */ render(); }
+  } else {
+    localSave(); render();
+  }
+}
+
+(async function init(){
+  try{
+    db = await claude.use('db');
+  }catch(e){ db = null; }
+  if(db){
+    dbAvailable = true;
+    db.collection('entries').orderBy('date','desc').limit(200).onSnapshot(
+      snap => { entries = {}; snap.docs.forEach(d => entries[d.id] = d.data()); render(); },
+      err => { dbAvailable = false; entries = localLoad(); render(); }
+    );
+  } else {
+    entries = localLoad();
+    render();
+  }
+  try{ adminMode = sessionStorage.getItem('kpi_admin') === '1'; }catch(e){}
+  render();
+})();
+
+// ---------- UI: header ----------
+function renderNav(){
+  const tabs = document.getElementById('tabs');
+  const items = [{id:'dashboard',name:'Dashboard'}, ...VAS];
+  tabs.innerHTML = items.map(t=>
+    `<button data-tab="${t.id}" class="${activeTab===t.id?'active':''}">${t.name}</button>`
+  ).join('');
+  tabs.querySelectorAll('button').forEach(b=> b.onclick = ()=>{ activeTab = b.dataset.tab; render(); });
+
+  const box = document.getElementById('adminBox');
+  if(adminMode){
+    box.innerHTML = `<span class="admin-pill">ADMIN MODE</span><button id="exitAdmin">Exit</button>`;
+    document.getElementById('exitAdmin').onclick = ()=>{ adminMode=false; try{sessionStorage.removeItem('kpi_admin')}catch(e){} render(); };
+  } else {
+    box.innerHTML = `<input id="pinInput" type="text" placeholder="Admin PIN" maxlength="6"><button id="pinBtn">Unlock</button>`;
+    document.getElementById('pinBtn').onclick = ()=>{
+      const v = document.getElementById('pinInput').value.trim();
+      if(v === ADMIN_PIN){ adminMode = true; try{sessionStorage.setItem('kpi_admin','1')}catch(e){} render(); }
+      else { document.getElementById('pinInput').style.borderColor = '#c00'; }
+    };
+  }
+}
+
+function render(){
+  renderNav();
+  const app = document.getElementById('app');
+  app.innerHTML = '';
+  if(!dbAvailable){
+    app.innerHTML += `<div class="banner">Live sync isn't active in this view, so changes are saved to this device only. Open this page as a signed-in editor of your workspace for it to sync across everyone automatically.</div>`;
+  }
+  if(activeTab === 'dashboard') renderDashboard(app);
+  else renderVaPage(app, activeTab);
+}
+
+// ---------- Dashboard ----------
+function renderDashboard(app){
+  const d = todayKey();
+  let teamAppts=0, teamDms=0, working=0;
+  const rows = VAS.map(va=>{
+    const e = getEntry(va.id, d);
+    const t = totals(e);
+    teamAppts += t.appts; teamDms += t.dms;
+    const status = !e.signIn ? 'Not signed in' : (!e.signOut ? 'Working' : 'Signed out');
+    if(status==='Working') working++;
+    const hrs = hoursBetween(e.signIn, e.signOut || (status==='Working' ? new Date().toISOString() : null));
+    return {va, e, t, status, hrs};
+  });
+
+  const card = document.createElement('div');
+  card.className='card';
+  card.innerHTML = `
+    <h2>Team overview — today</h2>
+    <p class="muted">${new Date().toLocaleDateString([], {weekday:'long', month:'long', day:'numeric'})}</p>
+    <div class="grid3" style="margin-top:14px;">
+      <div class="stat"><b>${teamAppts}</b><span>Appointments booked</span></div>
+      <div class="stat"><b>${teamDms}</b><span>DMs answered</span></div>
+      <div class="stat"><b>${working}/${VAS.length}</b><span>Currently clocked in</span></div>
+    </div>`;
+  app.appendChild(card);
+
+  const table = document.createElement('div');
+  table.className='card overflow';
+  table.innerHTML = `<h3>Today by VA</h3>
+    <table><thead><tr><th>VA</th><th>Status</th><th>Sign in</th><th>Sign out</th><th class="num">Hours</th><th class="num">Appts</th><th class="num">DMs</th><th>Submitted</th>${adminMode?'<th></th>':''}</tr></thead>
+    <tbody>${rows.map(r=>`<tr>
+      <td>${r.va.name}</td>
+      <td>${r.status}</td>
+      <td>${fmtTime(r.e.signIn)}</td>
+      <td>${fmtTime(r.e.signOut)}</td>
+      <td class="num">${r.hrs.toFixed(1)}</td>
+      <td class="num">${r.t.appts}</td>
+      <td class="num">${r.t.dms}</td>
+      <td>${r.e.submitted ? '<span class="tag ok">Submitted</span>' : '<span class="tag off">Open</span>'}</td>
+      ${adminMode ? `<td><button class="btn ghost" data-va="${r.va.id}" onclick="activeTab='${r.va.id}';render();">Open</button></td>`:''}
+    </tr>`).join('')}</tbody></table>`;
+  app.appendChild(table);
+}
+
+// ---------- VA page ----------
+function renderVaPage(app, vaId){
+  const va = VAS.find(v=>v.id===vaId);
+  const d = todayKey();
+  const e = getEntry(vaId, d);
+  const t = totals(e);
+  const locked = e.submitted && !adminMode;
+  const status = !e.signIn ? 'not-in' : (!e.signOut ? 'working' : 'done');
+  const liveHrs = hoursBetween(e.signIn, e.signOut || (status==='working'?new Date().toISOString():null));
+
+  const now = new Date();
+  const lateIn = e.signIn && new Date(e.signIn).getHours() >= DAY_START+0.001 && (new Date(e.signIn).getHours()>DAY_START || new Date(e.signIn).getMinutes()>5);
+  const earlyOut = e.signOut && new Date(e.signOut).getHours() < DAY_END;
+
+  const clock = document.createElement('div');
+  clock.className='card';
+  clock.innerHTML = `
+    <div class="clock">
+      <div>
+        <h2>${va.name} <span class="tag ${status==='working'?'ok':(status==='done'?'off':'warn')}">${status==='working'?'On shift':(status==='done'?'Signed out':'Not signed in')}</span></h2>
+        <div class="clock-status">Shift: 9:00 AM – 5:00 PM &middot; ${new Date().toLocaleDateString([], {weekday:'long', month:'short', day:'numeric'})}</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="clock-time">${fmtTime(e.signIn)} → ${fmtTime(e.signOut)}</div>
+        <div class="clock-status">${liveHrs.toFixed(1)} hrs logged today ${lateIn?'· late sign-in':''} ${earlyOut?'· early sign-out':''}</div>
+      </div>
+    </div>
+    <footer class="actions">
+      <button class="btn lime" id="signInBtn" ${e.signIn?'disabled':''}>Sign In</button>
+      <button class="btn" id="signOutBtn" ${(!e.signIn||e.signOut)?'disabled':''}>Sign Out</button>
+    </footer>`;
+  app.appendChild(clock);
+  clock.querySelector('#signInBtn').onclick = ()=> writeEntry(vaId, d, { signIn: new Date().toISOString() });
+  clock.querySelector('#signOutBtn').onclick = ()=> writeEntry(vaId, d, { signOut: new Date().toISOString() });
+
+  const form = document.createElement('div');
+  form.className='card';
+  form.innerHTML = `
+    <h2>Log today's work</h2>
+    <p class="muted" style="margin-bottom:14px;">Add one row per account you worked on today.</p>
+    <div class="form-row">
+      <div><label>Platform</label><select id="fPlatform" ${locked?'disabled':''}>${PLATFORMS.map(p=>`<option>${p}</option>`).join('')}</select></div>
+      <div><label>Account</label><select id="fAccount" ${locked?'disabled':''}>${ACCOUNTS.map(a=>`<option>${a}</option>`).join('')}</select></div>
+      <div><label>Appointments</label><input type="number" min="0" id="fAppts" value="0" ${locked?'disabled':''}></div>
+      <div><label>DMs answered</label><input type="number" min="0" id="fDms" value="0" ${locked?'disabled':''}></div>
+      <div><button class="btn" id="addRow" ${locked?'disabled':''}>+ Add</button></div>
+    </div>
+    <div class="overflow">
+    <table><thead><tr><th>Platform</th><th>Account</th><th class="num">Appointments</th><th class="num">DMs</th>${locked?'':'<th></th>'}</tr></thead>
+    <tbody id="logRows">
+      ${e.logs.length===0 ? `<tr><td colspan="5" class="muted">No entries yet.</td></tr>` : e.logs.map((l,i)=>`
+      <tr><td>${l.platform}</td><td>${l.account}</td><td class="num">${l.appts}</td><td class="num">${l.dms}</td>
+      ${locked?'':`<td><button class="rm" data-i="${i}">Remove</button></td>`}</tr>`).join('')}
+    </tbody></table>
+    </div>
+    <div class="grid3" style="margin-top:16px;">
+      <div class="stat"><b>${t.appts}</b><span>Appointments today</span></div>
+      <div class="stat"><b>${t.dms}</b><span>DMs answered today</span></div>
+      <div class="stat"><b>${liveHrs.toFixed(1)}</b><span>Hours worked today</span></div>
+    </div>
+    <footer class="actions">
+      <button class="btn lime" id="submitDay" ${locked||e.logs.length===0?'disabled':''}>${e.submitted?'Re-submit day':'Submit day'}</button>
+      ${e.submitted ? `<span class="lock-note">${locked ? 'Submitted — locked. Only an admin can edit this now.' : 'Admin mode: editing an already-submitted day.'}</span>` : ''}
+    </footer>`;
+  app.appendChild(form);
+
+  form.querySelector('#addRow').onclick = ()=>{
+    const platform = form.querySelector('#fPlatform').value;
+    const account = form.querySelector('#fAccount').value;
+    const appts = Number(form.querySelector('#fAppts').value||0);
+    const dms = Number(form.querySelector('#fDms').value||0);
+    const logs = [...e.logs, {platform,account,appts,dms}];
+    writeEntry(vaId, d, { logs });
+  };
+  form.querySelectorAll('.rm').forEach(btn=>{
+    btn.onclick = ()=>{
+      const logs = e.logs.filter((_,idx)=> idx !== Number(btn.dataset.i));
+      writeEntry(vaId, d, { logs });
+    };
+  });
+  const submitBtn = form.querySelector('#submitDay');
+  if(submitBtn) submitBtn.onclick = ()=> writeEntry(vaId, d, { submitted: true });
+
+  // history (last 7 days incl today)
+  const hist = document.createElement('div');
+  hist.className='card overflow';
+  const days = [...Array(7)].map((_,i)=>{
+    const dt = new Date(); dt.setDate(dt.getDate()-i);
+    return dt.toISOString().slice(0,10);
+  });
+  hist.innerHTML = `<h3>Last 7 days</h3>
+    <table><thead><tr><th>Date</th><th>Sign in</th><th>Sign out</th><th class="num">Hours</th><th class="num">Appts</th><th class="num">DMs</th><th>Status</th></tr></thead>
+    <tbody>${days.map(dt=>{
+      const he = getEntry(vaId, dt);
+      const ht = totals(he);
+      const hh = hoursBetween(he.signIn, he.signOut);
+      return `<tr><td>${dt}</td><td>${fmtTime(he.signIn)}</td><td>${fmtTime(he.signOut)}</td><td class="num">${hh.toFixed(1)}</td><td class="num">${ht.appts}</td><td class="num">${ht.dms}</td><td>${he.submitted?'<span class="tag ok">Submitted</span>':(he.signIn?'<span class="tag off">Open</span>':'—')}</td></tr>`;
+    }).join('')}</tbody></table>`;
+  app.appendChild(hist);
+}
+</script>
+</body>
+</html>
