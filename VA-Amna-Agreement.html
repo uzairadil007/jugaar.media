@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Virtual Assistant Services Agreement</title>
+<style>
+  :root {
+    --lime: #d8ff29;
+    --lime-dim: #eaffa0;
+    --black: #111111;
+    --white: #ffffff;
+    --paper: #ffffff;
+    --ink: #1a1a1a;
+    --muted: #5c5c5c;
+    --rule: #e6e6e6;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    box-sizing: border-box;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  html, body {
+    margin: 0;
+    background: var(--white);
+    color: var(--ink);
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  }
+
+  .cover {
+    background: var(--black);
+    color: var(--white);
+    padding: 72px 8vw 64px;
+    position: relative;
+    overflow: hidden;
+  }
+  .cover::after {
+    content: "";
+    position: absolute;
+    right: -8%;
+    top: -30%;
+    width: 480px;
+    height: 480px;
+    background: var(--lime);
+    border-radius: 50%;
+    opacity: 0.9;
+    filter: blur(0px);
+  }
+  .cover-inner { position: relative; z-index: 1; max-width: 760px; }
+  .cover-eyebrow {
+    display: inline-block;
+    color: var(--lime);
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    margin-bottom: 22px;
+  }
+  .cover h1 {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: 600;
+    font-size: clamp(34px, 5vw, 54px);
+    line-height: 1.08;
+    margin: 0 0 28px;
+    max-width: 11ch;
+  }
+  .cover-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 34px;
+    font-size: 14.5px;
+    color: #d8d8d8;
+    border-top: 1px solid #333;
+    padding-top: 20px;
+    max-width: 640px;
+  }
+  .cover-meta div { display: flex; flex-direction: column; gap: 4px; }
+  .cover-meta span.label { color: #8a8a8a; font-size: 12px; text-transform: none; }
+  .cover-meta span.value { color: var(--white); font-weight: 500; }
+
+  .doc {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 56px 8vw 100px;
+  }
+
+  section.clause {
+    margin-top: 52px;
+  }
+  section.clause:first-of-type { margin-top: 8px; }
+
+  .clause-head {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+  .clause-num {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--black);
+    background: var(--lime);
+    padding: 3px 9px;
+    border-radius: 3px;
+    flex-shrink: 0;
+    line-height: 1.6;
+  }
+  .clause-title {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: 600;
+    font-size: 21px;
+    color: var(--black);
+    letter-spacing: -0.01em;
+  }
+
+  .clause-body p {
+    font-size: 15.5px;
+    line-height: 1.7;
+    color: var(--ink);
+    margin: 0 0 14px;
+  }
+  .clause-body ul {
+    margin: 0 0 14px;
+    padding-left: 22px;
+  }
+  .clause-body li {
+    font-size: 15.5px;
+    line-height: 1.65;
+    margin-bottom: 6px;
+    color: var(--ink);
+  }
+  .clause-body ol {
+    margin: 0 0 14px;
+    padding-left: 22px;
+  }
+  .clause-body ol li { margin-bottom: 8px; }
+
+  .highlight {
+    background: var(--lime-dim);
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-weight: 600;
+  }
+
+  .field-line {
+    display: inline-block;
+    border-bottom: 1.4px solid var(--black);
+    min-width: 260px;
+    margin: 2px 0;
+  }
+
+  .note {
+    border-left: 3px solid var(--lime);
+    background: #fafcee;
+    padding: 12px 16px;
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-top: 10px;
+    border-radius: 0 4px 4px 0;
+  }
+
+  .divider {
+    height: 1px;
+    background: var(--rule);
+    margin-top: 52px;
+  }
+
+  .sig-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 28px;
+    margin-top: 20px;
+  }
+  .sig-card {
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 22px 24px;
+  }
+  .sig-card h3 {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 17px;
+    margin: 0 0 14px;
+    color: var(--black);
+  }
+  .sig-row { display: flex; justify-content: space-between; gap: 20px; font-size: 14.5px; padding: 7px 0; border-bottom: 1px dashed var(--rule); }
+  .sig-row:last-child { border-bottom: none; }
+  .sig-row .k { color: var(--muted); }
+  .sig-row .v { font-weight: 500; text-align: right; }
+
+  .final-note {
+    margin-top: 56px;
+    padding: 20px 22px;
+    background: var(--black);
+    color: var(--white);
+    border-radius: 8px;
+    font-size: 14px;
+    line-height: 1.65;
+  }
+  .final-note strong { color: var(--lime); }
+
+  @media (max-width: 640px) {
+    .cover { padding: 56px 6vw 44px; }
+    .doc { padding: 40px 6vw 80px; }
+    .clause-head { flex-direction: column; gap: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <div class="cover-inner">
+    <span class="cover-eyebrow">SERVICES AGREEMENT</span>
+    <h1>Virtual Assistant Services Agreement</h1>
+    <div class="cover-meta">
+      <div><span class="label">Agency</span><span class="value">jugaar.media</span></div>
+      <div><span class="label">Virtual Assistant</span><span class="value">Amna Khan</span></div>
+      <div><span class="label">Client Project</span><span class="value">Dr. Tehreem Khan / TSK Diet</span></div>
+      <div><span class="label">Governing Law</span><span class="value">Pakistan</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="doc">
+
+<section class="clause">
+  <div class="clause-head"><span class="clause-num">1</span><span class="clause-title">Parties</span></div>
+  <div class="clause-body">
+    <p>This Virtual Assistant Services Agreement ("Agreement") is made on <span class="field-line">&nbsp;</span> between the parties below.</p>
+    <p><strong>A. Agency</strong><br>
+    jugaar.media<br>
+    Instagram: @jugaar.media<br>
+    Website: www.jugaar.media</p>
+    <p>Hereinafter referred to as the "Agency" or "jugaar.media." jugaar.media provides digital marketing and social media management services to its clients, including Dr. Tehreem Khan / TSK Diet.</p>
+    <p><strong>B. Virtual Assistant</strong><br>
+    Name: Amna Khan<br>
+    CNIC: 35202-8056418-6<br>
+    Contact Number: 03201016237<br>
+    Address: House 188, Sector 2A2, Township, Lahore, Pakistan</p>
+    <p>Hereinafter referred to as the "Virtual Assistant," "VA," or "Amna." The contractual relationship under this Agreement is directly between jugaar.media and Amna Khan. Amna's services may be performed for or in connection with jugaar.media's client, Dr. Tehreem Khan / TSK Diet.</p>
+  </div>
+</section>
+
+<section class="clause">
+  <div class="clause-head"><span class="clause-num">2</span><span class="clause-title">Purpose of the Agreement</span></div>
+  <div class="clause-body">
+    <p>jugaar.media is engaging Amna Khan as a Virtual Assistant to assist with the management and day-to-day operation of social media accounts assigned to her by jugaar.media.</p>
+    <p>Amna understands that the accounts and client-related work she handles belong to or are managed on behalf of jugaar.media's client and must be handled strictly according to the instructions, policies and requirements communicated by jugaar.media.</p>
+    <p>The original TSK Diet agreement establishes the broader client relationship and includes responsibilities relating to social media management, posting, community management, DMs, consultation enquiries, account security, confidentiality, content ownership and reporting.</p>
+  </div>
+</section>
+
+<section class="clause">
+  <div class="clause-head"><span class="clause-num">3</span><span class="clause-title">Term of Agreement</span></div>
+  <div class="clause-body">
+    <p>This Agreement shall commence on Start Date: <span class="field-line">&nbsp;</span> and shall continue until End Date: <span class="field-line">&nbsp;</span>, unless terminated earlier in accordance with this Agreement.</p>
+    <p>The Agreement shall not automatically renew. Any extension or continuation shall be mutually agreed between jugaar.media and Amna in writing.</p>
+  </div>
+</section>
+
+<section class="clause">
+  <div class="clause-head"><span class="clause-num">4</span><span class="clause-title">Position and Status</span></div>
+  <div class="clause-body">
+    <p>Amna Khan is engaged as a Virtual Assistant / Independent Contractor for jugaar.media.</p>
+    <p>She is not being engaged directly by Dr. Tehreem Khan or TSK Diet. Her contractual relationship is with jugaar.media, which manages the client relationship.</p>
+    <p>Amna shall perform the services assigned to her professionally and in accordance with instructions given by jugaar.media.</p>
+    <p>The independent-contractor structure follows the original agreement, which states that contractors are responsible for their own taxes and are not entitled to employee benefits unless separately agreed in writing.</p>
+  </div>
+</section>
+
+<section class="clause">
+  <div class="clause-head"><span class="clause-num">5</span><span class="clause-title">Scope of Work</span></div>
+  <div class="clause-body">
+    <p>Amna shall be responsible for managing <span class="highlight">up to six (6) individual social media accounts/IDs</span> assigned to her by jugaar.media.</p>
+    <p>The six accounts may be:</p>
+    <ul>
+      <li>Six accounts on one social media platform; or</li>
+      <li>Six accounts across different social media platforms; or</li>
+      <li>Any combination of platforms and accounts determined by jugaar.media.</li>
+    </ul>
+    <p>For clarity, the agreed scope is based on six individual accounts/IDs, not necessarily six different platforms.</p>
+    <p>jugaar.media shall have the discretion to decide which accounts are assigned to Amna according to the requirements of the Agency and its client.</p>
+    <p>The monthly payment of <span class="highlight">PKR 25,000</span> covers the management of up to six (6) assigned accounts/IDs.</p>
+    <p>Any account beyond the agreed six-account scope shall require separate written agreement regarding responsibilities and additional payment.</p>
+  </div>
+</section>
+
+<section class="clause">
+  <div class="clause-head"><span class="clause-num">6</span><span class="clause-title">Virtual Assistant Responsibilities</span></div>
+  <div class="clause-body">
+    <p>Depending on the accounts assigned to Amna, her responsibilities may include:</p>
+    <ol>
+      <li>Managing the assigned social media accounts.</li>
+      <li>Publishing approved posts, reels, videos, stories, carousels and other content.</li>
+      <li>Following the content calendar provided by jugaar.media.</li>
+      <li>Publishing content at the times instructed by jugaar.media.</li>
+      <li>Responding to comments and direct messages.</li>
+      <li>Monitoring account activity.</li>
+      <li>Handling routine enquiries in accordance with approved instructions.</li>
+      <li>Identifying relevant consultation enquiries and leads.</li>
+      <li>Forwarding qualified leads to the designated customer-care representative.</li>
+      <li>Following approved captions, scripts, hashtags and posting instructions.</li>
+      <li>Maintaining consistency in posting.</li>
+      <li>Reporting account-related issues immediately.</li>
+      <li>Providing updates regarding completed tasks.</li>
+      <li>Providing screenshots or other evidence of completed work when requested.</li>
+      <li>Following all reasonable instructions issued by jugaar.media relating to the assigned accounts.</li>
+      <li>Maintaining professional communication with the Agency and its client.</li>
+      <li>Protecting the confidentiality and security of all account information.</li>
+    </ol>
+    <p>The original client agreement includes content research, posting, distribution, community management, DM handling, consultation booking and reporting within the wider social-media operation.</p>
+  </div>
+</section>
+
+<section class="clause">
+  <div class="clause-head"><span class="clause-num">7</span><span class="clause-title">Working Hours</span></div>
+  <div class="clause-body">
+    <p>Amna's agreed working hours shall be <strong>3:00 PM to 9:00 PM Pakistan Standard Time (PKT)</strong>.</p>
+    <p>During these working hours, Amna shall remain reasonably available for assigned work, including:</p>
+    <ul>
+      <li>Social media management</li>
+      <li>Posting</li>
+      <li>Comment management</li>
+      <li>DM management</li>
+      <li>Lead handling</li>
+      <li>Account monitoring</li>
+      <li>Communication with jugaar.media</li>
+      <li>Completing assigned tasks</li>
+      <li>Responding to instructions relating to the assigned accounts</li>
+    </ul>
+    <p>Any change to the regular working hours shall be communicated and agreed by jugaar.media and Amna.</p>
+  </div>
+</section>
+
+<section class="clause">
+  <div class="clause-head"><span class="clause-num">8</span><span class="clause-title">Payment</span></div>
+  <div class="clause-body">
+    <p>jugaar.media shall pay Amna Khan <span class="highlight">PKR 25,000 per month</span>.</p>
+    <p>This monthly payment covers the management of up to six (6) individual social media accounts/IDs.</p>
+    <p>The six accounts may be on one platform, or across multiple platforms. The number of different platforms does not increase the account allowance. The agreed scope is six individual accounts/IDs.</p>
+    <p>Payment shall be made on or before <span class="field-line">&nbsp;</span> day of each month.</p>
+    <p>Payment method: <span class="field-line">&nbsp;</span></p>
+    <p>The agreed fee covers Amna's Virtual Assistant services within the scope of this Agreement.</p>
+  </div>
+</section>
+
+<section class="clause">
+  <div class="clause-head"><span class="clause-num">9</span><span class="clause-title">Additional Work or Accounts</span></div>
+  <div class="clause-body">
+    <p>If jugaar.media requires Amna to manage more than six (6) individual accounts/IDs, the additional work shall be discussed separately.</p>
+    <p>No additional account shall automatically become part of the PKR 25,000 monthly fee.</p>
+    <p>Any additional payment or change in scope should be agreed in writing before the additional work becomes a permanent responsibility.</p>
+  </div>
+</section>
+
+<section class="clause">
+  <div class="clause-head"><span class="clause-num">10</span><span class="clause-title">Posting and Content Management</span></div>
+  <div class="clause-body">
+    <p>Amna shall follow the content and posting instructions provided by jugaar.media. Where content requires approval, Amna shall not publish the content until the required approval has been received.</p>
+    <p>Amna shall not independently:</p>
+    <ul>
+      <li>Change approved captions</li>
+      <li>Change approved messaging</li>
+      <li>Publish unapproved promotional material</li>
+      <li>Delete important content</li>
+      <li>Change the branding</li>
+      <li>Publish personal content</li>
+      <li>Alter account information</li>
+      <li>Make material changes to the Client's social media presence</li>
+    </ul>
+    <p>without appropriate authorisation. The original TSK Diet agreement states that content should not go live without Client approval where approval is required.</p>
+  </div>
+</section>
+
+<section class="clause">
+  <div class="clause-head"><span class="clause-num">11</span><span class="clause-title">Direct Messages and Comments</span></div>
+  <div class="clause-body">
+    <p>Where DM and comment management forms part of Amna's assigned duties, she shall:</p>
+    <ul>
+      <li>Respond professionally</li>
+      <li>Follow approved responses and communication guidelines</li>
+      <li>Avoid making unauthorised medical, financial or business promises</li>
+      <li>Forward relevant enquiries to the appropriate person</li>
+      <li>Escalate complaints or sensitive matters to jugaar.media</li>
+      <li>Avoid arguing with followers or clients</li>
+      <li>Maintain confidentiality</li>
+      <li>Never use conversations for personal purposes</li>
+    </ul>
+    <p>The original agreement includes a requirement for DMs to be answered within the applicable office-hours response period and for comments to be handled following posts.</p>
+  </div>
+</section>
+
+<section class="clause">
+  <div class="clause-head"><span class="clause-num">12</span><span class="clause-title">Consultation Leads</span></div>
+  <div class="clause-body">
+    <p>Where Amna receives a consultation enquiry through an assigned account, she shall follow the process communicated by jugaar.media. Relevant leads shall be passed to the designated customer-care representative.</p>
+    <p>Where required, the information passed may include: name, contact number, source account, relevant enquiry information, and booking details.</p>
+    <p>Amna must not retain or use Client leads for personal purposes. The original agreement requires booked consultations to be passed to the Client's customer-care representative with identifying and source information.</p>
+  </div>
+</section>
+
+<section class="clause">
+  <div class="clause-head"><span class="clause-num">13</span><span class="clause-title">Consultation Commission</span></div>
+  <div class="clause-body">
+    <p>Where specifically applicable to Amna's assigned responsibilities, Amna may receive <span class="highlight">PKR 500 per successfully booked consultation</span>.</p>
+    <p>A consultation shall only qualify where it is genuinely booked through the approved process and properly passed to the designated customer-care representative.</p>
+    <p>No commission shall be payable for: cancelled bookings, duplicate bookings, false bookings, unqualified bookings, or bookings that do not meet the Client's agreed criteria.</p>
+    <p>The original agreement specifically provides a PKR 500 booked-consultation payment for virtual assistants.</p>
+  </div>
+</section>
+
+<section class="clause">
+  <div class="clause-head"><span class="clause-num">14</span><span class="clause-title">Account Access and Security</span></div>
+  <div class="clause-body">
+    <p>All login credentials and account access provided to Amna are strictly for work purposes. Amna agrees that she shall:</p>
+    <ul>
+      <li>Keep all passwords confidential</li>
+      <li>Never share passwords with an unauthorised person</li>
+      <li>Never give account access to another person without written approval</li>
+      <li>Keep two-factor authentication arrangements unchanged unless instructed otherwise</li>
+      <li>Immediately report suspicious login activity</li>
+      <li>Immediately report any hacking or security incident</li>
+      <li>Not change recovery email addresses or phone numbers without authorisation</li>
+      <li>Not transfer ownership of any account</li>
+      <li>Not connect unauthorised third-party applications</li>
+      <li>Not use Client accounts for personal purposes</li>
+    </ul>
+    <p>The original agreement specifically requires account credentials to be used only for the work, prohibits unauthorised password sharing and requires access to be removed and credentials returned at termination.</p>
+  </div>
+</section>
+
+<section class="clause">
+  <div class="clause-head"><span class="clause-num">15</span><span class="clause-title">No Unauthorised Account Access</span></div>
+  <div class="clause-body">
+    <p>Amna shall not provide access to friends, family members, other VAs, freelancers, agencies, contractors, personal assistants, or any other third party without prior written approval from jugaar.media.</p>
+    <p>If another person is approved to access an account, that person's access must be properly authorised and subject to applicable confidentiality requirements.</p>
+  </div>
+</section>
+
+<section class="clause">
+  <div class="clause-head"><span class="clause-num">16</span><span class="clause-title">Ownership of Accounts</span></div>
+  <div class="clause-body">
+    <p>All social media accounts assigned to Amna remain the property of the relevant Client and/or the party legally entitled to the account. Amna does not obtain ownership rights merely because she manages an account.</p>
+    <p>This includes: account usernames, followers, followers' information, messages, leads, page assets, account history, content, audience data, analytics, and other account-related information.</p>
+    <p>The original agreement expressly states that accounts, followers, page assets and audience data belong to the Client at all times.</p>
+  </div>
+</section>
+
+<section class="clause">
+  <div class="clause-head"><span class="clause-num">17</span><span class="clause-title">Ownership of Content</span></div>
+  <div class="clause-body">
+    <p>All content created, uploaded, edited, organised or managed for the Client under this Agreement shall belong to the Client and/or jugaar.media as applicable.</p>
+    <p>This includes: videos, raw footage, photos, B-roll, graphics, designs, carousels, captions, scripts, content calendars, social media posts, account materials, Client testimonials, and other project materials.</p>
+    <p>The original TSK Diet agreement similarly provides that content created under the engagement belongs to the Client.</p>
+  </div>
+</section>
+
+<section class="clause">
+  <div class="clause-head"><span class="clause-num">18</span><span class="clause-title">Portfolio Use</span></div>
+  <div class="clause-body">
+    <p>Amna shall not publish, display or use Client work in her personal portfolio, Instagram, TikTok, Facebook, LinkedIn, website, freelancing profiles, promotional material, or any other public or private portfolio without prior written permission from jugaar.media.</p>
+  </div>
+</section>
+
+<section class="clause">
+  <div class="clause-head"><span class="clause-num">19</span><span class="clause-title">Confidentiality</span></div>
+  <div class="clause-body">
+    <p>Amna shall maintain strict confidentiality regarding all information obtained through her work. Confidential information includes, but is not limited to: Client names, phone numbers, health-related information, Client photographs, before-and-after photographs, testimonials, direct messages, consultation information, customer information, leads, pricing, business plans, marketing strategies, content plans, account credentials, internal communications, analytics, revenue-related information, and any other non-public information.</p>
+    <p>The original agreement identifies client names, phone numbers, health details, photos, testimonials, DM conversations, pricing and business plans as confidential.</p>
+  </div>
+</section>
+
+<section class="clause">
+  <div class="clause-head"><span class="clause-num">20</span><span class="clause-title">Use of Client Information</span></div>
+  <div class="clause-body">
+    <p>Amna shall not: sell Client information, share Client information, copy Client databases, contact Client leads for personal business, use Client information to obtain private clients, transfer Client information to another company, download confidential information unnecessarily, or use Client information for any purpose outside her authorised work.</p>
+    <p>This obligation shall continue after the Agreement ends.</p>
+  </div>
+</section>
+
+<section class="clause">
+  <div class="clause-head"><span class="clause-num">21</span><span class="clause-title">Client Photographs and Testimonials</span></div>
+  <div class="clause-body">
+    <p>Client photographs, testimonials and before-and-after materials must only be used in accordance with the Client's approval and applicable permissions. Amna must not independently publish or distribute such materials.</p>
+    <p>The original agreement requires permission before publishing before-and-after photographs and testimonials.</p>
+  </div>
+</section>
+
+<section class="clause">
+  <div class="clause-head"><span class="clause-num">22</span><span class="clause-title">Brand Deals and Third-Party Payments</span></div>
+  <div class="clause-body">
+    <p>Amna shall not independently accept brand payments, commissions, gifts, sponsorship payments, affiliate payments, products, services, or any other benefit from a brand, agency or third party in connection with the Client's accounts without prior written approval from jugaar.media.</p>
+    <p>If a brand approaches Amna through an account managed under this Agreement, she must report the enquiry to jugaar.media.</p>
+    <p>The original agreement similarly requires written Client approval before accepting commissions, gifts or payments from brands or third parties.</p>
+  </div>
+</section>
+
+<section class="clause">
+  <div class="clause-head"><span class="clause-num">23</span><span class="clause-title">Non-Solicitation of Clients and Followers</span></div>
+  <div class="clause-body">
+    <p>During the Agreement and for six (6) months after termination, Amna shall not use Client relationships obtained through her work under this Agreement to solicit the Client's clients or followers for her own services.</p>
+    <p>She shall not use the Client's audience, leads or customer information to establish or promote a competing personal service.</p>
+  </div>
+</section>
+
+<section class="clause">
+  <div class="clause-head"><span class="clause-num">24</span><span class="clause-title">Professional Conduct</span></div>
+  <div class="clause-body">
+    <p>Amna shall maintain professional conduct at all times when dealing with jugaar.media, Dr. Tehreem, TSK Diet, Client representatives, customers, followers, leads, brands, and other project personnel.</p>
+    <p>She shall not represent herself as the owner of the Client's business or accounts, and shall not make unauthorised statements on behalf of jugaar.media or Dr. Tehreem.</p>
+  </div>
+</section>
+
+<section class="clause">
+  <div class="clause-head"><span class="clause-num">25</span><span class="clause-title">No Subcontracting</span></div>
+  <div class="clause-body">
+    <p>Amna shall personally perform the agreed work unless jugaar.media gives prior written approval for another person to assist. She may not transfer her responsibilities to another person without approval.</p>
+    <p>Any approved third party receiving account access must comply with applicable security and confidentiality requirements.</p>
+  </div>
+</section>
+
+<section class="clause">
+  <div class="clause-head"><span class="clause-num">26</span><span class="clause-title">Reporting and Updates</span></div>
+  <div class="clause-body">
+    <p>Amna shall provide work updates when requested by jugaar.media. Updates may include: completed posts, account activity, DM activity, consultation leads, problems encountered, missed tasks, account issues, screenshots, performance information, and other relevant information.</p>
+    <p>Where requested, Amna shall provide a daily work update. The broader TSK Diet agreement includes daily updates, end-of-day reporting, weekly reviews and monthly reporting.</p>
+  </div>
+</section>
+
+<section class="clause">
+  <div class="clause-head"><span class="clause-num">27</span><span class="clause-title">Performance</span></div>
+  <div class="clause-body">
+    <p>Amna is expected to complete assigned duties accurately, consistently and within the agreed working hours. If performance issues occur, jugaar.media may:</p>
+    <ol>
+      <li>Discuss the issue with Amna;</li>
+      <li>Explain the required improvement;</li>
+      <li>Set reasonable corrective actions; and</li>
+      <li>Review her continued engagement if the issue is repeated.</li>
+    </ol>
+    <p>Repeated failure to perform agreed responsibilities may constitute grounds for termination.</p>
+  </div>
+</section>
+
+<section class="clause">
+  <div class="clause-head"><span class="clause-num">28</span><span class="clause-title">Leave and Unavailability</span></div>
+  <div class="clause-body">
+    <p>Amna should provide reasonable advance notice to jugaar.media if she expects to be unavailable during her agreed working hours. Where possible, planned leave should be communicated at least three (3) days in advance.</p>
+    <p>The purpose of advance notice is to ensure that assigned account management and posting responsibilities continue without interruption. The original agreement contains a three-day advance notice requirement for planned leave and requires appropriate cover so that posting does not stop.</p>
+  </div>
+</section>
+
+<section class="clause">
+  <div class="clause-head"><span class="clause-num">29</span><span class="clause-title">Expenses</span></div>
+  <div class="clause-body">
+    <p>Amna shall not incur expenses on behalf of jugaar.media or the Client without prior written approval. Any expense intended to be reimbursed must be approved before it is incurred. Unapproved expenses shall not automatically be reimbursed.</p>
+  </div>
+</section>
+
+<section class="clause">
+  <div class="clause-head"><span class="clause-num">30</span><span class="clause-title">Immediate Termination</span></div>
+  <div class="clause-body">
+    <p>jugaar.media may terminate this Agreement immediately, without the normal notice period, in circumstances including:</p>
+    <ul>
+      <li>Unauthorised sharing of passwords</li>
+      <li>Unauthorised account access</li>
+      <li>Breach of confidentiality</li>
+      <li>Misuse of Client data</li>
+      <li>Taking unauthorised payment from a brand or third party</li>
+      <li>Giving account access to an unauthorised person</li>
+      <li>Deliberate misuse of Client accounts</li>
+      <li>Serious misconduct</li>
+      <li>Deliberate publication of unauthorised content</li>
+      <li>Using Client leads for personal purposes</li>
+      <li>Stopping work without informing jugaar.media</li>
+      <li>Any other serious breach of this Agreement</li>
+    </ul>
+    <p>These grounds are adapted from the immediate-termination provisions of the original TSK Diet agreement.</p>
+  </div>
+</section>
+
+<section class="clause">
+  <div class="clause-head"><span class="clause-num">31</span><span class="clause-title">Ordinary Termination</span></div>
+  <div class="clause-body">
+    <p>Either party may terminate this Agreement by giving <strong>15 days' written notice</strong>.</p>
+    <p>During the notice period, Amna shall continue performing her agreed responsibilities unless jugaar.media instructs otherwise.</p>
+    <p>On termination, payment shall be handled for work properly completed up to the termination date, subject to the agreed payment arrangements.</p>
+  </div>
+</section>
+
+<section class="clause">
+  <div class="clause-head"><span class="clause-num">32</span><span class="clause-title">Handover After Termination</span></div>
+  <div class="clause-body">
+    <p>Upon termination or expiry of this Agreement, Amna shall complete the required handover. The handover shall include: account access, passwords where applicable, files, content, drafts, reports, pending posts, pending leads, relevant account information, other Client materials, and any other information reasonably required for continuity.</p>
+    <p>The handover shall be completed within <strong>three (3) days</strong>, unless jugaar.media specifies another period in writing.</p>
+    <p>The original agreement also requires completion of the account handover within three days following termination.</p>
+  </div>
+</section>
+
+<section class="clause">
+  <div class="clause-head"><span class="clause-num">33</span><span class="clause-title">Return and Deletion of Confidential Information</span></div>
+  <div class="clause-body">
+    <p>Upon termination, Amna shall return Client materials and cease using Client information. Where instructed, she shall delete confidential Client information from personal devices, accounts and storage, subject to any legal requirement to retain information. She shall not retain copies for personal use.</p>
+  </div>
+</section>
+
+<section class="clause">
+  <div class="clause-head"><span class="clause-num">34</span><span class="clause-title">No Personal Use of Client Accounts</span></div>
+  <div class="clause-body">
+    <p>Amna shall not use the Client's accounts to promote herself, promote another business, advertise personal services, contact people for personal purposes, add personal contact details, promote unrelated products, or generate personal business. All activity must relate to the authorised work.</p>
+  </div>
+</section>
+
+<section class="clause">
+  <div class="clause-head"><span class="clause-num">35</span><span class="clause-title">Account Changes</span></div>
+  <div class="clause-body">
+    <p>Without prior approval, Amna shall not change: passwords, recovery email, recovery phone number, account ownership, username, branding, bio, payment details, advertising settings, security settings, or other significant account information.</p>
+    <p>Any suspected security issue must be reported immediately.</p>
+  </div>
+</section>
+
+<section class="clause">
+  <div class="clause-head"><span class="clause-num">36</span><span class="clause-title">Competing Services and Client Relationships</span></div>
+  <div class="clause-body">
+    <p>During the term of this Agreement, Amna shall not use Client information, Client leads, Client followers or Client relationships obtained through her work to promote competing personal services.</p>
+    <p>Any restrictions concerning outside work shall not prevent Amna from carrying out unrelated work that does not misuse Client information, confidential information, account access or Client relationships.</p>
+  </div>
+</section>
+
+<section class="clause">
+  <div class="clause-head"><span class="clause-num">37</span><span class="clause-title">Changes to Assigned Accounts</span></div>
+  <div class="clause-body">
+    <p>jugaar.media may change which six accounts/IDs are assigned to Amna according to the needs of the Client. Changing one assigned account for another shall not by itself constitute an increase in the agreed scope.</p>
+    <p>The total standard scope remains up to six (6) individual accounts/IDs.</p>
+  </div>
+</section>
+
+<section class="clause">
+  <div class="clause-head"><span class="clause-num">38</span><span class="clause-title">Changes to the Agreement</span></div>
+  <div class="clause-body">
+    <p>Any material amendment to this Agreement should be made in writing and agreed by both parties. Changes may include: monthly payment, number of accounts, working hours, major responsibilities, term, commission arrangements, or other material contractual terms.</p>
+  </div>
+</section>
+
+<section class="clause">
+  <div class="clause-head"><span class="clause-num">39</span><span class="clause-title">Governing Law</span></div>
+  <div class="clause-body">
+    <p>This Agreement shall be governed by the laws of Pakistan. Any dispute between jugaar.media and Amna shall first be discussed in good faith with the aim of reaching a mutually acceptable resolution.</p>
+    <p>The original agreement also provides for Pakistan law and good-faith discussion of disputes.</p>
+  </div>
+</section>
+
+<section class="clause">
+  <div class="clause-head"><span class="clause-num">40</span><span class="clause-title">Entire Agreement</span></div>
+  <div class="clause-body">
+    <p>This Agreement represents the complete understanding between jugaar.media and Amna Khan regarding the Virtual Assistant services covered by this Agreement.</p>
+    <p>Any previous verbal understanding concerning these services shall be superseded by this written Agreement unless specifically incorporated into it.</p>
+  </div>
+</section>
+
+<section class="clause">
+  <div class="clause-head"><span class="clause-num">41</span><span class="clause-title">Acknowledgement</span></div>
+  <div class="clause-body">
+    <p>By signing this Agreement, Amna Khan confirms that:</p>
+    <ul>
+      <li>She has read the Agreement;</li>
+      <li>She understands her responsibilities;</li>
+      <li>She understands that she is being engaged by jugaar.media;</li>
+      <li>She understands that the work may be performed for jugaar.media's client, Dr. Tehreem Khan / TSK Diet;</li>
+      <li>She understands that her monthly fee is <span class="highlight">PKR 25,000 for up to six individual accounts/IDs</span>;</li>
+      <li>She understands that the accounts and Client information remain under the ownership/control of the relevant Client;</li>
+      <li>She agrees to maintain confidentiality;</li>
+      <li>She agrees to comply with account-security requirements;</li>
+      <li>She agrees not to share account access without approval;</li>
+      <li>She agrees to complete the required handover upon termination; and</li>
+      <li>She agrees to the terms and conditions of this Agreement.</li>
+    </ul>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section class="clause">
+  <div class="clause-head"><span class="clause-num">42</span><span class="clause-title">Signatures</span></div>
+  <div class="sig-grid">
+    <div class="sig-card">
+      <h3>For jugaar.media</h3>
+      <div class="sig-row"><span class="k">Agency</span><span class="v">jugaar.media</span></div>
+      <div class="sig-row"><span class="k">Instagram</span><span class="v">@jugaar.media</span></div>
+      <div class="sig-row"><span class="k">Website</span><span class="v">www.jugaar.media</span></div>
+      <div class="sig-row"><span class="k">Authorised Representative</span><span class="v">&nbsp;</span></div>
+      <div class="sig-row"><span class="k">Designation</span><span class="v">&nbsp;</span></div>
+      <div class="sig-row"><span class="k">Signature</span><span class="v">&nbsp;</span></div>
+      <div class="sig-row"><span class="k">Date</span><span class="v">&nbsp;</span></div>
+    </div>
+    <div class="sig-card">
+      <h3>Virtual Assistant</h3>
+      <div class="sig-row"><span class="k">Name</span><span class="v">Amna Khan</span></div>
+      <div class="sig-row"><span class="k">CNIC</span><span class="v">35202-8056418-6</span></div>
+      <div class="sig-row"><span class="k">Contact</span><span class="v">03201016237</span></div>
+      <div class="sig-row"><span class="k">Address</span><span class="v">House 188, Sector 2A2, Township, Lahore, Pakistan</span></div>
+      <div class="sig-row"><span class="k">Signature</span><span class="v">&nbsp;</span></div>
+      <div class="sig-row"><span class="k">Date</span><span class="v">&nbsp;</span></div>
+    </div>
+    <div class="sig-card">
+      <h3>Optional Client Acknowledgement</h3>
+      <div class="sig-row"><span class="k">Client</span><span class="v">Dr. Tehreem Khan / TSK Diet</span></div>
+      <div class="sig-row"><span class="k">Signature</span><span class="v">&nbsp;</span></div>
+      <div class="sig-row"><span class="k">Date</span><span class="v">&nbsp;</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="final-note">
+  <strong>Legal review note:</strong> This draft is adapted from the supplied TSK Diet Growth Team Agreement, including its provisions on scope, account security, ownership, confidentiality, third-party payments, subcontracting, termination, handover and independent-contractor status. The source agreement itself recommends review by a qualified legal professional in Pakistan before signing.
+</div>
+
+</div>
+</body>
+</html>
