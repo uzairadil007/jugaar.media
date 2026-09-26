@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>VIBE</title>
+<title>vibe.</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+CjxyZWN0IHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgcng9IjE0IiBmaWxsPSIjMGEwYTBhIi8+Cjx0ZXh0IHg9IjE0IiB5PSI0NSIgZm9udC1mYW1pbHk9IkhlbHZldGljYSwgQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc3R5bGU9Iml0YWxpYyIgZm9udC13ZWlnaHQ9IjgwMCIgZm9udC1zaXplPSIzNCIgZmlsbD0iI2ZmZmZmZiI+djwvdGV4dD4KPGNpcmNsZSBjeD0iNDciIGN5PSI0NSIgcj0iNS41IiBmaWxsPSIjZDhmZjI5Ii8+Cjwvc3ZnPg==">
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <style>
@@ -18,8 +19,9 @@ body{margin:0;background:var(--paper);color:var(--ink);font-family:Helvetica,Ari
   display:flex;flex-direction:column;min-height:100vh;}
 header{position:sticky;top:0;z-index:10;background:var(--ink);color:#fff;padding:14px 20px;padding-top:calc(14px + env(safe-area-inset-top,0px));
   display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;flex-shrink:0;}
-.brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.02em;}
-.brand .dot{width:12px;height:12px;background:var(--lime);border-radius:3px;}
+.brand{display:flex;align-items:center;font-size:19px;}
+.brand .logo{font-family:Helvetica,Arial,sans-serif;font-style:italic;font-weight:800;letter-spacing:.01em;color:#fff;}
+.brand .logo-dot{color:var(--lime);}
 nav{display:flex;gap:4px;background:#161616;border-radius:10px;padding:4px;flex-wrap:wrap;}
 nav button{background:none;border:0;color:#bbb;padding:8px 14px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;}
 nav button.active{background:var(--lime);color:var(--ink);}
@@ -122,7 +124,7 @@ input.gate-input::placeholder{color:#555;letter-spacing:.05em;font-family:Helvet
 </head>
 <body>
 <header>
-  <div class="brand"><span class="dot"></span> VIBE</div>
+  <div class="brand"><span class="logo">vibe<span class="logo-dot">.</span></span></div>
   <nav id="tabs"></nav>
   <div class="admin-toggle" id="adminBox"></div>
 </header>
