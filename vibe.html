@@ -210,6 +210,35 @@ async function writeEntry(va, date, patch){
   }
 }
 
+// admin-only: wipe one day's attendance/logs for a VA back to blank (they can sign in fresh)
+async function resetEntry(va, date){
+  if(!adminMode) return;
+  const key = entryKey(va,date);
+  const blank = { vaId:va, date, signIn:null, signOut:null, logs:[], submitted:false, verifiedByNoor:false, verifiedAt:null };
+  entries[key] = blank;
+  if(dbAvailable && db){
+    try{ await db.collection('entries').doc(key).set(blank); }
+    catch(err){ render(); }
+  } else {
+    localSave();
+  }
+  render();
+}
+
+// admin-only: permanently remove a day's entry/log from the database entirely
+async function deleteEntry(va, date){
+  if(!adminMode) return;
+  const key = entryKey(va,date);
+  delete entries[key];
+  if(dbAvailable && db){
+    try{ await db.collection('entries').doc(key).delete(); }
+    catch(err){ render(); }
+  } else {
+    localSave();
+  }
+  render();
+}
+
 const firebaseConfig = {
   apiKey: "AIzaSyAZn-MWlArpHYcb7Z88u-wzKdrBxtIsYiE",
   authDomain: "tracker-9a8cb.firebaseapp.com",
@@ -334,34 +363,38 @@ function renderDashboard(app){
     </div>`;
   app.appendChild(card);
 
-  const dmsCard = document.createElement('div');
-  dmsCard.className='card';
-  const platDms = dmsByPlatform(d);
-  dmsCard.innerHTML = `<h3>DMs answered today — by platform</h3>
-    <div class="grid3">
-      ${PLATFORMS.map(p=>`<div class="stat"><b>${platDms[p]||0}</b><span>${p}</span></div>`).join('')}
-    </div>`;
-  app.appendChild(dmsCard);
+  // one table: per-VA attendance/progress plus a platform-by-platform breakdown of appts/DMs
+  const rowsWithPlatforms = rows.map(r=>{
+    const byPlatform = PLATFORMS.map(p=>{
+      const logs = r.e.logs.filter(l=>l.platform===p);
+      return { platform:p, appts: logs.reduce((s,l)=>s+Number(l.appts||0),0), dms: logs.reduce((s,l)=>s+Number(l.dms||0),0) };
+    }).filter(x=>x.appts>0 || x.dms>0);
+    return { ...r, byPlatform: byPlatform.length ? byPlatform : [{platform:'—', appts:0, dms:0}] };
+  });
 
   const table = document.createElement('div');
   table.className='card overflow';
-  table.innerHTML = `<h3>Today by VA</h3>
-    <table><thead><tr><th>VA</th><th>Shift</th><th>Status</th><th>Sign in</th><th>Sign out</th><th class="num">Hours</th><th class="num">Appts</th><th class="num">DMs</th><th>Submitted</th><th>Verified</th>${adminMode?'<th></th>':''}</tr></thead>
-    <tbody>${rows.map(r=>`<tr>
-      <td>${r.va.name}</td>
-      <td>${r.va.shiftLabel}</td>
-      <td>${r.status}</td>
-      <td>${fmtTime(r.e.signIn)}</td>
-      <td>${fmtTime(r.e.signOut)}</td>
-      <td class="num"><span class="live-hours" data-signin="${r.e.signIn||''}" data-signout="${r.e.signOut||''}">${r.hrs.toFixed(2)}</span></td>
-      <td class="num">${r.t.appts}</td>
-      <td class="num">${r.t.dms}</td>
-      <td>${r.e.submitted ? '<span class="tag ok">Submitted</span>' : '<span class="tag off">Open</span>'}</td>
-      <td>${r.e.verifiedByNoor ? '<span class="tag verified">Verified</span>' : '<span class="tag off">—</span>'}</td>
-      ${adminMode ? `<td><button class="btn ghost" data-va="${r.va.id}" onclick="activeTab='${r.va.id}';render();">Open</button></td>`:''}
-    </tr>`).join('')}</tbody></table>
+  table.innerHTML = `<h3>Today by VA — platform breakdown</h3>
+    <table><thead><tr><th>VA</th><th>Status</th><th>Sign in</th><th>Sign out</th><th class="num">Hours</th><th>Submitted</th><th>Verified</th><th>Platform</th><th class="num">Appts</th><th class="num">DMs</th>${adminMode?'<th></th>':''}</tr></thead>
+    <tbody>${rowsWithPlatforms.map(r=> r.byPlatform.map((p,i)=>`<tr>
+      ${i===0 ? `
+      <td rowspan="${r.byPlatform.length}">${r.va.name}<div class="muted" style="font-size:12px;">${r.va.shiftLabel}</div></td>
+      <td rowspan="${r.byPlatform.length}">${r.status}</td>
+      <td rowspan="${r.byPlatform.length}">${fmtTime(r.e.signIn)}</td>
+      <td rowspan="${r.byPlatform.length}">${fmtTime(r.e.signOut)}</td>
+      <td class="num" rowspan="${r.byPlatform.length}"><span class="live-hours" data-signin="${r.e.signIn||''}" data-signout="${r.e.signOut||''}">${r.hrs.toFixed(2)}</span></td>
+      <td rowspan="${r.byPlatform.length}">${r.e.submitted ? '<span class="tag ok">Submitted</span>' : '<span class="tag off">Open</span>'}</td>
+      <td rowspan="${r.byPlatform.length}">${r.e.verifiedByNoor ? '<span class="tag verified">Verified</span>' : '<span class="tag off">—</span>'}</td>` : ''}
+      <td>${p.platform}</td>
+      <td class="num">${p.appts}</td>
+      <td class="num">${p.dms}</td>
+      ${i===0 && adminMode ? `<td rowspan="${r.byPlatform.length}"><button class="btn ghost" data-va="${r.va.id}" onclick="activeTab='${r.va.id}';render();">Open</button> <button class="btn ghost" data-reset-today="${r.va.id}">Reset</button></td>` : ''}
+    </tr>`).join('')).join('')}</tbody></table>
     <p class="muted" style="margin-top:12px;">Noor supervises Rimsha and Amna — she verifies each submitted day from her own tab.${adminMode?` <button class="btn ghost" onclick="activeTab='noor';render();">Open Noor's tab</button>`:''}</p>`;
   app.appendChild(table);
+  table.querySelectorAll('[data-reset-today]').forEach(b=>{
+    b.onclick = ()=>{ if(confirm(`Reset today's attendance and logs for ${b.dataset.resetToday}? This clears sign-in/out, logs, submitted and verified status for today only.`)) resetEntry(b.dataset.resetToday, d); };
+  });
 
   const noor = VAS.find(v=>v.id==='noor');
   const ne = getEntry(noor.id, d);
@@ -438,12 +471,15 @@ function renderSupervisionPage(app, noor){
     <footer class="actions">
       <button class="btn lime" id="noorSignIn" ${ne.signIn?'disabled':''}>Sign In</button>
       <button class="btn" id="noorSignOut" ${(!ne.signIn||ne.signOut)?'disabled':''}>Sign Out</button>
+      ${adminMode ? `<button class="btn ghost" id="resetNoorToday">Reset today's attendance</button>` : ''}
       <button class="btn ghost" id="lockNoor" style="margin-left:auto;">Lock this tab</button>
     </footer>`;
   app.appendChild(head);
   head.querySelector('#lockNoor').onclick = ()=>{ lockVa(noor.id); render(); };
   head.querySelector('#noorSignIn').onclick = ()=> writeEntry(noor.id, d, { signIn: new Date().toISOString() });
   head.querySelector('#noorSignOut').onclick = ()=> writeEntry(noor.id, d, { signOut: new Date().toISOString() });
+  const resetNoorBtn = head.querySelector('#resetNoorToday');
+  if(resetNoorBtn) resetNoorBtn.onclick = ()=>{ if(confirm("Reset Noor's own attendance for today?")) resetEntry(noor.id, d); };
 
   staff.forEach(va=>{
     const e = getEntry(va.id, d);
@@ -456,28 +492,33 @@ function renderSupervisionPage(app, noor){
       <h3>${va.name} <span class="muted" style="text-transform:none;letter-spacing:0;">&middot; ${va.shiftLabel}</span></h3>
       <div class="grid3">
         <div class="stat"><b>${status}</b><span>Status today</span></div>
+        <div class="stat"><b>${fmtTime(e.signIn)} → ${fmtTime(e.signOut)}</b><span>Sign in / out</span></div>
         <div class="stat"><b><span class="live-hours" data-signin="${e.signIn||''}" data-signout="${e.signOut||''}">${hrs.toFixed(2)}</span></b><span>Hours today</span></div>
         <div class="stat"><b>${t.appts} / ${t.dms}</b><span>Appts / DMs</span></div>
       </div>
       <footer class="actions">
         ${!e.submitted ? '<span class="tag off">Not submitted yet</span>' :
           (e.verifiedByNoor ? '<span class="tag verified">Verified ✓</span>' : `<button class="btn lime" data-verify="${va.id}">Verify today's entry</button>`)}
+        ${adminMode ? `<button class="btn ghost" data-reset-va="${va.id}" style="margin-left:auto;">Reset today's attendance</button>` : ''}
       </footer>`;
     app.appendChild(card);
     const btn = card.querySelector('[data-verify]');
     if(btn) btn.onclick = ()=> writeEntry(va.id, d, { verifiedByNoor:true, verifiedAt:new Date().toISOString() });
+    const rst = card.querySelector('[data-reset-va]');
+    if(rst) rst.onclick = ()=>{ if(confirm(`Reset today's attendance and logs for ${va.name}?`)) resetEntry(va.id, d); };
 
     const days = [...Array(7)].map((_,i)=>{ const dt=new Date(); dt.setDate(dt.getDate()-i); return localKey(dt); });
     const hist = document.createElement('div');
     hist.className='card overflow';
     hist.innerHTML = `<h3>${va.name} — last 7 days</h3>
-      <table><thead><tr><th>Date</th><th class="num">Hours</th><th class="num">Appts</th><th class="num">DMs</th><th>Submitted</th><th>Verified</th><th></th></tr></thead>
+      <table><thead><tr><th>Date</th><th>Sign in</th><th>Sign out</th><th class="num">Hours</th><th class="num">Appts</th><th class="num">DMs</th><th>Submitted</th><th>Verified</th><th></th>${adminMode?'<th></th>':''}</tr></thead>
       <tbody>${days.map(dt=>{
         const he = getEntry(va.id, dt); const ht = totals(he); const hh = hoursBetween(he.signIn, he.signOut);
-        return `<tr><td>${dt}</td><td class="num">${hh.toFixed(1)}</td><td class="num">${ht.appts}</td><td class="num">${ht.dms}</td>
+        return `<tr><td>${dt}</td><td>${fmtTime(he.signIn)}</td><td>${fmtTime(he.signOut)}</td><td class="num">${hh.toFixed(1)}</td><td class="num">${ht.appts}</td><td class="num">${ht.dms}</td>
           <td>${he.submitted ? '<span class="tag ok">Submitted</span>' : '<span class="tag off">Open</span>'}</td>
           <td>${he.verifiedByNoor ? '<span class="tag verified">Verified</span>' : '<span class="tag off">—</span>'}</td>
           <td>${he.submitted && !he.verifiedByNoor ? `<button class="btn ghost" data-verify-day="${va.id}_${dt}">Verify</button>` : ''}</td>
+          ${adminMode ? `<td><button class="rm" data-delete-day="${va.id}_${dt}">Delete</button></td>` : ''}
         </tr>`;
       }).join('')}</tbody></table>`;
     app.appendChild(hist);
@@ -488,6 +529,13 @@ function renderSupervisionPage(app, noor){
         writeEntry(vid, dt, { verifiedByNoor:true, verifiedAt:new Date().toISOString() });
       };
     });
+    hist.querySelectorAll('[data-delete-day]').forEach(b=>{
+      b.onclick = ()=>{
+        const raw = b.dataset.deleteDay; const idx = raw.indexOf('_');
+        const vid = raw.slice(0, idx), dt = raw.slice(idx+1);
+        if(confirm(`Permanently delete ${vid}'s entry for ${dt}? This cannot be undone.`)) deleteEntry(vid, dt);
+      };
+    });
   });
 
   // Noor's own attendance history
@@ -495,12 +543,15 @@ function renderSupervisionPage(app, noor){
   const nHist = document.createElement('div');
   nHist.className='card overflow';
   nHist.innerHTML = `<h3>Noor — attendance, last 7 days</h3>
-    <table><thead><tr><th>Date</th><th>Sign in</th><th>Sign out</th><th class="num">Hours</th></tr></thead>
+    <table><thead><tr><th>Date</th><th>Sign in</th><th>Sign out</th><th class="num">Hours</th>${adminMode?'<th></th>':''}</tr></thead>
     <tbody>${nDays.map(dt=>{
       const he = getEntry(noor.id, dt); const hh = hoursBetween(he.signIn, he.signOut);
-      return `<tr><td>${dt}</td><td>${fmtTime(he.signIn)}</td><td>${fmtTime(he.signOut)}</td><td class="num">${hh.toFixed(1)}</td></tr>`;
+      return `<tr><td>${dt}</td><td>${fmtTime(he.signIn)}</td><td>${fmtTime(he.signOut)}</td><td class="num">${hh.toFixed(1)}</td>${adminMode?`<td><button class="rm" data-delete-noor-day="${dt}">Delete</button></td>`:''}</tr>`;
     }).join('')}</tbody></table>`;
   app.appendChild(nHist);
+  nHist.querySelectorAll('[data-delete-noor-day]').forEach(b=>{
+    b.onclick = ()=>{ if(confirm(`Permanently delete Noor's entry for ${b.dataset.deleteNoorDay}? This cannot be undone.`)) deleteEntry(noor.id, b.dataset.deleteNoorDay); };
+  });
 }
 
 // ---------- VA page ----------
@@ -536,12 +587,15 @@ function renderVaPage(app, vaId){
     <footer class="actions">
       <button class="btn lime" id="signInBtn" ${e.signIn?'disabled':''}>Sign In</button>
       <button class="btn" id="signOutBtn" ${(!e.signIn||e.signOut)?'disabled':''}>Sign Out</button>
+      ${adminMode ? `<button class="btn ghost" id="resetVaToday">Reset today's attendance</button>` : ''}
       <button class="btn ghost" id="lockVa" style="margin-left:auto;">Lock this tab</button>
     </footer>`;
   app.appendChild(clock);
   clock.querySelector('#lockVa').onclick = ()=>{ lockVa(vaId); render(); };
   clock.querySelector('#signInBtn').onclick = ()=> writeEntry(vaId, d, { signIn: new Date().toISOString() });
   clock.querySelector('#signOutBtn').onclick = ()=> writeEntry(vaId, d, { signOut: new Date().toISOString() });
+  const resetVaBtn = clock.querySelector('#resetVaToday');
+  if(resetVaBtn) resetVaBtn.onclick = ()=>{ if(confirm(`Reset today's attendance and logs for ${va.name}? This clears sign-in/out, logs, submitted and verified status for today only.`)) resetEntry(vaId, d); };
 
   const form = document.createElement('div');
   form.className='card';
@@ -603,14 +657,17 @@ function renderVaPage(app, vaId){
     return localKey(dt);
   });
   hist.innerHTML = `<h3>Last 7 days</h3>
-    <table><thead><tr><th>Date</th><th>Sign in</th><th>Sign out</th><th class="num">Hours</th><th class="num">Appts</th><th class="num">DMs</th><th>Status</th></tr></thead>
+    <table><thead><tr><th>Date</th><th>Sign in</th><th>Sign out</th><th class="num">Hours</th><th class="num">Appts</th><th class="num">DMs</th><th>Status</th>${adminMode?'<th></th>':''}</tr></thead>
     <tbody>${days.map(dt=>{
       const he = getEntry(vaId, dt);
       const ht = totals(he);
       const hh = hoursBetween(he.signIn, he.signOut);
-      return `<tr><td>${dt}</td><td>${fmtTime(he.signIn)}</td><td>${fmtTime(he.signOut)}</td><td class="num">${hh.toFixed(1)}</td><td class="num">${ht.appts}</td><td class="num">${ht.dms}</td><td>${he.submitted?'<span class="tag ok">Submitted</span>':(he.signIn?'<span class="tag off">Open</span>':'—')}</td></tr>`;
+      return `<tr><td>${dt}</td><td>${fmtTime(he.signIn)}</td><td>${fmtTime(he.signOut)}</td><td class="num">${hh.toFixed(1)}</td><td class="num">${ht.appts}</td><td class="num">${ht.dms}</td><td>${he.submitted?'<span class="tag ok">Submitted</span>':(he.signIn?'<span class="tag off">Open</span>':'—')}</td>${adminMode?`<td><button class="rm" data-delete-va-day="${dt}">Delete</button></td>`:''}</tr>`;
     }).join('')}</tbody></table>`;
   app.appendChild(hist);
+  hist.querySelectorAll('[data-delete-va-day]').forEach(b=>{
+    b.onclick = ()=>{ if(confirm(`Permanently delete ${va.name}'s entry for ${b.dataset.deleteVaDay}? This cannot be undone.`)) deleteEntry(vaId, b.dataset.deleteVaDay); };
+  });
 }
 </script>
 </body>
