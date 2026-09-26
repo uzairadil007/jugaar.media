@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>VIBE</title>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <style>
 :root{
   --lime:#d8ff29; --ink:#0a0a0a; --paper:#ffffff; --line:#e8e8e8; --sub:#6b6b6b;
@@ -22,9 +24,23 @@ nav{display:flex;gap:4px;background:#161616;border-radius:10px;padding:4px;flex-
 nav button{background:none;border:0;color:#bbb;padding:8px 14px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;}
 nav button.active{background:var(--lime);color:var(--ink);}
 .admin-toggle{display:flex;align-items:center;gap:8px;}
-.admin-toggle input{width:90px;padding:7px 8px;border-radius:7px;border:1px solid #333;background:#161616;color:#fff;font-size:12px;}
-.admin-toggle button{background:transparent;border:1px solid #444;color:#eee;border-radius:7px;padding:7px 10px;font-size:12px;cursor:pointer;}
-.admin-pill{font-size:11px;background:var(--lime);color:var(--ink);padding:5px 9px;border-radius:20px;font-weight:700;}
+.admin-pin-wrap{position:relative;display:flex;align-items:center;}
+input.admin-pin{width:104px;padding:9px 30px 9px 12px;border-radius:9px;border:1.5px solid #2b2b2b;background:#101010;color:var(--lime);
+  font-family:'SFMono-Regular',Consolas,'Courier New',monospace;font-size:13px;letter-spacing:.18em;text-align:center;
+  transition:box-shadow .15s,border-color .15s;}
+input.admin-pin:focus{outline:none;border-color:var(--lime);box-shadow:0 0 0 3px rgba(216,255,41,.28);}
+input.admin-pin::placeholder{color:#5a5a5a;letter-spacing:.02em;font-family:Helvetica,Arial,sans-serif;font-size:10.5px;text-transform:uppercase;}
+button.admin-eye{position:absolute;right:2px;top:50%;transform:translateY(-50%);background:none;border:0;color:#8a8a8a;cursor:pointer;
+  font-size:14px;padding:8px;line-height:1;}
+button.admin-unlock{background:var(--lime);color:var(--ink);border:0;border-radius:9px;padding:9px 14px;font-weight:800;font-size:12px;
+  cursor:pointer;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;box-shadow:0 0 0 0 rgba(216,255,41,.5);
+  transition:transform .1s;}
+button.admin-unlock:active{transform:translateY(1px);}
+.admin-pin-wrap.shake{animation:shakeAnim .4s;}
+.admin-pin-err{width:100%;text-align:center;font-size:10.5px;color:#ff6b6b;margin-top:4px;}
+.admin-pill{font-size:11px;background:var(--lime);color:var(--ink);padding:6px 12px;border-radius:20px;font-weight:800;letter-spacing:.03em;
+  box-shadow:0 0 0 2px rgba(216,255,41,.25);}
+button.admin-exit{background:transparent;border:1px solid #444;color:#eee;border-radius:9px;padding:7px 12px;font-size:12px;cursor:pointer;}
 main{max-width:980px;margin:0 auto;padding:22px 20px 40px;width:100%;flex:1 0 auto;}
 .site-footer{flex-shrink:0;text-align:center;padding:20px 20px calc(20px + env(safe-area-inset-bottom,0px));font-size:12.5px;color:var(--sub);border-top:1px solid var(--line);}
 .site-footer a{color:var(--ink);font-weight:700;text-decoration:none;}
@@ -57,23 +73,44 @@ table{width:100%;border-collapse:collapse;font-size:13px;}
 th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line);}
 th{color:var(--sub);font-size:11px;text-transform:uppercase;letter-spacing:.05em;}
 td.num{text-align:right;font-variant-numeric:tabular-nums;}
-.rm{background:none;border:0;color:#b00;cursor:pointer;font-size:12px;}
+.rm{background:none;border:0;color:#b00;cursor:pointer;font-size:12px;padding:8px 6px;}
 .lock-note{font-size:12.5px;color:var(--sub);margin-top:10px;}
 .overflow{overflow-x:auto;-webkit-overflow-scrolling:touch;}
 footer.actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;align-items:center;}
+.tag.verified{background:#111;color:var(--lime);border:1px solid var(--lime);}
+.gate-card{max-width:420px;margin:8px auto 18px;}
+.gate{text-align:center;}
+.gate-icon{font-size:36px;margin-bottom:4px;filter:drop-shadow(0 2px 0 var(--lime));}
+.gate h2{margin-bottom:2px;}
+.gate-input-wrap{position:relative;margin-top:18px;}
+input.gate-input{width:100%;padding:16px 46px 16px 16px;border:2px solid var(--ink);border-radius:12px;
+  font-size:20px;letter-spacing:.14em;font-family:'SFMono-Regular',Consolas,'Courier New',monospace;
+  text-align:center;background:#101010;color:var(--lime);transition:box-shadow .15s,border-color .15s;}
+input.gate-input:focus{outline:none;border-color:var(--lime);box-shadow:0 0 0 4px rgba(216,255,41,.28);}
+input.gate-input::placeholder{color:#555;letter-spacing:.05em;font-family:Helvetica,Arial,sans-serif;font-size:13px;}
+.gate-eye{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:0;cursor:pointer;font-size:17px;padding:6px;}
+.gate-err{color:#c00;font-size:12.5px;margin-top:10px;min-height:16px;}
+.gate-lock-btn{background:none;border:1px solid var(--line);color:var(--sub);border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer;}
+@keyframes shakeAnim{10%,90%{transform:translateX(-2px);}20%,80%{transform:translateX(4px);}30%,50%,70%{transform:translateX(-7px);}40%,60%{transform:translateX(7px);}}
+.gate.shake{animation:shakeAnim .45s;}
 @media (max-width:640px){
   .form-row{grid-template-columns:1fr 1fr;}
   main{padding:16px 14px 32px;}
   .card{padding:16px;border-radius:14px;}
   select,input[type=number],input[type=text]{font-size:16px;}
+  input.admin-pin{font-size:16px;letter-spacing:.1em;width:118px;}
+  input.gate-input{font-size:18px;}
   .clock-time{font-size:26px;}
+  nav button{padding:10px 14px;}
+  button.admin-eye,button.gate-eye{padding:10px;}
 }
 @media (max-width:480px){
   header{flex-direction:column;align-items:stretch;padding:12px 16px;padding-top:calc(12px + env(safe-area-inset-top,0px));}
   .brand{justify-content:center;}
   nav{overflow-x:auto;justify-content:flex-start;}
   .admin-toggle{justify-content:center;}
-  .admin-toggle input{width:120px;flex:1;}
+  .admin-pin-wrap{flex:1;}
+  input.admin-pin{width:100%;}
   .form-row{grid-template-columns:1fr;}
   .grid3{grid-template-columns:1fr 1fr;}
   button.btn{width:100%;}
@@ -95,24 +132,30 @@ footer.actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;align-items:
 </footer>
 
 <script>
-const CAP = { db:true };
 const VAS = [
-  { id:'va1', name:'Rimsha' },
-  { id:'va2', name:'Noor' },
-  { id:'va3', name:'Amna' },
+  { id:'rimsha', name:'Rimsha', role:'va', shiftStart:9,  shiftEnd:15, shiftLabel:'9:00 AM – 3:00 PM' },
+  { id:'amna',   name:'Amna',   role:'va', shiftStart:15, shiftEnd:21, shiftLabel:'3:00 PM – 9:00 PM' },
+  { id:'noor',   name:'Noor',   role:'supervisor', shiftLabel:'Supervisor — verifies Rimsha & Amna' },
 ];
-const PLATFORMS = ['YouTube','Instagram','Facebook','TikTok'];
-const ACCOUNTS = ['Account 1','Account 2','Account 3'];
+const PLATFORMS = ['Instagram','Facebook','TikTok','YouTube'];
+const ACCOUNTS_BY_PLATFORM = {
+  'Instagram': ['@tsk_diet','@tskdiet_stories','@tehreemkhan_tsk'],
+  'Facebook':  ['@tsk_diet','@tskdiet_stories','@tehreemkhan_tsk'],
+  'TikTok':    ['@tskdiet'],
+  'YouTube':   ['Account 1','Account 2','Account 3'],
+};
+const accountsFor = platform => ACCOUNTS_BY_PLATFORM[platform] || ['Account 1'];
 const ADMIN_PIN = '2029';
-const DAY_START = 9, DAY_END = 17;
+const PASSCODES = { rimsha:'@rimsha3#', amna:'@amna9(', noor:'@noor4$' };
 
 let db = null, dbAvailable = false;
-let entries = {};          // key: vaId_date -> {signIn,signOut,logs[],submitted}
+let entries = {};          // key: vaId_date -> {signIn,signOut,logs[],submitted,verifiedByNoor,verifiedAt}
 let adminMode = false;
 let activeTab = 'dashboard';
+let unlocked = {};          // vaId -> true, once passcode entered this session
 const localKey = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 const todayKey = () => localKey(new Date());
-const fmtTime = iso => iso ? new Date(iso).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) : '—';
+const fmtTime = iso => iso ? new Date(iso).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',hour12:true}) : '—';
 const hoursBetween = (a,b) => a && b ? Math.max(0,(new Date(b)-new Date(a))/3600000) : 0;
 const entryKey = (va,d) => va+'_'+d;
 
@@ -121,6 +164,28 @@ function getEntry(va, date){
 }
 function totals(e){
   return e.logs.reduce((a,l)=>({appts:a.appts+Number(l.appts||0), dms:a.dms+Number(l.dms||0)}), {appts:0,dms:0});
+}
+function dmsByPlatform(day){
+  const out = {}; PLATFORMS.forEach(p=> out[p]=0);
+  VAS.filter(v=>v.role==='va').forEach(va=>{
+    getEntry(va.id, day).logs.forEach(l=>{ out[l.platform] = (out[l.platform]||0) + Number(l.dms||0); });
+  });
+  return out;
+}
+
+// ---------- per-VA passcode lock ----------
+function isUnlocked(vaId){
+  if(adminMode) return true;
+  if(unlocked[vaId]) return true;
+  try{ return sessionStorage.getItem('vibe_unlock_'+vaId) === '1'; }catch(e){ return false; }
+}
+function unlockVa(vaId){
+  unlocked[vaId] = true;
+  try{ sessionStorage.setItem('vibe_unlock_'+vaId, '1'); }catch(e){}
+}
+function lockVa(vaId){
+  delete unlocked[vaId];
+  try{ sessionStorage.removeItem('vibe_unlock_'+vaId); }catch(e){}
 }
 
 // ---------- persistence ----------
@@ -140,9 +205,19 @@ async function writeEntry(va, date, patch){
   }
 }
 
+const firebaseConfig = {
+  apiKey: "AIzaSyAZn-MWlArpHYcb7Z88u-wzKdrBxtIsYiE",
+  authDomain: "tracker-9a8cb.firebaseapp.com",
+  projectId: "tracker-9a8cb",
+  storageBucket: "tracker-9a8cb.firebasestorage.app",
+  messagingSenderId: "765187139896",
+  appId: "1:765187139896:web:61ddd4fad7ee85364239cd"
+};
+
 (async function init(){
   try{
-    db = await claude.use('db');
+    firebase.initializeApp(firebaseConfig);
+    db = firebase.firestore();
   }catch(e){ db = null; }
   if(db){
     dbAvailable = true;
@@ -156,7 +231,29 @@ async function writeEntry(va, date, patch){
   }
   try{ adminMode = sessionStorage.getItem('kpi_admin') === '1'; }catch(e){}
   render();
+  setInterval(tickLiveElements, 1000);
 })();
+
+// ---------- live (real-time) date/time/hours ticking ----------
+function tickLiveElements(){
+  const now = new Date();
+  document.querySelectorAll('.live-clock-time').forEach(el=>{
+    el.textContent = now.toLocaleString([], {weekday:'long', month:'long', day:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:true});
+  });
+  document.querySelectorAll('.live-hours').forEach(el=>{
+    const signIn = el.dataset.signin || null;
+    const signOut = el.dataset.signout || null;
+    if(!signIn) return;
+    const hrs = hoursBetween(signIn, signOut || now.toISOString());
+    el.textContent = hrs.toFixed(2);
+  });
+  // if the day has rolled over past midnight while the page stayed open, refresh the whole view
+  const k = todayKey();
+  if(k !== tickLiveElements._lastDay){
+    if(tickLiveElements._lastDay !== undefined) render();
+    tickLiveElements._lastDay = k;
+  }
+}
 
 // ---------- UI: header ----------
 function renderNav(){
@@ -169,17 +266,27 @@ function renderNav(){
 
   const box = document.getElementById('adminBox');
   if(adminMode){
-    box.innerHTML = `<span class="admin-pill">ADMIN MODE</span><button id="exitAdmin">Exit</button>`;
+    box.innerHTML = `<span class="admin-pill">🔓 ADMIN MODE</span><button class="admin-exit" id="exitAdmin">Exit</button>`;
     document.getElementById('exitAdmin').onclick = ()=>{ adminMode=false; try{sessionStorage.removeItem('kpi_admin')}catch(e){} render(); };
   } else {
-    box.innerHTML = `<input id="pinInput" type="text" inputmode="numeric" autocomplete="off" placeholder="Admin PIN" maxlength="6"><button id="pinBtn">Unlock</button>`;
+    box.innerHTML = `
+      <div class="admin-pin-wrap" id="pinWrap">
+        <input id="pinInput" class="admin-pin" type="password" inputmode="numeric" autocomplete="off" placeholder="ADMIN PIN" maxlength="6">
+        <button type="button" class="admin-eye" id="pinEye" aria-label="Show PIN">👁</button>
+      </div>
+      <button class="admin-unlock" id="pinBtn">🔒 Unlock</button>`;
     const pinInput = document.getElementById('pinInput');
+    const pinWrap = document.getElementById('pinWrap');
     const tryUnlock = ()=>{
       const v = pinInput.value.trim();
       if(v === ADMIN_PIN){ adminMode = true; try{sessionStorage.setItem('kpi_admin','1')}catch(e){} render(); }
-      else { pinInput.style.borderColor = '#c00'; }
+      else {
+        pinWrap.classList.remove('shake'); void pinWrap.offsetWidth; pinWrap.classList.add('shake');
+        pinInput.value=''; pinInput.focus();
+      }
     };
     document.getElementById('pinBtn').onclick = tryUnlock;
+    document.getElementById('pinEye').onclick = ()=>{ pinInput.type = pinInput.type==='password' ? 'text' : 'password'; };
     pinInput.onkeydown = ev => { if(ev.key === 'Enter') tryUnlock(); };
   }
 }
@@ -189,7 +296,7 @@ function render(){
   const app = document.getElementById('app');
   app.innerHTML = '';
   if(!dbAvailable){
-    app.innerHTML += `<div class="banner">Live sync isn't active in this view, so changes are saved to this device only. Open this page as a signed-in editor of your workspace for it to sync across everyone automatically.</div>`;
+    app.innerHTML += `<div class="banner">Can't reach the shared database right now, so changes are being saved to this device only. Check your internet connection and reload — once it reconnects, everything will sync across the team automatically.</div>`;
   }
   if(activeTab === 'dashboard') renderDashboard(app);
   else renderVaPage(app, activeTab);
@@ -198,8 +305,9 @@ function render(){
 // ---------- Dashboard ----------
 function renderDashboard(app){
   const d = todayKey();
+  const staff = VAS.filter(v=>v.role==='va');
   let teamAppts=0, teamDms=0, working=0;
-  const rows = VAS.map(va=>{
+  const rows = staff.map(va=>{
     const e = getEntry(va.id, d);
     const t = totals(e);
     teamAppts += t.appts; teamDms += t.dms;
@@ -213,35 +321,189 @@ function renderDashboard(app){
   card.className='card';
   card.innerHTML = `
     <h2>Team overview — today</h2>
-    <p class="muted">${new Date().toLocaleDateString([], {weekday:'long', month:'long', day:'numeric'})}</p>
+    <p class="muted live-clock-time">${new Date().toLocaleString([], {weekday:'long', month:'long', day:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:true})}</p>
     <div class="grid3" style="margin-top:14px;">
       <div class="stat"><b>${teamAppts}</b><span>Appointments booked</span></div>
       <div class="stat"><b>${teamDms}</b><span>DMs answered</span></div>
-      <div class="stat"><b>${working}/${VAS.length}</b><span>Currently clocked in</span></div>
+      <div class="stat"><b>${working}/${staff.length}</b><span>Currently clocked in</span></div>
     </div>`;
   app.appendChild(card);
+
+  const dmsCard = document.createElement('div');
+  dmsCard.className='card';
+  const platDms = dmsByPlatform(d);
+  dmsCard.innerHTML = `<h3>DMs answered today — by platform</h3>
+    <div class="grid3">
+      ${PLATFORMS.map(p=>`<div class="stat"><b>${platDms[p]||0}</b><span>${p}</span></div>`).join('')}
+    </div>`;
+  app.appendChild(dmsCard);
 
   const table = document.createElement('div');
   table.className='card overflow';
   table.innerHTML = `<h3>Today by VA</h3>
-    <table><thead><tr><th>VA</th><th>Status</th><th>Sign in</th><th>Sign out</th><th class="num">Hours</th><th class="num">Appts</th><th class="num">DMs</th><th>Submitted</th>${adminMode?'<th></th>':''}</tr></thead>
+    <table><thead><tr><th>VA</th><th>Shift</th><th>Status</th><th>Sign in</th><th>Sign out</th><th class="num">Hours</th><th class="num">Appts</th><th class="num">DMs</th><th>Submitted</th><th>Verified</th>${adminMode?'<th></th>':''}</tr></thead>
     <tbody>${rows.map(r=>`<tr>
       <td>${r.va.name}</td>
+      <td>${r.va.shiftLabel}</td>
       <td>${r.status}</td>
       <td>${fmtTime(r.e.signIn)}</td>
       <td>${fmtTime(r.e.signOut)}</td>
-      <td class="num">${r.hrs.toFixed(1)}</td>
+      <td class="num"><span class="live-hours" data-signin="${r.e.signIn||''}" data-signout="${r.e.signOut||''}">${r.hrs.toFixed(2)}</span></td>
       <td class="num">${r.t.appts}</td>
       <td class="num">${r.t.dms}</td>
       <td>${r.e.submitted ? '<span class="tag ok">Submitted</span>' : '<span class="tag off">Open</span>'}</td>
+      <td>${r.e.verifiedByNoor ? '<span class="tag verified">Verified</span>' : '<span class="tag off">—</span>'}</td>
       ${adminMode ? `<td><button class="btn ghost" data-va="${r.va.id}" onclick="activeTab='${r.va.id}';render();">Open</button></td>`:''}
-    </tr>`).join('')}</tbody></table>`;
+    </tr>`).join('')}</tbody></table>
+    <p class="muted" style="margin-top:12px;">Noor supervises Rimsha and Amna — she verifies each submitted day from her own tab.${adminMode?` <button class="btn ghost" onclick="activeTab='noor';render();">Open Noor's tab</button>`:''}</p>`;
   app.appendChild(table);
+
+  const noor = VAS.find(v=>v.id==='noor');
+  const ne = getEntry(noor.id, d);
+  const nStatus = !ne.signIn ? 'Not signed in' : (!ne.signOut ? 'Working' : 'Signed out');
+  const nHrs = hoursBetween(ne.signIn, ne.signOut || (nStatus==='Working' ? new Date().toISOString() : null));
+  const nCard = document.createElement('div');
+  nCard.className='card';
+  nCard.innerHTML = `<h3>Noor — supervisor attendance today</h3>
+    <div class="grid3">
+      <div class="stat"><b>${nStatus}</b><span>Status</span></div>
+      <div class="stat"><b>${fmtTime(ne.signIn)} → ${fmtTime(ne.signOut)}</b><span>Sign in / out</span></div>
+      <div class="stat"><b><span class="live-hours" data-signin="${ne.signIn||''}" data-signout="${ne.signOut||''}">${nHrs.toFixed(2)}</span></b><span>Hours today</span></div>
+    </div>`;
+  app.appendChild(nCard);
+}
+
+// ---------- passcode gate ----------
+function renderGate(app, va){
+  const card = document.createElement('div');
+  card.className='card gate-card';
+  card.innerHTML = `
+    <div class="gate">
+      <div class="gate-icon">🔒</div>
+      <h2>${va.name}'s private area</h2>
+      <p class="muted">${va.shiftLabel}</p>
+      <p class="muted">Enter your passcode to continue.</p>
+      <div class="gate-input-wrap">
+        <input type="password" id="gatePass" class="gate-input" placeholder="• • • • • •" autocomplete="off" autocapitalize="off" spellcheck="false">
+        <button type="button" id="gateToggle" class="gate-eye" aria-label="Show passcode">👁</button>
+      </div>
+      <button class="btn lime" id="gateBtn" style="width:100%;margin-top:14px;">Unlock</button>
+      <p class="gate-err" id="gateErr"></p>
+    </div>`;
+  app.appendChild(card);
+  const input = card.querySelector('#gatePass');
+  const err = card.querySelector('#gateErr');
+  const gate = card.querySelector('.gate');
+  const tryUnlock = ()=>{
+    if(input.value === PASSCODES[va.id]){
+      unlockVa(va.id); render();
+    } else {
+      err.textContent = 'Incorrect passcode — try again.';
+      gate.classList.remove('shake'); void card.offsetWidth; gate.classList.add('shake');
+      input.value=''; input.focus();
+    }
+  };
+  card.querySelector('#gateBtn').onclick = tryUnlock;
+  input.onkeydown = ev => { if(ev.key==='Enter') tryUnlock(); };
+  card.querySelector('#gateToggle').onclick = ()=>{ input.type = input.type==='password' ? 'text' : 'password'; };
+  input.focus();
+}
+
+// ---------- Noor's supervision dashboard ----------
+function renderSupervisionPage(app, noor){
+  const d = todayKey();
+  const staff = VAS.filter(v=>v.role==='va');
+  const ne = getEntry(noor.id, d);
+  const nStatus = !ne.signIn ? 'not-in' : (!ne.signOut ? 'working' : 'done');
+  const nLiveHrs = hoursBetween(ne.signIn, ne.signOut || (nStatus==='working' ? new Date().toISOString() : null));
+
+  const head = document.createElement('div');
+  head.className='card';
+  head.innerHTML = `
+    <div class="clock">
+      <div>
+        <h2>${noor.name} <span class="tag ${nStatus==='working'?'ok':(nStatus==='done'?'off':'warn')}">${nStatus==='working'?'On shift':(nStatus==='done'?'Signed out':'Not signed in')}</span></h2>
+        <div class="clock-status">Verifies Rimsha &amp; Amna's daily entries &middot; <span class="live-clock-time">${new Date().toLocaleString([], {weekday:'long', month:'long', day:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:true})}</span></div>
+      </div>
+      <div style="text-align:right;">
+        <div class="clock-time">${fmtTime(ne.signIn)} → ${fmtTime(ne.signOut)}</div>
+        <div class="clock-status"><span class="live-hours" data-signin="${ne.signIn||''}" data-signout="${ne.signOut||''}">${nLiveHrs.toFixed(2)}</span> hrs logged today</div>
+      </div>
+    </div>
+    <footer class="actions">
+      <button class="btn lime" id="noorSignIn" ${ne.signIn?'disabled':''}>Sign In</button>
+      <button class="btn" id="noorSignOut" ${(!ne.signIn||ne.signOut)?'disabled':''}>Sign Out</button>
+      <button class="btn ghost" id="lockNoor" style="margin-left:auto;">Lock this tab</button>
+    </footer>`;
+  app.appendChild(head);
+  head.querySelector('#lockNoor').onclick = ()=>{ lockVa(noor.id); render(); };
+  head.querySelector('#noorSignIn').onclick = ()=> writeEntry(noor.id, d, { signIn: new Date().toISOString() });
+  head.querySelector('#noorSignOut').onclick = ()=> writeEntry(noor.id, d, { signOut: new Date().toISOString() });
+
+  staff.forEach(va=>{
+    const e = getEntry(va.id, d);
+    const t = totals(e);
+    const status = !e.signIn ? 'Not signed in' : (!e.signOut ? 'Working' : 'Signed out');
+    const hrs = hoursBetween(e.signIn, e.signOut || (status==='Working' ? new Date().toISOString() : null));
+    const card = document.createElement('div');
+    card.className='card overflow';
+    card.innerHTML = `
+      <h3>${va.name} <span class="muted" style="text-transform:none;letter-spacing:0;">&middot; ${va.shiftLabel}</span></h3>
+      <div class="grid3">
+        <div class="stat"><b>${status}</b><span>Status today</span></div>
+        <div class="stat"><b><span class="live-hours" data-signin="${e.signIn||''}" data-signout="${e.signOut||''}">${hrs.toFixed(2)}</span></b><span>Hours today</span></div>
+        <div class="stat"><b>${t.appts} / ${t.dms}</b><span>Appts / DMs</span></div>
+      </div>
+      <footer class="actions">
+        ${!e.submitted ? '<span class="tag off">Not submitted yet</span>' :
+          (e.verifiedByNoor ? '<span class="tag verified">Verified ✓</span>' : `<button class="btn lime" data-verify="${va.id}">Verify today's entry</button>`)}
+      </footer>`;
+    app.appendChild(card);
+    const btn = card.querySelector('[data-verify]');
+    if(btn) btn.onclick = ()=> writeEntry(va.id, d, { verifiedByNoor:true, verifiedAt:new Date().toISOString() });
+
+    const days = [...Array(7)].map((_,i)=>{ const dt=new Date(); dt.setDate(dt.getDate()-i); return localKey(dt); });
+    const hist = document.createElement('div');
+    hist.className='card overflow';
+    hist.innerHTML = `<h3>${va.name} — last 7 days</h3>
+      <table><thead><tr><th>Date</th><th class="num">Hours</th><th class="num">Appts</th><th class="num">DMs</th><th>Submitted</th><th>Verified</th><th></th></tr></thead>
+      <tbody>${days.map(dt=>{
+        const he = getEntry(va.id, dt); const ht = totals(he); const hh = hoursBetween(he.signIn, he.signOut);
+        return `<tr><td>${dt}</td><td class="num">${hh.toFixed(1)}</td><td class="num">${ht.appts}</td><td class="num">${ht.dms}</td>
+          <td>${he.submitted ? '<span class="tag ok">Submitted</span>' : '<span class="tag off">Open</span>'}</td>
+          <td>${he.verifiedByNoor ? '<span class="tag verified">Verified</span>' : '<span class="tag off">—</span>'}</td>
+          <td>${he.submitted && !he.verifiedByNoor ? `<button class="btn ghost" data-verify-day="${va.id}_${dt}">Verify</button>` : ''}</td>
+        </tr>`;
+      }).join('')}</tbody></table>`;
+    app.appendChild(hist);
+    hist.querySelectorAll('[data-verify-day]').forEach(b=>{
+      b.onclick = ()=>{
+        const raw = b.dataset.verifyDay; const idx = raw.indexOf('_');
+        const vid = raw.slice(0, idx), dt = raw.slice(idx+1);
+        writeEntry(vid, dt, { verifiedByNoor:true, verifiedAt:new Date().toISOString() });
+      };
+    });
+  });
+
+  // Noor's own attendance history
+  const nDays = [...Array(7)].map((_,i)=>{ const dt=new Date(); dt.setDate(dt.getDate()-i); return localKey(dt); });
+  const nHist = document.createElement('div');
+  nHist.className='card overflow';
+  nHist.innerHTML = `<h3>Noor — attendance, last 7 days</h3>
+    <table><thead><tr><th>Date</th><th>Sign in</th><th>Sign out</th><th class="num">Hours</th></tr></thead>
+    <tbody>${nDays.map(dt=>{
+      const he = getEntry(noor.id, dt); const hh = hoursBetween(he.signIn, he.signOut);
+      return `<tr><td>${dt}</td><td>${fmtTime(he.signIn)}</td><td>${fmtTime(he.signOut)}</td><td class="num">${hh.toFixed(1)}</td></tr>`;
+    }).join('')}</tbody></table>`;
+  app.appendChild(nHist);
 }
 
 // ---------- VA page ----------
 function renderVaPage(app, vaId){
   const va = VAS.find(v=>v.id===vaId);
+  if(!isUnlocked(vaId)){ renderGate(app, va); return; }
+  if(va.role === 'supervisor'){ renderSupervisionPage(app, va); return; }
+
   const d = todayKey();
   const e = getEntry(vaId, d);
   const t = totals(e);
@@ -250,8 +512,8 @@ function renderVaPage(app, vaId){
   const liveHrs = hoursBetween(e.signIn, e.signOut || (status==='working'?new Date().toISOString():null));
 
   const minutesOfDay = dt => dt.getHours()*60 + dt.getMinutes();
-  const lateIn = e.signIn && minutesOfDay(new Date(e.signIn)) > DAY_START*60 + 5; // 5 min grace
-  const earlyOut = e.signOut && minutesOfDay(new Date(e.signOut)) < DAY_END*60;
+  const lateIn = e.signIn && minutesOfDay(new Date(e.signIn)) > va.shiftStart*60 + 5; // 5 min grace
+  const earlyOut = e.signOut && minutesOfDay(new Date(e.signOut)) < va.shiftEnd*60;
 
   const clock = document.createElement('div');
   clock.className='card';
@@ -259,18 +521,20 @@ function renderVaPage(app, vaId){
     <div class="clock">
       <div>
         <h2>${va.name} <span class="tag ${status==='working'?'ok':(status==='done'?'off':'warn')}">${status==='working'?'On shift':(status==='done'?'Signed out':'Not signed in')}</span></h2>
-        <div class="clock-status">Shift: 9:00 AM – 5:00 PM &middot; ${new Date().toLocaleDateString([], {weekday:'long', month:'short', day:'numeric'})}</div>
+        <div class="clock-status">Shift: ${va.shiftLabel} &middot; <span class="live-clock-time">${new Date().toLocaleString([], {weekday:'long', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:true})}</span></div>
       </div>
       <div style="text-align:right;">
         <div class="clock-time">${fmtTime(e.signIn)} → ${fmtTime(e.signOut)}</div>
-        <div class="clock-status">${liveHrs.toFixed(1)} hrs logged today ${lateIn?'· late sign-in':''} ${earlyOut?'· early sign-out':''}</div>
+        <div class="clock-status"><span class="live-hours" data-signin="${e.signIn||''}" data-signout="${e.signOut||''}">${liveHrs.toFixed(2)}</span> hrs logged today ${lateIn?'· late sign-in':''} ${earlyOut?'· early sign-out':''}</div>
       </div>
     </div>
     <footer class="actions">
       <button class="btn lime" id="signInBtn" ${e.signIn?'disabled':''}>Sign In</button>
       <button class="btn" id="signOutBtn" ${(!e.signIn||e.signOut)?'disabled':''}>Sign Out</button>
+      <button class="btn ghost" id="lockVa" style="margin-left:auto;">Lock this tab</button>
     </footer>`;
   app.appendChild(clock);
+  clock.querySelector('#lockVa').onclick = ()=>{ lockVa(vaId); render(); };
   clock.querySelector('#signInBtn').onclick = ()=> writeEntry(vaId, d, { signIn: new Date().toISOString() });
   clock.querySelector('#signOutBtn').onclick = ()=> writeEntry(vaId, d, { signOut: new Date().toISOString() });
 
@@ -281,7 +545,7 @@ function renderVaPage(app, vaId){
     <p class="muted" style="margin-bottom:14px;">Add one row per account you worked on today.</p>
     <div class="form-row">
       <div><label>Platform</label><select id="fPlatform" ${locked?'disabled':''}>${PLATFORMS.map(p=>`<option>${p}</option>`).join('')}</select></div>
-      <div><label>Account</label><select id="fAccount" ${locked?'disabled':''}>${ACCOUNTS.map(a=>`<option>${a}</option>`).join('')}</select></div>
+      <div><label>Account</label><select id="fAccount" ${locked?'disabled':''}>${accountsFor(PLATFORMS[0]).map(a=>`<option>${a}</option>`).join('')}</select></div>
       <div><label>Appointments</label><input type="number" min="0" id="fAppts" value="0" ${locked?'disabled':''}></div>
       <div><label>DMs answered</label><input type="number" min="0" id="fDms" value="0" ${locked?'disabled':''}></div>
       <div><button class="btn" id="addRow" ${locked?'disabled':''}>+ Add</button></div>
@@ -305,6 +569,10 @@ function renderVaPage(app, vaId){
     </footer>`;
   app.appendChild(form);
 
+  form.querySelector('#fPlatform').onchange = ev=>{
+    const fAccount = form.querySelector('#fAccount');
+    fAccount.innerHTML = accountsFor(ev.target.value).map(a=>`<option>${a}</option>`).join('');
+  };
   form.querySelector('#addRow').onclick = ()=>{
     const platform = form.querySelector('#fPlatform').value;
     const account = form.querySelector('#fAccount').value;
