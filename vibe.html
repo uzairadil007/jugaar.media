@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0a0a">
 <title>vibe.</title>
 <link rel="icon" type="image/png" sizes="16x16" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAyUlEQVR4nM2TsQqDMBRFj6GTWZ1cOguK2N3ZWfDD/BH3fIDgVv0Bh+IfCGa0XWpJKxabduhdkhDOfe/yEoe7XNe98oG01g6AsIFNxrGBTYlv4N8bFEXBNE34vg+AUoqmaRBiu87BPHRdB0AURYRhSJqmZFnGPM/7DPq+ZxxH4jgmz3OqqqKu67cRVlNQShEEAVJKkiRhGIbH3Xk6cpKXJ4NVuLZt8TyPsixXsLludrAlEzS72D3GBXqN8AcvcflVNtJaO2LZ2MAAN9agS0lCqby8AAAAAElFTkSuQmCC">
 <link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAABjElEQVR4nO2XMYrCQBSGv4TFwm1yA8HWIpJG0EuIWHgCvUAKS8HGTvAUgrU2ltZZGxHEam2tAmYsBHeLJUPMhkncmLiFf/Xy3pD/y5tJJqMRoWKx+BWVTyshhBbO3SSyMlaB6Hmbh730vM3DEHrcwKylPePpg3p6B14A/xdgNpvheR6e59HpdH7Vl8ulrI/H48cDOI4jY9M0b2rNZpN6vQ7A8XhkMBhkC1CtVmVcKBQYDofyut/v47putgDBDvR6PcrlMgCr1YrpdPpnc4j5EG23W0qlEgCVSgXXddlsNhiGweVyoVarsdvtUgG8qYqO40gA0zRpNBoYhgHAZDJJbQ4xr2FwGlqtFt1uF4DD4cBoNEptDgk64KvdbsvYtm2EEMobf3g/nbPeP5XjlB1Yr9dcr9eb3GKxYD6fJzIPx3cDnE4n9vu9vD6fz9i2ndg8CYRyCgAsy4obkkoP3wui5ly1DjLZjIKGcYvw9Uf0AtCjjkt5SQihPb8DPknexr6nHk7kaQ6h07GvPI/n35NFnP7YSuh5AAAAAElFTkSuQmCC">
@@ -18,8 +19,7 @@
 *{box-sizing:border-box;}
 html,body{height:100%;}
 body{margin:0;background:var(--paper);color:var(--ink);font-family:Helvetica,Arial,sans-serif;
-  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
-  display:flex;flex-direction:column;min-height:100vh;}
+  display:flex;flex-direction:column;min-height:100vh;min-height:100dvh;}
 header{position:sticky;top:0;z-index:10;background:var(--ink);color:#fff;padding:14px 20px;padding-top:calc(14px + env(safe-area-inset-top,0px));
   display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;flex-shrink:0;}
 .brand{display:flex;align-items:center;font-size:19px;}
@@ -123,6 +123,360 @@ input.gate-input::placeholder{color:#555;letter-spacing:.05em;font-family:Helvet
   .clock{flex-direction:column;align-items:flex-start;}
   .clock > div:last-child{text-align:left;}
 }
+
+/* ---- status cards (VA / supervisor) ---- */
+body{background:#f6f4ea;}
+.vc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px;margin-bottom:18px;}
+.vcard{background:#fffefb;border:1.5px solid #e6e4d4;border-radius:26px;padding:26px 28px 22px;margin-bottom:18px;}
+.vc-grid .vcard{margin-bottom:0;}
+.vc-top{display:flex;justify-content:space-between;align-items:center;gap:12px;}
+.vc-title{font-weight:800;letter-spacing:.09em;font-size:15px;text-transform:uppercase;}
+input.vc-date{width:auto;font-family:'SFMono-Regular',Consolas,'Courier New',monospace;font-size:15px;padding:10px 14px;border:1.5px solid #e6e4d4;border-radius:12px;background:#fffefb;}
+.vc-big{display:flex;align-items:baseline;gap:8px;margin-top:22px;line-height:1;}
+.vc-big b{font-size:78px;font-weight:800;}
+.vc-big span{font-size:32px;font-weight:700;color:#7a7a72;}
+.vc-label{margin-top:12px;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:#6b6b63;}
+.vc-bar{height:14px;border-radius:8px;background:#e4e1d4;margin-top:20px;overflow:hidden;}
+.vc-bar i{display:block;height:100%;background:#f0553a;border-radius:8px;transition:width .3s;}
+.vc-meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px 22px;margin-top:20px;font-size:16px;color:#6b6b63;}
+.vc-dot{width:16px;height:16px;border-radius:50%;background:#bdbdb5;display:inline-block;margin-right:10px;vertical-align:-2px;}
+.vc-dot.on{background:#2fbf5b;box-shadow:0 0 0 4px rgba(47,191,91,.2);}
+.vc-mono{font-family:'SFMono-Regular',Consolas,'Courier New',monospace;font-weight:800;color:#0a0a0a;}
+.vc-flag{color:#f0553a;font-weight:700;}
+.vc-foot{border-top:1.5px solid #e6e4d4;margin-top:18px;padding-top:16px;font-size:16px;color:#55554e;}
+.vc-foot b{color:#0a0a0a;}
+.vc-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;}
+@media (max-width:640px){.vcard{padding:20px 18px 18px;border-radius:22px;}.vc-big b{font-size:64px;}.vc-meta{font-size:15px;gap:8px 16px;}input.vc-date{font-size:16px;}}
+@media (max-width:480px){.vc-grid{grid-template-columns:1fr;}.vc-actions .btn{flex:1;}}
+
+/* ---- compact variant (dashboard) ---- */
+.vc-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:14px;}
+.vcard.compact{padding:16px 18px 14px;border-radius:20px;}
+.compact .vc-top{gap:8px;flex-wrap:wrap;}
+.compact .vc-title{font-size:12.5px;}
+.compact input.vc-date{font-size:12px;padding:6px 8px;border-radius:10px;max-width:100%;}
+.compact .vc-big{margin-top:10px;gap:6px;}
+.compact .vc-big b{font-size:clamp(36px,5vw,46px);}
+.compact .vc-big span{font-size:clamp(16px,2.4vw,20px);}
+.compact .vc-label{font-size:10.5px;margin-top:8px;line-height:1.3;}
+.compact .vc-bar{height:9px;margin-top:12px;}
+.compact .vc-meta{font-size:13px;margin-top:12px;gap:4px 14px;}
+.compact .vc-dot{width:11px;height:11px;margin-right:7px;vertical-align:-1px;}
+.compact .vc-dot.on{box-shadow:0 0 0 3px rgba(47,191,91,.2);}
+.compact .vc-foot{font-size:13px;margin-top:12px;padding-top:11px;}
+@media (max-width:640px){
+  .vcard.compact{padding:14px 15px 12px;border-radius:18px;}
+  .compact input.vc-date{font-size:16px;padding:5px 8px;}
+  .compact .vc-meta{font-size:12.5px;}
+}
+@media (min-width:641px) and (max-width:860px){.vc-grid{grid-template-columns:repeat(2,1fr);}}
+
+/* ---- passcode gate (modern) ---- */
+.g2-wrap{display:flex;justify-content:center;padding:clamp(8px,4vh,40px) 0 20px;}
+.g2-card{position:relative;width:100%;max-width:400px;background:#fffefb;border:1.5px solid #e6e4d4;border-radius:28px;
+  padding:38px 30px 30px;text-align:center;overflow:hidden;box-shadow:0 1px 0 #fff inset,0 24px 60px -28px rgba(10,10,10,.28);
+  animation:g2In .7s cubic-bezier(.2,.8,.2,1) both;transition:transform .5s cubic-bezier(.4,0,.2,1),opacity .5s;}
+.g2-card::before{content:"";position:absolute;inset:-40% -20% auto -20%;height:70%;pointer-events:none;
+  background:radial-gradient(closest-side,rgba(216,255,41,.38),rgba(216,255,41,0));animation:g2Glow 6s ease-in-out infinite alternate;}
+.g2-card>*{position:relative;}
+.g2-card>.g2-i{animation:g2Up .6s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i,0)*70ms + 150ms);}
+.g2-icon{width:78px;height:78px;margin:0 auto 18px;border-radius:24px;background:var(--ink);display:grid;place-items:center;
+  animation:g2Float 4s ease-in-out infinite;box-shadow:0 12px 28px -10px rgba(10,10,10,.5);}
+.g2-icon::after{content:"";position:absolute;inset:0;border-radius:24px;border:2px solid var(--lime);opacity:0;animation:g2Ring 2.6s ease-out infinite;}
+.g2-icon svg{width:36px;height:36px;overflow:visible;}
+.g2-icon .shackle{transform-origin:16px 11px;transition:transform .45s cubic-bezier(.34,1.56,.64,1);}
+.g2-card h2{font-size:23px;letter-spacing:-.01em;margin:0 0 10px;}
+.g2-chip{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;color:#55554e;background:#f2f0e4;border-radius:999px;padding:6px 12px;}
+.g2-chip i{width:7px;height:7px;border-radius:50%;background:#f0553a;animation:g2Blink 1.6s ease-in-out infinite;}
+.g2-sub{font-size:14px;color:var(--sub);margin:16px 0 18px;}
+.g2-field{position:relative;}
+.g2-field input{width:100%;height:56px;padding:0 50px 0 18px;border:2px solid transparent;border-radius:16px;background:#f3f1e6;color:var(--ink);
+  font-family:'SFMono-Regular',Consolas,'Courier New',monospace;font-size:18px;letter-spacing:.14em;text-align:center;
+  transition:background .2s,border-color .2s,box-shadow .25s;}
+.g2-field input::placeholder{letter-spacing:.02em;font-family:Helvetica,Arial,sans-serif;font-size:14px;color:#9a9a90;}
+.g2-field input:hover{background:#eeebdd;}
+.g2-field input:focus{outline:none;background:#fff;border-color:var(--ink);box-shadow:0 0 0 5px rgba(216,255,41,.55);}
+.g2-field input.bad{border-color:#f0553a;background:#fff4f1;box-shadow:0 0 0 5px rgba(240,85,58,.14);}
+.g2-eye{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:40px;height:40px;border:0;background:none;border-radius:12px;cursor:pointer;color:#7a7a72;display:grid;place-items:center;transition:background .2s,color .2s;}
+.g2-eye:hover{background:rgba(10,10,10,.06);color:var(--ink);}
+.g2-eye svg{width:20px;height:20px;}
+.g2-err{min-height:20px;margin:10px 0 0;font-size:13px;font-weight:600;color:#e2452a;opacity:0;transform:translateY(-4px);transition:opacity .25s,transform .25s;}
+.g2-err.show{opacity:1;transform:none;}
+.g2-btn{position:relative;width:100%;height:54px;margin-top:6px;border:0;border-radius:16px;background:var(--ink);color:var(--lime);font-weight:800;font-size:15px;letter-spacing:.02em;
+  cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:10px;overflow:hidden;transition:transform .15s,box-shadow .25s,background .3s,color .3s;}
+.g2-btn::before{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(216,255,41,.28) 50%,transparent 70%);transform:translateX(-120%);}
+.g2-btn:hover{box-shadow:0 12px 26px -12px rgba(10,10,10,.6);transform:translateY(-1px);}
+.g2-btn:hover::before{transition:transform .8s;transform:translateX(120%);}
+.g2-btn:active{transform:translateY(1px) scale(.99);}
+.g2-btn svg{width:18px;height:18px;transition:transform .25s;}
+.g2-btn:hover svg{transform:translateX(4px);}
+.g2-card.shake{animation:g2Shake .45s;}
+.g2-card.ok{transform:scale(.97) translateY(-6px);opacity:0;transition-delay:.35s;}
+.g2-card.ok .shackle{transform:translateY(-4px) rotate(24deg);}
+.g2-card.ok .g2-icon{background:var(--lime);animation:none;transform:scale(1.06);transition:background .3s,transform .4s cubic-bezier(.34,1.56,.64,1);}
+.g2-card.ok .g2-icon svg *{stroke:var(--ink);}
+.g2-card.ok .g2-btn{background:var(--lime);color:var(--ink);}
+@keyframes g2In{from{opacity:0;transform:translateY(24px) scale(.97);}to{opacity:1;transform:none;}}
+@keyframes g2Up{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:none;}}
+@keyframes g2Float{0%,100%{transform:translateY(0);}50%{transform:translateY(-5px);}}
+@keyframes g2Ring{0%{opacity:.7;transform:scale(1);}100%{opacity:0;transform:scale(1.55);}}
+@keyframes g2Glow{from{transform:translateX(-6%);}to{transform:translateX(8%) translateY(6%);}}
+@keyframes g2Blink{0%,100%{opacity:1;}50%{opacity:.35;}}
+@keyframes g2Shake{10%,90%{transform:translateX(-2px);}20%,80%{transform:translateX(4px);}30%,50%,70%{transform:translateX(-7px);}40%,60%{transform:translateX(7px);}}
+@media (max-width:480px){.g2-card{padding:30px 20px 24px;border-radius:24px;}.g2-field input{font-size:16px;}}
+@media (prefers-reduced-motion:reduce){.g2-card,.g2-card *,.g2-card::before{animation:none!important;transition:none!important;}}
+
+/* ---- size trim: everything a step smaller ---- */
+main{max-width:860px;padding:16px 16px 32px;}
+header{padding:10px 16px;padding-top:calc(10px + env(safe-area-inset-top,0px));}
+.brand{font-size:17px;}
+nav button{padding:6px 12px;font-size:12px;}
+button.btn{padding:9px 16px;font-size:12.5px;border-radius:9px;}
+.card{padding:16px;border-radius:14px;margin-bottom:14px;}
+h2{font-size:16px;} h3{font-size:12px;margin-bottom:10px;}
+.stat{padding:11px;} .stat b{font-size:20px;} .stat span{font-size:10.5px;}
+table{font-size:12.5px;} th,td{padding:7px 6px;}
+/* full status card */
+.vcard{padding:18px 20px 16px;border-radius:20px;margin-bottom:14px;}
+.vc-title{font-size:12.5px;}
+input.vc-date{font-size:12.5px;padding:7px 10px;border-radius:10px;}
+.vc-big{margin-top:14px;} .vc-big b{font-size:52px;} .vc-big span{font-size:22px;}
+.vc-label{font-size:11px;margin-top:8px;}
+.vc-bar{height:10px;margin-top:14px;}
+.vc-meta{font-size:13.5px;margin-top:14px;gap:6px 16px;}
+.vc-dot{width:12px;height:12px;margin-right:7px;}
+.vc-foot{font-size:13.5px;margin-top:14px;padding-top:12px;}
+.vc-actions{margin-top:12px;}
+/* dashboard cards even tighter */
+.vc-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:12px;}
+.vcard.compact{padding:13px 15px 12px;border-radius:16px;}
+.compact .vc-big b{font-size:clamp(30px,4vw,36px);} .compact .vc-big span{font-size:15px;}
+.compact .vc-label{font-size:9.5px;} .compact .vc-bar{height:7px;margin-top:10px;}
+.compact .vc-meta{font-size:12px;margin-top:10px;} .compact .vc-foot{font-size:12px;margin-top:10px;padding-top:9px;}
+.compact .vc-title{font-size:11.5px;} .compact input.vc-date{font-size:11.5px;padding:4px 7px;}
+/* passcode gate */
+.g2-wrap{padding:clamp(4px,3vh,24px) 0 12px;}
+.g2-card{max-width:320px;padding:26px 22px 22px;border-radius:22px;}
+.g2-icon{width:56px;height:56px;border-radius:18px;margin-bottom:12px;}
+.g2-icon::after{border-radius:18px;} .g2-icon svg{width:26px;height:26px;}
+.g2-card h2{font-size:18px;margin-bottom:8px;}
+.g2-chip{font-size:11px;padding:4px 10px;}
+.g2-sub{font-size:12.5px;margin:12px 0 12px;}
+.g2-field input{height:44px;font-size:15px;border-radius:13px;padding:0 42px 0 14px;}
+.g2-field input::placeholder{font-size:12.5px;}
+.g2-eye{width:32px;height:32px;right:6px;} .g2-eye svg{width:17px;height:17px;}
+.g2-err{font-size:12px;min-height:16px;margin-top:7px;}
+.g2-btn{height:44px;font-size:13.5px;border-radius:13px;} .g2-btn svg{width:16px;height:16px;}
+@media (max-width:640px){
+  main{padding:12px 12px 28px;} .card{padding:13px;}
+  .vc-big b{font-size:44px;} .vc-meta{font-size:12.5px;}
+  .g2-field input{font-size:16px;}
+}
+
+/* ---- admin button + modals ---- */
+.adm-btn{display:inline-flex;align-items:center;gap:8px;background:transparent;border:1.5px solid #333;color:#eee;border-radius:10px;padding:7px 12px;font-weight:700;font-size:12px;cursor:pointer;transition:border-color .2s,color .2s,transform .15s;}
+.adm-btn:hover{border-color:var(--lime);color:var(--lime);}
+.adm-btn:active{transform:scale(.97);}
+.adm-btn svg{width:15px;height:15px;}
+.adm-on{display:inline-flex;align-items:center;gap:9px;background:var(--lime);color:var(--ink);border-radius:10px;padding:5px 5px 5px 12px;font-weight:800;font-size:12px;animation:g2Up .4s both;}
+.adm-on button{border:0;background:rgba(10,10,10,.13);color:var(--ink);border-radius:7px;width:26px;height:26px;cursor:pointer;font-size:15px;line-height:1;transition:background .2s;}
+.adm-on button:hover{background:rgba(10,10,10,.28);}
+.adm-dot{width:8px;height:8px;border-radius:50%;background:var(--ink);animation:g2Blink 1.6s ease-in-out infinite;}
+.ov{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:rgba(10,10,10,.45);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);opacity:0;transition:opacity .2s;padding:16px;}
+.ov.in{opacity:1;}
+.mdl{width:100%;max-width:340px;background:#fffefb;border-radius:22px;padding:24px 22px 20px;box-shadow:0 30px 80px -20px rgba(0,0,0,.5);transform:translateY(14px) scale(.97);transition:transform .3s cubic-bezier(.2,.8,.2,1);text-align:center;}
+.ov.in .mdl{transform:none;}
+.mdl h2{font-size:18px;margin:10px 0 4px;} .mdl .muted{font-size:12.5px;}
+.mdl-ico{width:48px;height:48px;border-radius:15px;background:var(--ink);color:var(--lime);display:grid;place-items:center;margin:0 auto;}
+.mdl-ico svg{width:22px;height:22px;}
+.pin-row{display:flex;gap:10px;justify-content:center;margin:18px 0 6px;}
+.pin-box{width:50px;height:58px;border-radius:14px;border:2px solid transparent;background:#f3f1e6;text-align:center;font-size:22px;font-weight:800;color:var(--ink);padding:0;transition:background .2s,border-color .2s,box-shadow .2s,transform .2s;}
+.pin-box:focus{outline:none;background:#fff;border-color:var(--ink);box-shadow:0 0 0 4px rgba(216,255,41,.55);transform:translateY(-2px);}
+.pin-box.filled{background:var(--ink);color:var(--lime);}
+.pin-row.shake{animation:g2Shake .45s;}
+.pin-row.bad .pin-box{border-color:#f0553a;}
+.pin-row.ok .pin-box{background:var(--lime);border-color:var(--lime);color:var(--ink);transform:translateY(-3px);}
+.pin-err{min-height:18px;font-size:12.5px;font-weight:600;color:#e2452a;margin:6px 0 0;}
+.te{text-align:left;margin-top:14px;}
+.te-row{display:grid;grid-template-columns:1fr auto auto;gap:6px;align-items:end;margin-bottom:12px;}
+.te label{margin-bottom:5px;}
+.te input[type=time],.te input[type=date]{width:100%;height:42px;padding:0 10px;border:1.5px solid var(--line);border-radius:10px;font-size:16px;background:#fff;font-family:'SFMono-Regular',Consolas,monospace;}
+.te input:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 3px rgba(216,255,41,.5);}
+.te-mini{height:42px;padding:0 10px;border:1.5px solid var(--line);background:#fff;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;transition:background .2s;}
+.te-mini:hover{background:#f3f1e6;}
+.te-sum{font-size:12.5px;color:var(--sub);text-align:center;margin:2px 0 0;min-height:18px;}
+.te-sum.bad{color:#e2452a;font-weight:600;}
+.mdl-actions{display:flex;gap:10px;margin-top:14px;} .mdl-actions .btn{flex:1;width:auto;}
+/* ---- unified dashboard ---- */
+.dash-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;}
+.dash-tools{display:flex;align-items:center;gap:6px;}
+.dash-tools button{height:34px;min-width:34px;padding:0 10px;border:1.5px solid #e6e4d4;background:#fffefb;border-radius:10px;font-weight:700;font-size:12.5px;cursor:pointer;transition:background .2s,transform .15s;}
+.dash-tools button:hover:not(:disabled){background:#f3f1e6;} .dash-tools button:active:not(:disabled){transform:scale(.96);} .dash-tools button:disabled{opacity:.4;cursor:default;}
+.dash-tools input[type=date]{height:34px;padding:0 8px;border:1.5px solid #e6e4d4;border-radius:10px;font-size:13px;background:#fffefb;font-family:'SFMono-Regular',Consolas,monospace;}
+.dash-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:10px;margin-top:14px;}
+.kpi{border:1.5px solid #e6e4d4;border-radius:14px;padding:10px 12px;background:#fffefb;animation:g2Up .5s both;animation-delay:calc(var(--i,0)*50ms);}
+.kpi b{display:block;font-size:24px;line-height:1.1;font-variant-numeric:tabular-nums;}
+.kpi span{font-size:10px;color:var(--sub);text-transform:uppercase;letter-spacing:.06em;font-weight:600;}
+.kpi.hero{background:var(--ink);border-color:var(--ink);} .kpi.hero b{color:var(--lime);} .kpi.hero span{color:#aaa;}
+.dash-sec{font-size:10.5px;font-weight:800;color:var(--sub);text-transform:uppercase;letter-spacing:.08em;margin:18px 0 8px;}
+.plat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:8px;}
+.plat{border:1.5px solid #e6e4d4;border-radius:12px;padding:9px 11px;background:#fffefb;}
+.plat div{display:flex;justify-content:space-between;align-items:baseline;gap:6px;}
+.plat b{font-size:18px;font-variant-numeric:tabular-nums;} .plat small{font-size:10.5px;color:var(--sub);font-weight:600;}
+.plat em{font-style:normal;font-size:10px;color:var(--sub);text-transform:uppercase;letter-spacing:.05em;font-weight:700;}
+.plat i{display:block;height:4px;border-radius:3px;background:#e9e6d9;margin-top:7px;overflow:hidden;} .plat i u{display:block;height:100%;background:#f0553a;border-radius:3px;transition:width .4s;}
+.dtable{min-width:760px;}
+.dtable td{vertical-align:middle;white-space:nowrap;}
+.dtable .who{background:none;border:0;padding:0;font:inherit;font-weight:800;cursor:pointer;color:var(--ink);text-align:left;}
+.dtable .who:hover{text-decoration:underline;}
+.dtable .role{display:block;font-size:10.5px;color:var(--sub);font-weight:600;}
+.sdot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#c9c9c0;margin-right:7px;}
+.sdot.on{background:#2fbf5b;box-shadow:0 0 0 3px rgba(47,191,91,.2);} .sdot.done{background:#0a0a0a;} .sdot.warn{background:#f0a23a;}
+.flag{font-size:10px;font-weight:800;color:#f0553a;text-transform:uppercase;margin-left:6px;}
+.edt{color:#f0553a;font-size:11px;cursor:help;}
+button.ed{background:#fffefb;border:1.5px solid #e6e4d4;border-radius:8px;padding:5px 9px;font-size:11.5px;font-weight:700;cursor:pointer;} button.ed:hover{background:var(--lime);border-color:var(--lime);}
+
+/* ---- v5: single command panel + admin remake ---- */
+.adm-btn{border-radius:999px;padding:7px 14px 7px 10px;background:#161616;border:1.5px solid #2c2c2c;}
+.adm-btn .adm-ic{width:22px;height:22px;border-radius:50%;background:#2a2a2a;display:grid;place-items:center;color:var(--lime);transition:background .2s,color .2s;}
+.adm-btn .adm-ic svg{width:12px;height:12px;}
+.adm-btn:hover .adm-ic{background:var(--lime);color:var(--ink);}
+.adm-on{border-radius:999px;padding:4px 4px 4px 12px;box-shadow:0 0 0 4px rgba(216,255,41,.18);}
+.adm-on button{border-radius:999px;width:auto;padding:0 10px;height:24px;font-size:11px;font-weight:800;}
+.adm-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--ink);color:#fff;border-radius:14px;padding:10px 12px;margin-top:14px;}
+.adm-bar b{color:var(--lime);font-size:11px;letter-spacing:.08em;text-transform:uppercase;}
+.adm-bar span{font-size:12px;color:#aaa;flex:1;min-width:140px;}
+.adm-bar .btn{padding:7px 12px;}
+.alerts{display:flex;flex-direction:column;gap:6px;margin-top:14px;}
+.alert{display:flex;align-items:center;gap:8px;font-size:12.5px;padding:8px 12px;border-radius:10px;background:#fff4f1;border:1px solid #f6cfc6;color:#8a2a16;}
+.alert.info{background:#f4f8de;border-color:#e2eba8;color:#4d5a10;}
+.alert button{margin-left:auto;}
+.trend{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;align-items:end;height:92px;}
+.tcol{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:3px;font-size:10px;color:var(--sub);cursor:pointer;}
+.tcol i{display:block;width:100%;max-width:34px;background:#e4e1d4;border-radius:5px 5px 2px 2px;min-height:3px;transition:height .4s;}
+.tcol.sel i{background:var(--ink);} .tcol:hover i{background:var(--lime);}
+.tcol.sel{color:var(--ink);font-weight:800;}
+.tcol em{font-style:normal;font-variant-numeric:tabular-nums;color:var(--ink);font-weight:700;}
+.chips{display:flex;flex-wrap:wrap;gap:6px;}
+.chip{font-size:11.5px;background:#f3f1e6;border-radius:999px;padding:5px 10px;color:#55554e;} .chip b{color:var(--ink);}
+.dtable tr.sub td{background:#faf9f1;white-space:normal;font-size:12px;color:#55554e;padding:10px 12px;}
+button.xp{background:none;border:0;cursor:pointer;font-size:12px;color:var(--sub);padding:4px 6px;transition:transform .2s;} button.xp.open{transform:rotate(90deg);}
+.shiftbar{height:5px;border-radius:3px;background:#e9e6d9;margin-top:5px;overflow:hidden;min-width:70px;} .shiftbar u{display:block;height:100%;background:#2fbf5b;}
+.te select{width:100%;height:42px;border:1.5px solid var(--line);border-radius:10px;font-size:16px;padding:0 8px;background:#fff;}
+.te-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.te-quick{display:flex;gap:6px;flex-wrap:wrap;margin:-2px 0 8px;} .te-quick .te-mini{height:30px;font-size:11px;}
+.mdl.wide{max-width:400px;}
+.kpi small{display:block;font-size:10px;color:#8a8a80;margin-top:2px;} .kpi.hero small{color:#888;}
+
+/* ---- v6: minimal dashboard ---- */
+.dboard .vc-grid{margin-bottom:14px;}
+.dboard .vcard.compact{border-width:1px;}
+.mn{border:1px solid #e6e4d4;border-radius:20px;background:#fffefb;padding:18px 20px 14px;}
+.mn-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;}
+.mn-head h2{margin:0;font-size:15px;} .mn-head .muted{font-size:11.5px;}
+.mn-nums{display:flex;flex-wrap:wrap;margin:16px 0 4px;}
+.mn-nums div{flex:1 1 90px;padding:2px 14px;border-left:1px solid #e6e4d4;}
+.mn-nums div:first-child{border-left:0;padding-left:0;}
+.mn-nums b{display:block;font-size:22px;line-height:1.1;font-variant-numeric:tabular-nums;}
+.mn-nums span{font-size:10px;color:var(--sub);text-transform:uppercase;letter-spacing:.06em;font-weight:600;}
+.mn-plat{display:flex;flex-wrap:wrap;gap:6px 18px;margin:10px 0 2px;font-size:12.5px;color:var(--sub);}
+.mn-plat b{color:var(--ink);font-variant-numeric:tabular-nums;} .mn-plat small{color:#9a9a90;}
+.mn-acct{font-size:11.5px;color:#9a9a90;margin:2px 0 0;}
+.mn-sep{height:1px;background:#eeecdf;margin:14px 0 4px;}
+.mn .dtable th{border-bottom:1px solid #eeecdf;} .mn .dtable td{border-bottom:1px solid #f4f2e8;}
+.adm-line{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--sub);margin-top:12px;}
+.adm-line b{color:var(--ink);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;background:var(--lime);padding:3px 8px;border-radius:999px;}
+.adm-line .ed{margin-left:auto;}
+
+/* ---- v7: decluttered ---- */
+.mn-bar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px;}
+.mn-bar h2{margin:0;font-size:18px;} .mn-bar .muted{font-size:11.5px;}
+.dash-tools .adm-go{background:var(--lime);border-color:var(--lime);}
+.mn{margin-top:14px;}
+.mn-nums{margin-top:0;}
+.vc-x{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:10px;}
+.vc-x .chip{font-size:11px;}
+.xp-link{margin-left:auto;background:none;border:0;font-size:11.5px;font-weight:700;color:var(--sub);cursor:pointer;padding:4px 0;} .xp-link:hover{color:var(--ink);}
+.vc-detail{flex-basis:100%;font-size:12px;color:#55554e;padding-top:8px;border-top:1px dashed #e6e4d4;margin-top:4px;}
+.vc-detail .chips{flex-direction:column;align-items:flex-start;gap:4px;} .vc-detail .chip{background:none;padding:0;font-size:12px;}
+.alert{padding:7px 12px;}
+
+/* ---- v8: mobile pass + dashboard card footer + unsubmit ---- */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
+button,select,input,label{touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
+.vc-x .tag{margin:0;font-size:11.5px;padding:5px 12px;}
+button.ed.danger{color:#b3261e;}
+button.ed.danger:hover{background:#fde8e6;border-color:#f3b8b2;color:#8a1a13;}
+button.btn.danger{background:#e2452a;color:#fff;}
+.acts{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+.acts .btn{width:auto;}
+@media (max-width:640px){
+  /* header: brand + admin on one row, tabs on a second row */
+  header{display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px 12px;padding:8px 12px;padding-top:calc(8px + env(safe-area-inset-top,0px));}
+  .brand{justify-content:flex-start;}
+  #adminBox{grid-column:2;grid-row:1;justify-content:flex-end;}
+  nav{grid-column:1/-1;grid-row:2;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(max-content,1fr);gap:3px;overflow-x:auto;scrollbar-width:none;}
+  nav::-webkit-scrollbar{display:none;}
+  nav button{padding:9px 10px;min-height:38px;font-size:12.5px;text-align:center;white-space:nowrap;}
+  main{padding:10px 12px 24px;}
+
+  /* dashboard toolbar */
+  .mn-bar > div:first-child{width:100%;}
+  .dash-tools{width:100%;display:grid;grid-template-columns:44px minmax(0,1fr) 44px auto;gap:6px;}
+  .dash-tools button,.dash-tools input[type=date]{height:42px;}
+  .dash-tools input[type=date]{width:100%;min-width:0;font-size:16px;}
+  .dash-tools .adm-go{grid-column:1/-1;}
+
+  /* dashboard cards */
+  .vc-grid{grid-template-columns:1fr;gap:10px;}
+  .compact .vc-meta{font-size:13px;gap:4px 12px;}
+  .compact .vc-foot{font-size:12.5px;}
+  .vc-x{gap:8px;margin-top:12px;}
+  .vc-x .tag{font-size:12px;padding:6px 13px;}
+  button.ed{min-height:36px;padding:6px 12px;font-size:12.5px;}
+  .xp-link{min-height:36px;padding:6px 0 6px 10px;font-size:12.5px;}
+  .vc-detail{font-size:12.5px;}
+
+  /* summary panel */
+  .mn{padding:14px 14px 10px;border-radius:18px;}
+  .mn-nums{display:grid;grid-template-columns:1fr 1fr;gap:14px 0;}
+  .mn-nums div{padding:0 12px;border-left:0;}
+  .mn-nums div:nth-child(odd){padding-left:0;}
+  .mn-nums div:nth-child(even){border-left:1px solid #e6e4d4;}
+  .mn-nums b{font-size:24px;}
+  .mn-plat{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;}
+  .alert{flex-wrap:wrap;}
+
+  /* forms */
+  select,input[type=number],input[type=text]{min-height:44px;}
+  .form-row{grid-template-columns:1fr 1fr;}
+  .form-row > div:nth-child(1),.form-row > div:nth-child(2),.form-row > div:nth-child(5){grid-column:1/-1;}
+  button.btn{min-height:44px;}
+  .grid3 .stat:last-child:nth-child(odd){grid-column:1/-1;}
+
+  /* tables become stacked rows */
+  .card.overflow{overflow:visible;}
+  .rtable,.rtable tbody{display:block;}
+  .rtable thead{display:none;}
+  .rtable tr{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;padding:12px 2px;border-bottom:1px solid var(--line);}
+  .rtable.c3 tr{grid-template-columns:repeat(3,minmax(0,1fr));}
+  .rtable tr:last-child{border-bottom:0;}
+  .rtable td{display:block;border:0;padding:0;text-align:left;min-width:0;font-size:13.5px;}
+  .rtable td[data-label]::before{content:attr(data-label);display:block;font-size:10px;font-weight:600;color:var(--sub);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px;}
+  .rtable td:not([data-label]),.rtable td.full{grid-column:1/-1;}
+  .rtable td:empty{display:none;}
+  .rtable .tag{margin-left:0;}
+  .rtable .rm{padding:8px 0;font-size:13px;}
+
+  /* modals: sit near the top so the keyboard never covers them */
+  .ov{place-items:start center;padding:max(16px,7dvh) 12px 12px;overflow-y:auto;}
+  .mdl{max-height:calc(100dvh - 24px);overflow-y:auto;}
+}
+@media (max-width:380px){
+  .vcard.compact{padding:12px 12px 10px;}
+  .pin-box{width:46px;height:54px;}
+}
+.brand{cursor:pointer;-webkit-user-select:none;user-select:none;padding:4px 0;}
 </style>
 </head>
 <body>
@@ -150,7 +504,7 @@ const ACCOUNTS_BY_PLATFORM = {
   'YouTube':   ['Account 1','Account 2','Account 3'],
 };
 const accountsFor = platform => ACCOUNTS_BY_PLATFORM[platform] || ['Account 1'];
-const ADMIN_PIN = '2029';
+const ADMIN_PIN = '1997';
 const PASSCODES = { rimsha:'@rimsha3#', amna:'@amna9(', noor:'@noor4$' };
 
 let db = null, dbAvailable = false;
@@ -210,35 +564,6 @@ async function writeEntry(va, date, patch){
   }
 }
 
-// admin-only: wipe one day's attendance/logs for a VA back to blank (they can sign in fresh)
-async function resetEntry(va, date){
-  if(!adminMode) return;
-  const key = entryKey(va,date);
-  const blank = { vaId:va, date, signIn:null, signOut:null, logs:[], submitted:false, verifiedByNoor:false, verifiedAt:null };
-  entries[key] = blank;
-  if(dbAvailable && db){
-    try{ await db.collection('entries').doc(key).set(blank); }
-    catch(err){ render(); }
-  } else {
-    localSave();
-  }
-  render();
-}
-
-// admin-only: permanently remove a day's entry/log from the database entirely
-async function deleteEntry(va, date){
-  if(!adminMode) return;
-  const key = entryKey(va,date);
-  delete entries[key];
-  if(dbAvailable && db){
-    try{ await db.collection('entries').doc(key).delete(); }
-    catch(err){ render(); }
-  } else {
-    localSave();
-  }
-  render();
-}
-
 const firebaseConfig = {
   apiKey: "AIzaSyAZn-MWlArpHYcb7Z88u-wzKdrBxtIsYiE",
   authDomain: "tracker-9a8cb.firebaseapp.com",
@@ -248,7 +573,7 @@ const firebaseConfig = {
   appId: "1:765187139896:web:61ddd4fad7ee85364239cd"
 };
 
-(async function init(){
+async function init(){
   try{
     firebase.initializeApp(firebaseConfig);
     db = firebase.firestore();
@@ -265,14 +590,249 @@ const firebaseConfig = {
   }
   try{ adminMode = sessionStorage.getItem('kpi_admin') === '1'; }catch(e){}
   render();
+  tickLiveElements();
   setInterval(tickLiveElements, 1000);
-})();
+}
+
+
+// ---------- status card (Zahra-style) ----------
+const MONTH_NAMES=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const viewDates={};
+const getViewDate=id=>viewDates[id]||todayKey();
+const pad2=n=>String(n).padStart(2,'0');
+const fmtHMS=ms=>{const s=Math.floor(ms/1000);return `${pad2(Math.floor(s/3600))}:${pad2(Math.floor(s%3600/60))}:${pad2(s%60)}`;};
+const fmt24=iso=>{ if(!iso) return '—'; const d=new Date(iso); const h=d.getHours(); return (h%12||12)+':'+pad2(d.getMinutes())+' '+(h<12?'AM':'PM'); };
+
+function monthStats(va, dk){
+  const [y,m]=dk.split('-').map(Number);
+  const last=new Date(y,m,0).getDate(), today=todayKey();
+  let booked=0, verified=0, missed=0;
+  for(let day=1; day<=last; day++){
+    const k=`${y}-${pad2(m)}-${pad2(day)}`;
+    const e=getEntry(va.id,k);
+    if(va.role==='va') booked+=totals(e).appts;
+    else VAS.filter(v=>v.role==='va').forEach(v=>{ if(getEntry(v.id,k).verifiedByNoor) verified++; });
+    if(k<today && !e.signIn) missed++;   // past day with no sign-in
+  }
+  return {booked, verified, missed, month:MONTH_NAMES[m-1]};
+}
+
+function mountStatusCard(parent, va, opts={}){
+  const dk=opts.dk||getViewDate(va.id), today=todayKey(), isToday=dk===today;
+  const e=getEntry(va.id,dk), sup=va.role==='supervisor';
+  let big,small,label;
+  if(sup){
+    const st=VAS.filter(v=>v.role==='va').map(v=>getEntry(v.id,dk));
+    big=st.filter(x=>x.verifiedByNoor).length; small=st.filter(x=>x.submitted).length; label='Entries verified';
+  } else { const t=totals(e); big=t.appts; small=t.dms; label='Appointments booked'; }
+  const pct=small>0?Math.min(100,big/small*100):0;
+  const working=isToday && e.signIn && !e.signOut;
+  const statusTxt=working?'Working':(e.signIn&&e.signOut?'Signed out':(e.signIn?'No sign-out':'Offline'));
+  const ms=e.signIn?Math.max(0,(e.signOut?new Date(e.signOut):new Date())-new Date(e.signIn)):0;
+  const mins=d=>d.getHours()*60+d.getMinutes();
+  const lateIn=va.shiftStart!=null && e.signIn && mins(new Date(e.signIn))>va.shiftStart*60+5;
+  const earlyOut=va.shiftEnd!=null && e.signOut && mins(new Date(e.signOut))<va.shiftEnd*60;
+  const mo=monthStats(va,dk);
+  const [yy,mm,dd]=dk.split('-').map(Number);
+  const title=`${va.name} · ${isToday?'Today':dd+' '+MONTH_NAMES[mm-1].slice(0,3)}`;
+  const te=getEntry(va.id,today);
+  const el=document.createElement('div');
+  el.className='vcard'+(opts.compact?' compact':'');
+  el.innerHTML=`
+    <div class="vc-top">
+      <div class="vc-title">${title}</div>
+      ${opts.dk?(adminMode?`<button class="ed" data-edit-time="${va.id}|${dk}">✎ Times</button>`:''):`<input type="date" class="vc-date" value="${dk}" max="${today}">`}
+    </div>
+    <div class="vc-big"><b>${big}</b></div>
+    <div class="vc-label">${label}</div>
+    <div class="vc-meta">
+      <span><i class="vc-dot ${working?'on':''}"></i>${statusTxt}</span>
+      <span>Time worked <span class="vc-mono live-hms" data-signin="${e.signIn||''}" data-live="${working?1:0}">${fmtHMS(ms)}</span></span>
+      <span>Started ${fmt24(e.signIn)}${e.signOut?` · Ended ${fmt24(e.signOut)}`:''}</span>
+      ${lateIn?'<span class="vc-flag">Late sign-in</span>':''}${earlyOut?'<span class="vc-flag">Early sign-out</span>':''}
+    </div>
+    <div class="vc-foot">${sup
+      ? `<b>${mo.verified}</b> verified · <b>${mo.missed}</b> missed in ${mo.month}`
+      : `<b>${mo.booked}</b> booked · <b>${mo.missed}</b> missed in ${mo.month}`}</div>
+    ${opts.actions?`<div class="vc-actions">
+      <button class="btn lime" data-a="in" ${te.signIn?'disabled':''}>Sign In</button>
+      <button class="btn" data-a="out" ${(!te.signIn||te.signOut)?'disabled':''}>Sign Out</button>
+      ${adminMode?`<button class="btn ghost" data-edit-time="${va.id}|${dk}">✎ Edit times</button>`:''}
+      <button class="btn ghost" data-a="lock" style="margin-left:auto;">Lock this tab</button>
+    </div>`:''}`;
+  parent.appendChild(el);
+  const dEl=el.querySelector('.vc-date'); if(dEl) dEl.onchange=ev=>{ viewDates[va.id]=ev.target.value||todayKey(); render(); };
+  if(opts.actions){
+    el.querySelector('[data-a=in]').onclick=()=>writeEntry(va.id,today,{signIn:new Date().toISOString()});
+    el.querySelector('[data-a=out]').onclick=()=>writeEntry(va.id,today,{signOut:new Date().toISOString()});
+    el.querySelector('[data-a=lock]').onclick=()=>{ lockVa(va.id); render(); };
+  }
+  return el;
+}
+
+
+// ---------- overlay / modals ----------
+function openOverlay(inner){
+  const ov=document.createElement('div'); ov.className='ov';
+  ov.innerHTML=`<div class="mdl" role="dialog" aria-modal="true">${inner}</div>`;
+  document.body.appendChild(ov);
+  requestAnimationFrame(()=>ov.classList.add('in'));
+  const onKey=e=>{ if(e.key==='Escape') close(); };
+  const close=()=>{ ov.classList.remove('in'); setTimeout(()=>ov.remove(),220); document.removeEventListener('keydown',onKey); };
+  document.addEventListener('keydown',onKey);
+  ov.addEventListener('mousedown',e=>{ if(e.target===ov) close(); });
+  return {ov, close, box:ov.firstElementChild};
+}
+const SHIELD='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.2 8.2-8 9-4.8-.8-8-4.5-8-9V6l8-3z"/><path d="M9 12l2 2 4-4"/></svg>';
+
+function openPinModal(){
+  const n=ADMIN_PIN.length;
+  const {ov,close,box}=openOverlay(`
+    <div class="mdl-ico">${SHIELD}</div>
+    <h2>Admin access</h2><p class="muted">Enter your ${n}-digit PIN</p>
+    <div class="pin-row" id="pinRow">${Array.from({length:n},()=>'<input class="pin-box" type="password" inputmode="numeric" autocomplete="off" maxlength="1">').join('')}</div>
+    <p class="pin-err" id="pinErr"></p>`);
+  const row=box.querySelector('#pinRow'), err=box.querySelector('#pinErr');
+  const boxes=[...row.querySelectorAll('input')];
+  const check=()=>{
+    const v=boxes.map(b=>b.value).join('');
+    if(v.length<n) return;
+    if(v===ADMIN_PIN){
+      row.classList.add('ok'); boxes.forEach(b=>b.disabled=true);
+      setTimeout(()=>{ adminMode=true; try{sessionStorage.setItem('kpi_admin','1')}catch(e){} close(); render(); },450);
+    } else {
+      err.textContent='Wrong PIN — try again.'; row.classList.add('bad');
+      row.classList.remove('shake'); void row.offsetWidth; row.classList.add('shake');
+      setTimeout(()=>{ boxes.forEach(b=>{b.value='';b.classList.remove('filled');}); row.classList.remove('bad'); boxes[0].focus(); },420);
+    }
+  };
+  boxes.forEach((b,i)=>{
+    b.addEventListener('input',()=>{
+      b.value=b.value.replace(/\D/g,'').slice(-1);
+      b.classList.toggle('filled',!!b.value); err.textContent='';
+      if(b.value && boxes[i+1]) boxes[i+1].focus();
+      check();
+    });
+    b.addEventListener('keydown',ev=>{
+      if(ev.key==='Backspace' && !b.value && boxes[i-1]){ boxes[i-1].value=''; boxes[i-1].classList.remove('filled'); boxes[i-1].focus(); }
+      if(ev.key==='ArrowLeft' && boxes[i-1]) boxes[i-1].focus();
+      if(ev.key==='ArrowRight' && boxes[i+1]) boxes[i+1].focus();
+    });
+    b.addEventListener('paste',ev=>{
+      const d=(ev.clipboardData.getData('text')||'').replace(/\D/g,'').slice(0,n);
+      if(!d) return; ev.preventDefault();
+      d.split('').forEach((c,k)=>{ boxes[k].value=c; boxes[k].classList.add('filled'); });
+      boxes[Math.min(d.length,n-1)].focus(); check();
+    });
+  });
+  setTimeout(()=>boxes[0].focus(),120);
+}
+
+function openTimeEditor(vaId, dk){
+  if(!adminMode) return;
+  vaId=vaId||VAS[0].id; dk=dk||todayKey();
+  const toT=iso=>{ if(!iso) return ''; const d=new Date(iso); return pad2(d.getHours())+':'+pad2(d.getMinutes()); };
+  const {close,box}=openOverlay(`
+    <div class="mdl-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+    <h2>Edit times</h2><p class="muted" id="teShift"></p>
+    <div class="te">
+      <div class="te-grid">
+        <div><label>Person</label><select id="teWho">${VAS.map(v=>`<option value="${v.id}" ${v.id===vaId?'selected':''}>${v.name}${v.role==='supervisor'?' (supervisor)':''}</option>`).join('')}</select></div>
+        <div><label>Date</label><input type="date" id="teDay" value="${dk}" max="${todayKey()}"></div>
+      </div>
+      <div class="te-quick"><button class="te-mini" id="teShiftFill">Fill with shift hours</button><button class="te-mini" id="teClrAll">Clear day</button></div>
+      <div class="te-row"><div><label>Sign in</label><input type="time" id="teIn"></div><button class="te-mini" data-now="teIn">Now</button><button class="te-mini" data-clr="teIn">Clear</button></div>
+      <div class="te-row"><div><label>Sign out</label><input type="time" id="teOut"></div><button class="te-mini" data-now="teOut">Now</button><button class="te-mini" data-clr="teOut">Clear</button></div>
+      <p class="te-sum" id="teSum"></p>
+    </div>
+    <div class="mdl-actions"><button class="btn ghost" id="teCancel">Cancel</button><button class="btn lime" id="teSave">Save</button></div>`);
+  box.classList.add('wide');
+  const $=id=>box.querySelector('#'+id);
+  const who=$('teWho'), day=$('teDay'), inI=$('teIn'), outI=$('teOut'), sum=$('teSum'), save=$('teSave');
+  const cur=()=>VAS.find(v=>v.id===who.value);
+  const load=()=>{
+    const e=getEntry(who.value,day.value||todayKey());
+    inI.value=toT(e.signIn); outI.value=toT(e.signOut);
+    const v=cur(); $('teShift').textContent=v.shiftStart!=null?'Shift '+v.shiftLabel:v.shiftLabel;
+    $('teShiftFill').style.display=v.shiftStart!=null?'':'none'; upd();
+  };
+  const at=t=>new Date(`${day.value}T${t}:00`);
+  const upd=()=>{
+    sum.classList.remove('bad'); save.disabled=!day.value;
+    if(inI.value&&outI.value){
+      const m=Math.round((at(outI.value)-at(inI.value))/60000);
+      if(m<=0){ sum.textContent='Sign-out must be after sign-in.'; sum.classList.add('bad'); save.disabled=true; }
+      else sum.textContent=`Total ${Math.floor(m/60)}h ${pad2(m%60)}m`;
+    } else if(outI.value&&!inI.value){ sum.textContent='Add a sign-in time too.'; sum.classList.add('bad'); save.disabled=true; }
+    else sum.textContent=inI.value?'Still on shift (no sign-out).':'No times recorded.';
+  };
+  [who,day].forEach(x=>x.addEventListener('change',load));
+  [inI,outI].forEach(x=>x.addEventListener('input',upd));
+  box.querySelectorAll('[data-now]').forEach(b=>b.onclick=()=>{ const d=new Date(); $(b.dataset.now).value=pad2(d.getHours())+':'+pad2(d.getMinutes()); upd(); });
+  box.querySelectorAll('[data-clr]').forEach(b=>b.onclick=()=>{ $(b.dataset.clr).value=''; upd(); });
+  $('teClrAll').onclick=()=>{ inI.value=''; outI.value=''; upd(); };
+  $('teShiftFill').onclick=()=>{ const v=cur(); inI.value=pad2(v.shiftStart)+':00'; outI.value=pad2(v.shiftEnd)+':00'; upd(); };
+  $('teCancel').onclick=close;
+  save.onclick=()=>{
+    const iso=t=>t?at(t).toISOString():null;
+    writeEntry(who.value,day.value,{signIn:iso(inI.value),signOut:iso(outI.value),editedByAdmin:true,editedAt:new Date().toISOString()});
+    dashDate=day.value>=todayKey()?null:day.value;
+    close();
+  };
+  load();
+}
+// ---------- admin: unsubmit any day ----------
+function openConfirm({title,msg,ok,danger},onOk){
+  const {close,box}=openOverlay(`
+    <div class="mdl-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg></div>
+    <h2>${title}</h2><p class="muted">${msg}</p>
+    <div class="mdl-actions"><button class="btn ghost" id="cfNo">Cancel</button><button class="btn ${danger?'danger':'lime'}" id="cfYes">${ok}</button></div>`);
+  box.querySelector('#cfNo').onclick=close;
+  box.querySelector('#cfYes').onclick=()=>{ close(); onOk(); };
+}
+function unsubmitDay(vaId, dk){
+  if(!adminMode) return;
+  const va=VAS.find(v=>v.id===vaId); if(!va) return;
+  const e=getEntry(vaId,dk); if(!e.submitted) return;
+  const [y,m,d]=dk.split('-').map(Number);
+  const label=`${d} ${MONTH_NAMES[m-1].slice(0,3)} ${y}`;
+  openConfirm({
+    title:'Unsubmit this day?',
+    msg:`${va.name}'s log for ${label} will go back to open${e.verifiedByNoor?' and its verification will be cleared':''}.`,
+    ok:'Unsubmit', danger:true
+  }, ()=>writeEntry(vaId,dk,{submitted:false,verifiedByNoor:false,verifiedAt:null,unsubmittedByAdmin:true,unsubmittedAt:new Date().toISOString()}));
+}
+document.addEventListener('click',ev=>{
+  const b=ev.target.closest('[data-edit-time]');
+  if(b){ const [id,dt]=b.dataset.editTime.split('|'); openTimeEditor(id,dt); return; }
+  const u=ev.target.closest('[data-unsub]');
+  if(u){ const [id,dt]=u.dataset.unsub.split('|'); unsubmitDay(id,dt); }
+});
+
+// ---------- sync everything to the present ----------
+const fmtNow = d => d.toLocaleString([], {weekday:'short', day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:true});
+function syncToPresent(){
+  dashDate = null;
+  Object.keys(viewDates).forEach(k=>delete viewDates[k]);
+  render();
+  tickLiveElements();
+}
+function clockBar(){
+  const el = document.createElement('div');
+  el.className = 'mn-bar';
+  el.innerHTML = `<div><h2>Today</h2><span class="muted live-clock-time">${fmtNow(new Date())}</span></div>`;
+  return el;
+}
+// catch up immediately when the phone/tab wakes up (timers are paused in the background)
+document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) tickLiveElements(); });
+window.addEventListener('focus', tickLiveElements);
+window.addEventListener('pageshow', tickLiveElements);
 
 // ---------- live (real-time) date/time/hours ticking ----------
 function tickLiveElements(){
   const now = new Date();
   document.querySelectorAll('.live-clock-time').forEach(el=>{
-    el.textContent = now.toLocaleString([], {weekday:'long', month:'long', day:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:true});
+    el.textContent = fmtNow(now);
   });
   document.querySelectorAll('.live-hours').forEach(el=>{
     const signIn = el.dataset.signin || null;
@@ -281,10 +841,18 @@ function tickLiveElements(){
     const hrs = hoursBetween(signIn, signOut || now.toISOString());
     el.textContent = hrs.toFixed(2);
   });
+  document.querySelectorAll('.live-total').forEach(el=>{
+    const day=el.dataset.day, isT=day===todayKey(); let h=0;
+    VAS.forEach(v=>{ const e=getEntry(v.id,day); if(e.signIn) h+=hoursBetween(e.signIn, e.signOut||(isT?now.toISOString():e.signIn)); });
+    el.textContent=h.toFixed(2);
+  });
+  document.querySelectorAll('.live-hms[data-live="1"]').forEach(el=>{
+    if(el.dataset.signin) el.textContent = fmtHMS(now - new Date(el.dataset.signin));
+  });
   // if the day has rolled over past midnight while the page stayed open, refresh the whole view
   const k = todayKey();
   if(k !== tickLiveElements._lastDay){
-    if(tickLiveElements._lastDay !== undefined) render();
+    if(tickLiveElements._lastDay !== undefined){ dashDate=null; Object.keys(viewDates).forEach(k=>delete viewDates[k]); render(); }
     tickLiveElements._lastDay = k;
   }
 }
@@ -296,32 +864,16 @@ function renderNav(){
   tabs.innerHTML = items.map(t=>
     `<button data-tab="${t.id}" class="${activeTab===t.id?'active':''}">${t.name}</button>`
   ).join('');
-  tabs.querySelectorAll('button').forEach(b=> b.onclick = ()=>{ activeTab = b.dataset.tab; render(); });
+  tabs.querySelectorAll('button').forEach(b=> b.onclick = ()=>{ activeTab = b.dataset.tab; if(activeTab==='dashboard') dashDate=null; render(); });
 
+  const logo = document.querySelector('.brand');
+  if(logo) logo.onclick = ()=>{ syncToPresent(); if(!adminMode && !document.querySelector('.ov')) openPinModal(); };
   const box = document.getElementById('adminBox');
   if(adminMode){
-    box.innerHTML = `<span class="admin-pill">🔓 ADMIN MODE</span><button class="admin-exit" id="exitAdmin">Exit</button>`;
+    box.innerHTML = `<div class="adm-on"><span class="adm-dot"></span>Admin mode<button id="exitAdmin" aria-label="Exit admin mode" title="Exit admin mode">Exit</button></div>`;
     document.getElementById('exitAdmin').onclick = ()=>{ adminMode=false; try{sessionStorage.removeItem('kpi_admin')}catch(e){} render(); };
   } else {
-    box.innerHTML = `
-      <div class="admin-pin-wrap" id="pinWrap">
-        <input id="pinInput" class="admin-pin" type="password" inputmode="numeric" autocomplete="off" placeholder="ADMIN PIN" maxlength="6">
-        <button type="button" class="admin-eye" id="pinEye" aria-label="Show PIN">👁</button>
-      </div>
-      <button class="admin-unlock" id="pinBtn">🔒 Unlock</button>`;
-    const pinInput = document.getElementById('pinInput');
-    const pinWrap = document.getElementById('pinWrap');
-    const tryUnlock = ()=>{
-      const v = pinInput.value.trim();
-      if(v === ADMIN_PIN){ adminMode = true; try{sessionStorage.setItem('kpi_admin','1')}catch(e){} render(); }
-      else {
-        pinWrap.classList.remove('shake'); void pinWrap.offsetWidth; pinWrap.classList.add('shake');
-        pinInput.value=''; pinInput.focus();
-      }
-    };
-    document.getElementById('pinBtn').onclick = tryUnlock;
-    document.getElementById('pinEye').onclick = ()=>{ pinInput.type = pinInput.type==='password' ? 'text' : 'password'; };
-    pinInput.onkeydown = ev => { if(ev.key === 'Enter') tryUnlock(); };
+    box.innerHTML = '';
   }
 }
 
@@ -336,115 +888,173 @@ function render(){
   else renderVaPage(app, activeTab);
 }
 
-// ---------- Dashboard ----------
+// ---------- Dashboard (single unified panel) ----------
+let dashDate=null;
+const expanded={};
+const getDash=()=>dashDate||todayKey();
+const dayTitle=dk=>{
+  if(dk===todayKey()) return 'Today';
+  if(dk===shiftDay(todayKey(),-1)) return 'Yesterday';
+  const [y,m,d]=dk.split('-').map(Number);
+  return new Date(y,m-1,d).toLocaleDateString([], {weekday:'short', day:'numeric', month:'short', year:'numeric'});
+};
+const shiftDay=(dk,n)=>{ const [y,m,d]=dk.split('-').map(Number); return localKey(new Date(y,m-1,d+n)); };
+const pct=(a,b)=>b>0?Math.round(a/b*100):0;
+
 function renderDashboard(app){
-  const d = todayKey();
-  const staff = VAS.filter(v=>v.role==='va');
-  let teamAppts=0, teamDms=0, working=0;
-  const rows = staff.map(va=>{
-    const e = getEntry(va.id, d);
-    const t = totals(e);
-    teamAppts += t.appts; teamDms += t.dms;
-    const status = !e.signIn ? 'Not signed in' : (!e.signOut ? 'Working' : 'Signed out');
-    if(status==='Working') working++;
-    const hrs = hoursBetween(e.signIn, e.signOut || (status==='Working' ? new Date().toISOString() : null));
-    return {va, e, t, status, hrs};
+  const dk=getDash(), today=todayKey(), isToday=dk===today;
+  const now=new Date(), nowMin=now.getHours()*60+now.getMinutes();
+  const mins=d=>d.getHours()*60+d.getMinutes();
+  const staff=VAS.filter(v=>v.role==='va');
+  let teamAppts=0, teamDms=0, working=0, submitted=0, verified=0, totalH=0, vaH=0;
+  const plat={}, acct={}; PLATFORMS.forEach(p=>plat[p]={dms:0,appts:0});
+  const alerts=[];
+  const rows=VAS.map(va=>{
+    const e=getEntry(va.id,dk), sup=va.role==='supervisor', t=totals(e);
+    const live=isToday&&!!e.signIn&&!e.signOut;
+    const ms=e.signIn?Math.max(0,(e.signOut?new Date(e.signOut):(live?now:new Date(e.signIn)))-new Date(e.signIn)):0;
+    const hrs=ms/3600000; totalH+=hrs;
+    if(!sup){
+      vaH+=hrs; teamAppts+=t.appts; teamDms+=t.dms; if(live) working++; if(e.submitted) submitted++; if(e.verifiedByNoor) verified++;
+      e.logs.forEach(l=>{
+        const o=plat[l.platform]||(plat[l.platform]={dms:0,appts:0}); o.dms+=Number(l.dms||0); o.appts+=Number(l.appts||0);
+        const k=l.platform+' '+l.account; const a=acct[k]||(acct[k]={dms:0,appts:0}); a.dms+=Number(l.dms||0); a.appts+=Number(l.appts||0);
+      });
+    }
+    const state=live?'on':(e.signIn&&e.signOut?'done':(e.signIn?'warn':'off'));
+    const stateTxt=live?'Working':(e.signIn&&e.signOut?'Signed out':(e.signIn?'No sign-out':'Not signed in'));
+    const late=va.shiftStart!=null&&e.signIn&&mins(new Date(e.signIn))>va.shiftStart*60+5;
+    const early=va.shiftEnd!=null&&e.signOut&&mins(new Date(e.signOut))<va.shiftEnd*60;
+    if(isToday&&va.shiftStart!=null){
+      if(!e.signIn&&nowMin>va.shiftStart*60+5) alerts.push({m:`${va.name} hasn't signed in yet.`,va:va.id});
+      if(e.signIn&&!e.signOut&&nowMin>va.shiftEnd*60) alerts.push({m:`${va.name} is still clocked in past shift end.`,va:va.id});
+      if(e.signIn&&!e.submitted&&nowMin>va.shiftEnd*60) alerts.push({m:`${va.name} hasn't submitted today's log.`});
+    }
+    if(!sup&&e.submitted&&!e.verifiedByNoor) alerts.push({m:`${va.name}'s day awaits verification.`,info:1,verify:va.id});
+    return {va,e,t,sup,live,hrs,state,stateTxt,late,early};
   });
+  const nStaff=staff.length;
+  const edited=e=>e.editedByAdmin?' <span class="edt" title="Edited by admin">✎</span>':'';
+  const detail=r=>{
+    if(r.sup) return `${r.va.name} supervises ${staff.map(v=>v.name).join(' & ')} · verified ${verified} of ${submitted} submitted.`;
+    if(!r.e.logs.length) return 'No work logged for this day.';
+    return `<div class="chips">${r.e.logs.map(l=>`<span class="chip">${l.platform} · ${l.account} — <b>${l.appts}</b> appt · <b>${l.dms}</b> DMs</span>`).join('')}</div>${r.e.editedAt?`<p class="muted" style="margin:8px 0 0;">Times edited by admin at ${fmtTime(r.e.editedAt)}</p>`:''}`;
+  };
 
-  const card = document.createElement('div');
-  card.className='card';
-  card.innerHTML = `
-    <h2>Team overview — today</h2>
-    <p class="muted live-clock-time">${new Date().toLocaleString([], {weekday:'long', month:'long', day:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:true})}</p>
-    <div class="grid3" style="margin-top:14px;">
-      <div class="stat"><b>${teamAppts}</b><span>Appointments booked</span></div>
-      <div class="stat"><b>${teamDms}</b><span>DMs answered</span></div>
-      <div class="stat"><b>${working}/${staff.length}</b><span>Currently clocked in</span></div>
+  const wrap=document.createElement('div'); wrap.className='dboard';
+  app.appendChild(wrap);
+
+  const bar=document.createElement('div'); bar.className='mn-bar';
+  bar.innerHTML=`
+    <div><h2>${dayTitle(dk)}</h2>${isToday
+      ? `<span class="muted live-clock-time">${fmtNow(now)}</span>`
+      : `<span class="muted">Viewing a past day · live time ${fmtNow(now).replace(/^.*?,\s*/,'')} · <a href="#" id="dBackToday" style="color:inherit;font-weight:600;">Back to today</a></span>`}</div>
+    <div class="dash-tools">
+      <button id="dPrev" aria-label="Previous day">‹</button>
+      <input type="date" id="dDate" value="${dk}" max="${today}">
+      <button id="dNext" aria-label="Next day" ${isToday?'disabled':''}>›</button>
+      <button id="dToday" ${isToday?'disabled':''}>Today</button>
+      ${adminMode?`<button id="admEditAny" class="adm-go">✎ Edit anyone's time</button>`:''}
     </div>`;
-  app.appendChild(card);
+  wrap.appendChild(bar);
 
-  // one table: per-VA attendance/progress plus a platform-by-platform breakdown of appts/DMs
-  const rowsWithPlatforms = rows.map(r=>{
-    const byPlatform = PLATFORMS.map(p=>{
-      const logs = r.e.logs.filter(l=>l.platform===p);
-      return { platform:p, appts: logs.reduce((s,l)=>s+Number(l.appts||0),0), dms: logs.reduce((s,l)=>s+Number(l.dms||0),0) };
-    }).filter(x=>x.appts>0 || x.dms>0);
-    return { ...r, byPlatform: byPlatform.length ? byPlatform : [{platform:'—', appts:0, dms:0}] };
+  if(alerts.length){
+    const al=document.createElement('div'); al.className='alerts';
+    al.innerHTML=alerts.map(a=>`<div class="alert ${a.info?'info':''}">${a.m}${a.verify&&adminMode?`<button class="ed" data-vfy="${a.verify}">✓ Verify</button>`:''}${a.va&&adminMode?`<button class="ed" data-edit-time="${a.va}|${dk}">✎ Fix time</button>`:''}</div>`).join('');
+    wrap.appendChild(al);
+  }
+
+  const grid=document.createElement('div'); grid.className='vc-grid'; grid.style.marginTop='14px';
+  wrap.appendChild(grid);
+  rows.forEach(r=>{
+    const el=mountStatusCard(grid,r.va,{compact:true,dk});
+    const open=!!expanded[r.va.id];
+    const x=document.createElement('div'); x.className='vc-x';
+    x.innerHTML=`
+      ${r.sup?'':(r.e.submitted?'<span class="tag ok">Submitted</span>':'')}
+      ${r.sup?'':(r.e.verifiedByNoor?'<span class="tag verified">Verified</span>':'')}
+      ${adminMode&&!r.sup&&r.e.submitted&&!r.e.verifiedByNoor?`<button class="ed" data-vfy="${r.va.id}">✓ Verify</button>`:''}
+      ${adminMode&&!r.sup&&r.e.submitted?`<button class="ed danger" data-unsub="${r.va.id}|${dk}">↺ Unsubmit</button>`:''}
+      <button class="xp-link" data-xp="${r.va.id}">${open?'Hide':'Details'} ${open?'▴':'▾'}</button>
+      ${open?`<div class="vc-detail">${detail(r)}</div>`:''}`;
+    el.appendChild(x);
   });
 
-  const table = document.createElement('div');
-  table.className='card overflow';
-  table.innerHTML = `<h3>Today by VA — platform breakdown</h3>
-    <table><thead><tr><th>VA</th><th>Status</th><th>Sign in</th><th>Sign out</th><th class="num">Hours</th><th>Submitted</th><th>Verified</th><th>Platform</th><th class="num">Appts</th><th class="num">DMs</th>${adminMode?'<th></th>':''}</tr></thead>
-    <tbody>${rowsWithPlatforms.map(r=> r.byPlatform.map((p,i)=>`<tr>
-      ${i===0 ? `
-      <td rowspan="${r.byPlatform.length}">${r.va.name}<div class="muted" style="font-size:12px;">${r.va.shiftLabel}</div></td>
-      <td rowspan="${r.byPlatform.length}">${r.status}</td>
-      <td rowspan="${r.byPlatform.length}">${fmtTime(r.e.signIn)}</td>
-      <td rowspan="${r.byPlatform.length}">${fmtTime(r.e.signOut)}</td>
-      <td class="num" rowspan="${r.byPlatform.length}"><span class="live-hours" data-signin="${r.e.signIn||''}" data-signout="${r.e.signOut||''}">${r.hrs.toFixed(2)}</span></td>
-      <td rowspan="${r.byPlatform.length}">${r.e.submitted ? '<span class="tag ok">Submitted</span>' : '<span class="tag off">Open</span>'}</td>
-      <td rowspan="${r.byPlatform.length}">${r.e.verifiedByNoor ? '<span class="tag verified">Verified</span>' : '<span class="tag off">—</span>'}</td>` : ''}
-      <td>${p.platform}</td>
-      <td class="num">${p.appts}</td>
-      <td class="num">${p.dms}</td>
-      ${i===0 && adminMode ? `<td rowspan="${r.byPlatform.length}"><button class="btn ghost" data-va="${r.va.id}" onclick="activeTab='${r.va.id}';render();">Open</button> <button class="btn ghost" data-reset-today="${r.va.id}">Reset</button></td>` : ''}
-    </tr>`).join('')).join('')}</tbody></table>
-    <p class="muted" style="margin-top:12px;">Noor supervises Rimsha and Amna — she verifies each submitted day from her own tab.${adminMode?` <button class="btn ghost" onclick="activeTab='noor';render();">Open Noor's tab</button>`:''}</p>`;
-  app.appendChild(table);
-  table.querySelectorAll('[data-reset-today]').forEach(b=>{
-    b.onclick = ()=>{ if(confirm(`Reset today's attendance and logs for ${b.dataset.resetToday}? This clears sign-in/out, logs, submitted and verified status for today only.`)) resetEntry(b.dataset.resetToday, d); };
-  });
+  const sum=document.createElement('div'); sum.className='mn';
+  sum.innerHTML=`
+    <div class="mn-nums">
+      <div><b>${teamAppts}</b><span>Appointments · ${pct(teamAppts,teamDms)}%</span></div>
+      <div><b>${teamDms}</b><span>DMs answered</span></div>
+      <div><b>${working}/${nStaff}</b><span>Clocked in</span></div>
+      <div><b><span class="live-total" data-day="${dk}" style="font-size:inherit;color:inherit;text-transform:none;letter-spacing:0;font-weight:inherit;">${totalH.toFixed(2)}</span></b><span>Team hours</span></div>
+    </div>
+    <div class="mn-plat">${Object.entries(plat).map(([p,o])=>`<span>${p} <b>${o.dms}</b> <small>${o.appts} appt</small></span>`).join('')}</div>`;
+  wrap.appendChild(sum);
 
-  const noor = VAS.find(v=>v.id==='noor');
-  const ne = getEntry(noor.id, d);
-  const nStatus = !ne.signIn ? 'Not signed in' : (!ne.signOut ? 'Working' : 'Signed out');
-  const nHrs = hoursBetween(ne.signIn, ne.signOut || (nStatus==='Working' ? new Date().toISOString() : null));
-  const nCard = document.createElement('div');
-  nCard.className='card';
-  nCard.innerHTML = `<h3>Noor — supervisor attendance today</h3>
-    <div class="grid3">
-      <div class="stat"><b>${nStatus}</b><span>Status</span></div>
-      <div class="stat"><b>${fmtTime(ne.signIn)} → ${fmtTime(ne.signOut)}</b><span>Sign in / out</span></div>
-      <div class="stat"><b><span class="live-hours" data-signin="${ne.signIn||''}" data-signout="${ne.signOut||''}">${nHrs.toFixed(2)}</span></b><span>Hours today</span></div>
-    </div>`;
-  app.appendChild(nCard);
+  bar.querySelector('#dDate').onchange=ev=>{ dashDate=ev.target.value||null; render(); };
+  bar.querySelector('#dPrev').onclick=()=>{ dashDate=shiftDay(dk,-1); render(); };
+  bar.querySelector('#dNext').onclick=()=>{ const n=shiftDay(dk,1); dashDate=n>=today?null:n; render(); };
+  bar.querySelector('#dToday').onclick=()=>{ dashDate=null; render(); };
+  const bt=bar.querySelector('#dBackToday'); if(bt) bt.onclick=ev=>{ ev.preventDefault(); dashDate=null; render(); };
+  wrap.querySelectorAll('[data-xp]').forEach(b=>b.onclick=()=>{ expanded[b.dataset.xp]=!expanded[b.dataset.xp]; render(); });
+  wrap.querySelectorAll('[data-vfy]').forEach(b=>b.onclick=()=>writeEntry(b.dataset.vfy,dk,{verifiedByNoor:true,verifiedAt:new Date().toISOString()}));
+  const any=bar.querySelector('#admEditAny'); if(any) any.onclick=()=>openTimeEditor(null,dk);
 }
 
 // ---------- passcode gate ----------
 function renderGate(app, va){
-  const card = document.createElement('div');
-  card.className='card gate-card';
-  card.innerHTML = `
-    <div class="gate">
-      <div class="gate-icon">🔒</div>
-      <h2>${va.name}'s private area</h2>
-      <p class="muted">${va.shiftLabel}</p>
-      <p class="muted">Enter your passcode to continue.</p>
-      <div class="gate-input-wrap">
-        <input type="password" id="gatePass" class="gate-input" placeholder="• • • • • •" autocomplete="off" autocapitalize="off" spellcheck="false">
-        <button type="button" id="gateToggle" class="gate-eye" aria-label="Show passcode">👁</button>
+  const EYE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+  const EYEOFF='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.9 17.9A10.5 10.5 0 0 1 12 19C5.5 19 2 12 2 12a18 18 0 0 1 4.1-5.1M9.9 5.2A9.7 9.7 0 0 1 12 5c6.5 0 10 7 10 7a18 18 0 0 1-2.2 3.2M1 1l22 22"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>';
+  const wrap = document.createElement('div');
+  wrap.className='g2-wrap';
+  wrap.innerHTML = `
+    <div class="g2-card" id="gateCard">
+      <div class="g2-icon g2-i" style="--i:0">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#d8ff29" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="5" y="11" width="14" height="10" rx="3"/>
+          <path class="shackle" d="M8 11V8a4 4 0 0 1 8 0v3"/>
+          <circle cx="12" cy="16" r="1" fill="#d8ff29"/>
+        </svg>
       </div>
-      <button class="btn lime" id="gateBtn" style="width:100%;margin-top:14px;">Unlock</button>
-      <p class="gate-err" id="gateErr"></p>
+      <h2 class="g2-i" style="--i:1">${va.name}'s private area</h2>
+      <div class="g2-i" style="--i:2"><span class="g2-chip"><i></i>${va.shiftLabel}</span></div>
+      <p class="g2-sub g2-i" style="--i:3">Enter your passcode to continue.</p>
+      <div class="g2-field g2-i" style="--i:4">
+        <input type="password" id="gatePass" placeholder="Passcode" autocomplete="off" autocapitalize="off" spellcheck="false">
+        <button type="button" class="g2-eye" id="gateToggle" aria-label="Show passcode">${EYE}</button>
+      </div>
+      <p class="g2-err" id="gateErr" role="alert"></p>
+      <button class="g2-btn g2-i" style="--i:5" id="gateBtn"><span id="gateBtnTxt">Unlock</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </button>
     </div>`;
-  app.appendChild(card);
-  const input = card.querySelector('#gatePass');
-  const err = card.querySelector('#gateErr');
-  const gate = card.querySelector('.gate');
+  app.appendChild(wrap);
+  const card = wrap.querySelector('#gateCard');
+  const input = wrap.querySelector('#gatePass');
+  const err = wrap.querySelector('#gateErr');
+  const btnTxt = wrap.querySelector('#gateBtnTxt');
+  let busy = false;
   const tryUnlock = ()=>{
+    if(busy) return;
     if(input.value === PASSCODES[va.id]){
-      unlockVa(va.id); render();
+      busy = true;
+      input.disabled = true; err.classList.remove('show'); input.classList.remove('bad');
+      btnTxt.textContent = 'Unlocked';
+      card.classList.add('ok');
+      setTimeout(()=>{ unlockVa(va.id); render(); }, 850);
     } else {
       err.textContent = 'Incorrect passcode — try again.';
-      gate.classList.remove('shake'); void card.offsetWidth; gate.classList.add('shake');
+      err.classList.add('show'); input.classList.add('bad');
+      card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
       input.value=''; input.focus();
     }
   };
-  card.querySelector('#gateBtn').onclick = tryUnlock;
+  input.oninput = ()=>{ input.classList.remove('bad'); err.classList.remove('show'); };
+  wrap.querySelector('#gateBtn').onclick = tryUnlock;
   input.onkeydown = ev => { if(ev.key==='Enter') tryUnlock(); };
-  card.querySelector('#gateToggle').onclick = ()=>{ input.type = input.type==='password' ? 'text' : 'password'; };
-  input.focus();
+  const tog = wrap.querySelector('#gateToggle');
+  tog.onclick = ()=>{ const show = input.type==='password'; input.type = show?'text':'password'; tog.innerHTML = show?EYEOFF:EYE; input.focus(); };
+  input.focus({preventScroll:true});
 }
 
 // ---------- Noor's supervision dashboard ----------
@@ -455,31 +1065,7 @@ function renderSupervisionPage(app, noor){
   const nStatus = !ne.signIn ? 'not-in' : (!ne.signOut ? 'working' : 'done');
   const nLiveHrs = hoursBetween(ne.signIn, ne.signOut || (nStatus==='working' ? new Date().toISOString() : null));
 
-  const head = document.createElement('div');
-  head.className='card';
-  head.innerHTML = `
-    <div class="clock">
-      <div>
-        <h2>${noor.name} <span class="tag ${nStatus==='working'?'ok':(nStatus==='done'?'off':'warn')}">${nStatus==='working'?'On shift':(nStatus==='done'?'Signed out':'Not signed in')}</span></h2>
-        <div class="clock-status">Verifies Rimsha &amp; Amna's daily entries &middot; <span class="live-clock-time">${new Date().toLocaleString([], {weekday:'long', month:'long', day:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:true})}</span></div>
-      </div>
-      <div style="text-align:right;">
-        <div class="clock-time">${fmtTime(ne.signIn)} → ${fmtTime(ne.signOut)}</div>
-        <div class="clock-status"><span class="live-hours" data-signin="${ne.signIn||''}" data-signout="${ne.signOut||''}">${nLiveHrs.toFixed(2)}</span> hrs logged today</div>
-      </div>
-    </div>
-    <footer class="actions">
-      <button class="btn lime" id="noorSignIn" ${ne.signIn?'disabled':''}>Sign In</button>
-      <button class="btn" id="noorSignOut" ${(!ne.signIn||ne.signOut)?'disabled':''}>Sign Out</button>
-      ${adminMode ? `<button class="btn ghost" id="resetNoorToday">Reset today's attendance</button>` : ''}
-      <button class="btn ghost" id="lockNoor" style="margin-left:auto;">Lock this tab</button>
-    </footer>`;
-  app.appendChild(head);
-  head.querySelector('#lockNoor').onclick = ()=>{ lockVa(noor.id); render(); };
-  head.querySelector('#noorSignIn').onclick = ()=> writeEntry(noor.id, d, { signIn: new Date().toISOString() });
-  head.querySelector('#noorSignOut').onclick = ()=> writeEntry(noor.id, d, { signOut: new Date().toISOString() });
-  const resetNoorBtn = head.querySelector('#resetNoorToday');
-  if(resetNoorBtn) resetNoorBtn.onclick = ()=>{ if(confirm("Reset Noor's own attendance for today?")) resetEntry(noor.id, d); };
+  mountStatusCard(app, noor, {actions:true});
 
   staff.forEach(va=>{
     const e = getEntry(va.id, d);
@@ -492,33 +1078,31 @@ function renderSupervisionPage(app, noor){
       <h3>${va.name} <span class="muted" style="text-transform:none;letter-spacing:0;">&middot; ${va.shiftLabel}</span></h3>
       <div class="grid3">
         <div class="stat"><b>${status}</b><span>Status today</span></div>
-        <div class="stat"><b>${fmtTime(e.signIn)} → ${fmtTime(e.signOut)}</b><span>Sign in / out</span></div>
         <div class="stat"><b><span class="live-hours" data-signin="${e.signIn||''}" data-signout="${e.signOut||''}">${hrs.toFixed(2)}</span></b><span>Hours today</span></div>
         <div class="stat"><b>${t.appts} / ${t.dms}</b><span>Appts / DMs</span></div>
       </div>
       <footer class="actions">
         ${!e.submitted ? '<span class="tag off">Not submitted yet</span>' :
           (e.verifiedByNoor ? '<span class="tag verified">Verified ✓</span>' : `<button class="btn lime" data-verify="${va.id}">Verify today's entry</button>`)}
-        ${adminMode ? `<button class="btn ghost" data-reset-va="${va.id}" style="margin-left:auto;">Reset today's attendance</button>` : ''}
       </footer>`;
     app.appendChild(card);
     const btn = card.querySelector('[data-verify]');
     if(btn) btn.onclick = ()=> writeEntry(va.id, d, { verifiedByNoor:true, verifiedAt:new Date().toISOString() });
-    const rst = card.querySelector('[data-reset-va]');
-    if(rst) rst.onclick = ()=>{ if(confirm(`Reset today's attendance and logs for ${va.name}?`)) resetEntry(va.id, d); };
 
     const days = [...Array(7)].map((_,i)=>{ const dt=new Date(); dt.setDate(dt.getDate()-i); return localKey(dt); });
     const hist = document.createElement('div');
     hist.className='card overflow';
     hist.innerHTML = `<h3>${va.name} — last 7 days</h3>
-      <table><thead><tr><th>Date</th><th>Sign in</th><th>Sign out</th><th class="num">Hours</th><th class="num">Appts</th><th class="num">DMs</th><th>Submitted</th><th>Verified</th><th></th>${adminMode?'<th></th>':''}</tr></thead>
+      <table class="rtable c3"><thead><tr><th>Date</th><th class="num">Hours</th><th class="num">Appts</th><th class="num">DMs</th><th>Submitted</th><th>Verified</th><th></th></tr></thead>
       <tbody>${days.map(dt=>{
         const he = getEntry(va.id, dt); const ht = totals(he); const hh = hoursBetween(he.signIn, he.signOut);
-        return `<tr><td>${dt}</td><td>${fmtTime(he.signIn)}</td><td>${fmtTime(he.signOut)}</td><td class="num">${hh.toFixed(1)}</td><td class="num">${ht.appts}</td><td class="num">${ht.dms}</td>
-          <td>${he.submitted ? '<span class="tag ok">Submitted</span>' : '<span class="tag off">Open</span>'}</td>
-          <td>${he.verifiedByNoor ? '<span class="tag verified">Verified</span>' : '<span class="tag off">—</span>'}</td>
-          <td>${he.submitted && !he.verifiedByNoor ? `<button class="btn ghost" data-verify-day="${va.id}_${dt}">Verify</button>` : ''}</td>
-          ${adminMode ? `<td><button class="rm" data-delete-day="${va.id}_${dt}">Delete</button></td>` : ''}
+        const acts = (he.submitted && !he.verifiedByNoor ? `<button class="btn ghost" data-verify-day="${va.id}_${dt}">Verify</button>` : '')
+          + (adminMode ? `<button class="ed" data-edit-time="${va.id}|${dt}">✎ ${fmtTime(he.signIn)}–${fmtTime(he.signOut)}</button>` : '')
+          + (adminMode && he.submitted ? `<button class="ed danger" data-unsub="${va.id}|${dt}">↺ Unsubmit</button>` : '');
+        return `<tr><td data-label="Date">${dt}</td><td class="num" data-label="Hours">${hh.toFixed(1)}</td><td class="num" data-label="Appts">${ht.appts}</td><td class="num" data-label="DMs">${ht.dms}</td>
+          <td data-label="Submitted">${he.submitted ? '<span class="tag ok">Submitted</span>' : '<span class="tag off">Open</span>'}</td>
+          <td data-label="Verified">${he.verifiedByNoor ? '<span class="tag verified">Verified</span>' : '<span class="tag off">—</span>'}</td>
+          <td class="acts">${acts}</td>
         </tr>`;
       }).join('')}</tbody></table>`;
     app.appendChild(hist);
@@ -529,13 +1113,6 @@ function renderSupervisionPage(app, noor){
         writeEntry(vid, dt, { verifiedByNoor:true, verifiedAt:new Date().toISOString() });
       };
     });
-    hist.querySelectorAll('[data-delete-day]').forEach(b=>{
-      b.onclick = ()=>{
-        const raw = b.dataset.deleteDay; const idx = raw.indexOf('_');
-        const vid = raw.slice(0, idx), dt = raw.slice(idx+1);
-        if(confirm(`Permanently delete ${vid}'s entry for ${dt}? This cannot be undone.`)) deleteEntry(vid, dt);
-      };
-    });
   });
 
   // Noor's own attendance history
@@ -543,21 +1120,19 @@ function renderSupervisionPage(app, noor){
   const nHist = document.createElement('div');
   nHist.className='card overflow';
   nHist.innerHTML = `<h3>Noor — attendance, last 7 days</h3>
-    <table><thead><tr><th>Date</th><th>Sign in</th><th>Sign out</th><th class="num">Hours</th>${adminMode?'<th></th>':''}</tr></thead>
+    <table class="rtable"><thead><tr><th>Date</th><th>Sign in</th><th>Sign out</th><th class="num">Hours</th>${adminMode?'<th></th>':''}</tr></thead>
     <tbody>${nDays.map(dt=>{
       const he = getEntry(noor.id, dt); const hh = hoursBetween(he.signIn, he.signOut);
-      return `<tr><td>${dt}</td><td>${fmtTime(he.signIn)}</td><td>${fmtTime(he.signOut)}</td><td class="num">${hh.toFixed(1)}</td>${adminMode?`<td><button class="rm" data-delete-noor-day="${dt}">Delete</button></td>`:''}</tr>`;
+      return `<tr><td data-label="Date">${dt}</td><td data-label="Sign in">${fmtTime(he.signIn)}</td><td data-label="Sign out">${fmtTime(he.signOut)}</td><td class="num" data-label="Hours">${hh.toFixed(1)}</td>${adminMode?`<td><button class="ed" data-edit-time="${noor.id}|${dt}">✎ Edit</button></td>`:''}</tr>`;
     }).join('')}</tbody></table>`;
   app.appendChild(nHist);
-  nHist.querySelectorAll('[data-delete-noor-day]').forEach(b=>{
-    b.onclick = ()=>{ if(confirm(`Permanently delete Noor's entry for ${b.dataset.deleteNoorDay}? This cannot be undone.`)) deleteEntry(noor.id, b.dataset.deleteNoorDay); };
-  });
 }
 
 // ---------- VA page ----------
 function renderVaPage(app, vaId){
   const va = VAS.find(v=>v.id===vaId);
   if(!isUnlocked(vaId)){ renderGate(app, va); return; }
+  app.appendChild(clockBar());
   if(va.role === 'supervisor'){ renderSupervisionPage(app, va); return; }
 
   const d = todayKey();
@@ -571,31 +1146,7 @@ function renderVaPage(app, vaId){
   const lateIn = e.signIn && minutesOfDay(new Date(e.signIn)) > va.shiftStart*60 + 5; // 5 min grace
   const earlyOut = e.signOut && minutesOfDay(new Date(e.signOut)) < va.shiftEnd*60;
 
-  const clock = document.createElement('div');
-  clock.className='card';
-  clock.innerHTML = `
-    <div class="clock">
-      <div>
-        <h2>${va.name} <span class="tag ${status==='working'?'ok':(status==='done'?'off':'warn')}">${status==='working'?'On shift':(status==='done'?'Signed out':'Not signed in')}</span></h2>
-        <div class="clock-status">Shift: ${va.shiftLabel} &middot; <span class="live-clock-time">${new Date().toLocaleString([], {weekday:'long', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:true})}</span></div>
-      </div>
-      <div style="text-align:right;">
-        <div class="clock-time">${fmtTime(e.signIn)} → ${fmtTime(e.signOut)}</div>
-        <div class="clock-status"><span class="live-hours" data-signin="${e.signIn||''}" data-signout="${e.signOut||''}">${liveHrs.toFixed(2)}</span> hrs logged today ${lateIn?'· late sign-in':''} ${earlyOut?'· early sign-out':''}</div>
-      </div>
-    </div>
-    <footer class="actions">
-      <button class="btn lime" id="signInBtn" ${e.signIn?'disabled':''}>Sign In</button>
-      <button class="btn" id="signOutBtn" ${(!e.signIn||e.signOut)?'disabled':''}>Sign Out</button>
-      ${adminMode ? `<button class="btn ghost" id="resetVaToday">Reset today's attendance</button>` : ''}
-      <button class="btn ghost" id="lockVa" style="margin-left:auto;">Lock this tab</button>
-    </footer>`;
-  app.appendChild(clock);
-  clock.querySelector('#lockVa').onclick = ()=>{ lockVa(vaId); render(); };
-  clock.querySelector('#signInBtn').onclick = ()=> writeEntry(vaId, d, { signIn: new Date().toISOString() });
-  clock.querySelector('#signOutBtn').onclick = ()=> writeEntry(vaId, d, { signOut: new Date().toISOString() });
-  const resetVaBtn = clock.querySelector('#resetVaToday');
-  if(resetVaBtn) resetVaBtn.onclick = ()=>{ if(confirm(`Reset today's attendance and logs for ${va.name}? This clears sign-in/out, logs, submitted and verified status for today only.`)) resetEntry(vaId, d); };
+  mountStatusCard(app, va, {actions:true});
 
   const form = document.createElement('div');
   form.className='card';
@@ -605,15 +1156,15 @@ function renderVaPage(app, vaId){
     <div class="form-row">
       <div><label>Platform</label><select id="fPlatform" ${locked?'disabled':''}>${PLATFORMS.map(p=>`<option>${p}</option>`).join('')}</select></div>
       <div><label>Account</label><select id="fAccount" ${locked?'disabled':''}>${accountsFor(PLATFORMS[0]).map(a=>`<option>${a}</option>`).join('')}</select></div>
-      <div><label>Appointments</label><input type="number" min="0" id="fAppts" value="0" ${locked?'disabled':''}></div>
-      <div><label>DMs answered</label><input type="number" min="0" id="fDms" value="0" ${locked?'disabled':''}></div>
+      <div><label>Appointments</label><input type="number" inputmode="numeric" min="0" id="fAppts" value="0" ${locked?'disabled':''}></div>
+      <div><label>DMs answered</label><input type="number" inputmode="numeric" min="0" id="fDms" value="0" ${locked?'disabled':''}></div>
       <div><button class="btn" id="addRow" ${locked?'disabled':''}>+ Add</button></div>
     </div>
     <div class="overflow">
-    <table><thead><tr><th>Platform</th><th>Account</th><th class="num">Appointments</th><th class="num">DMs</th>${locked?'':'<th></th>'}</tr></thead>
+    <table class="rtable"><thead><tr><th>Platform</th><th>Account</th><th class="num">Appointments</th><th class="num">DMs</th>${locked?'':'<th></th>'}</tr></thead>
     <tbody id="logRows">
       ${e.logs.length===0 ? `<tr><td colspan="${locked?4:5}" class="muted">No entries yet.</td></tr>` : e.logs.map((l,i)=>`
-      <tr><td>${l.platform}</td><td>${l.account}</td><td class="num">${l.appts}</td><td class="num">${l.dms}</td>
+      <tr><td data-label="Platform">${l.platform}</td><td data-label="Account">${l.account}</td><td class="num" data-label="Appointments">${l.appts}</td><td class="num" data-label="DMs">${l.dms}</td>
       ${locked?'':`<td><button class="rm" data-i="${i}">Remove</button></td>`}</tr>`).join('')}
     </tbody></table>
     </div>
@@ -624,6 +1175,7 @@ function renderVaPage(app, vaId){
     </div>
     <footer class="actions">
       <button class="btn lime" id="submitDay" ${locked||e.logs.length===0?'disabled':''}>${e.submitted?'Re-submit day':'Submit day'}</button>
+      ${e.submitted&&adminMode?`<button class="btn ghost" data-unsub="${vaId}|${d}">↺ Unsubmit day</button>`:''}
       ${e.submitted ? `<span class="lock-note">${locked ? 'Submitted — locked. Only an admin can edit this now.' : 'Admin mode: editing an already-submitted day.'}</span>` : ''}
     </footer>`;
   app.appendChild(form);
@@ -657,18 +1209,17 @@ function renderVaPage(app, vaId){
     return localKey(dt);
   });
   hist.innerHTML = `<h3>Last 7 days</h3>
-    <table><thead><tr><th>Date</th><th>Sign in</th><th>Sign out</th><th class="num">Hours</th><th class="num">Appts</th><th class="num">DMs</th><th>Status</th>${adminMode?'<th></th>':''}</tr></thead>
+    <table class="rtable c3"><thead><tr><th>Date</th><th>Sign in</th><th>Sign out</th><th class="num">Hours</th><th class="num">Appts</th><th class="num">DMs</th><th>Status</th>${adminMode?'<th></th>':''}</tr></thead>
     <tbody>${days.map(dt=>{
       const he = getEntry(vaId, dt);
       const ht = totals(he);
       const hh = hoursBetween(he.signIn, he.signOut);
-      return `<tr><td>${dt}</td><td>${fmtTime(he.signIn)}</td><td>${fmtTime(he.signOut)}</td><td class="num">${hh.toFixed(1)}</td><td class="num">${ht.appts}</td><td class="num">${ht.dms}</td><td>${he.submitted?'<span class="tag ok">Submitted</span>':(he.signIn?'<span class="tag off">Open</span>':'—')}</td>${adminMode?`<td><button class="rm" data-delete-va-day="${dt}">Delete</button></td>`:''}</tr>`;
+      return `<tr><td data-label="Date">${dt}</td><td data-label="Sign in">${fmtTime(he.signIn)}</td><td data-label="Sign out">${fmtTime(he.signOut)}</td><td class="num" data-label="Hours">${hh.toFixed(1)}</td><td class="num" data-label="Appts">${ht.appts}</td><td class="num" data-label="DMs">${ht.dms}</td><td data-label="Status" class="full">${he.submitted?'<span class="tag ok">Submitted</span>':(he.signIn?'<span class="tag off">Open</span>':'—')}</td>${adminMode?`<td class="acts"><button class="ed" data-edit-time="${vaId}|${dt}">✎ Edit</button>${he.submitted?`<button class="ed danger" data-unsub="${vaId}|${dt}">↺ Unsubmit</button>`:''}</td>`:''}</tr>`;
     }).join('')}</tbody></table>`;
   app.appendChild(hist);
-  hist.querySelectorAll('[data-delete-va-day]').forEach(b=>{
-    b.onclick = ()=>{ if(confirm(`Permanently delete ${va.name}'s entry for ${b.dataset.deleteVaDay}? This cannot be undone.`)) deleteEntry(vaId, b.dataset.deleteVaDay); };
-  });
 }
+
+init();
 </script>
 </body>
 </html>
