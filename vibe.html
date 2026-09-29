@@ -392,6 +392,7 @@ button.xp{background:none;border:0;cursor:pointer;font-size:12px;color:var(--sub
 .mn-bar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px;}
 .mn-bar h2{margin:0;font-size:18px;} .mn-bar .muted{font-size:11.5px;}
 .dash-tools .adm-go{background:var(--lime);border-color:var(--lime);}
+.dwrap{display:contents;} .dlabel{display:none;}
 .mn{margin-top:14px;}
 .mn-nums{margin-top:0;}
 .vc-x{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:10px;}
@@ -422,10 +423,16 @@ button.btn.danger{background:#e2452a;color:#fff;}
 
   /* dashboard toolbar */
   .mn-bar > div:first-child{width:100%;}
-  .dash-tools{width:100%;display:grid;grid-template-columns:44px minmax(0,1fr) 44px auto;gap:6px;}
-  .dash-tools button,.dash-tools input[type=date]{height:42px;}
-  .dash-tools input[type=date]{width:100%;min-width:0;font-size:16px;}
-  .dash-tools .adm-go{grid-column:1/-1;}
+  .mn-bar{gap:6px;margin-bottom:8px;}
+  .mn-bar h2{font-size:15px;line-height:1.2;}
+  .mn-bar .muted{font-size:10.5px;line-height:1.3;display:block;}
+  .dash-tools{width:100%;display:grid;grid-template-columns:30px minmax(0,1fr) 30px auto;gap:4px;align-items:center;}
+  .dash-tools button{height:30px;min-width:0;padding:0 9px;font-size:11.5px;border-radius:8px;border-width:1px;touch-action:manipulation;}
+  .dwrap{display:flex;position:relative;align-items:center;justify-content:center;height:30px;min-width:0;border:1px solid #e6e4d4;border-radius:8px;background:#fffefb;}
+  .dlabel{display:block;font-size:12px;font-weight:700;white-space:nowrap;pointer-events:none;}
+  /* real date input stays on top, invisible, so tapping opens the native picker (16px avoids iOS zoom) */
+  .dash-tools .dwrap input[type=date]{position:absolute;inset:0;width:100%;height:100%;opacity:0;border:0;padding:0;font-size:16px;cursor:pointer;}
+  .dash-tools .adm-go{grid-column:1/-1;height:30px;}
 
   /* dashboard cards */
   .vc-grid{grid-template-columns:1fr;gap:10px;}
@@ -473,6 +480,9 @@ button.btn.danger{background:#e2452a;color:#fff;}
   .mdl{max-height:calc(100dvh - 24px);overflow-y:auto;}
 }
 @media (max-width:380px){
+  .dash-tools{grid-template-columns:28px minmax(0,1fr) 28px auto;gap:3px;}
+  .dash-tools button{padding:0 7px;}
+  .dlabel{font-size:11.5px;}
   .vcard.compact{padding:12px 12px 10px;}
   .pin-box{width:46px;height:54px;}
 }
@@ -652,8 +662,8 @@ function mountStatusCard(parent, va, opts={}){
       ${lateIn?'<span class="vc-flag">Late sign-in</span>':''}${earlyOut?'<span class="vc-flag">Early sign-out</span>':''}
     </div>
     <div class="vc-foot">${sup
-      ? `<b>${mo.verified}</b> verified · <b>${mo.missed}</b> missed in ${mo.month}`
-      : `<b>${mo.booked}</b> booked · <b>${mo.missed}</b> missed in ${mo.month}`}</div>
+      ? `<b>${mo.verified}</b> verified in ${mo.month}`
+      : `<b>${mo.booked}</b> booked in ${mo.month}`}</div>
     ${opts.actions?`<div class="vc-actions">
       <button class="btn lime" data-a="in" ${te.signIn?'disabled':''}>Sign In</button>
       <button class="btn" data-a="out" ${(!te.signIn||te.signOut)?'disabled':''}>Sign Out</button>
@@ -892,6 +902,7 @@ function render(){
 let dashDate=null;
 const expanded={};
 const getDash=()=>dashDate||todayKey();
+const dayShort=dk=>{ const [y,m,d]=dk.split('-').map(Number); return new Date(y,m-1,d).toLocaleDateString([], {day:'numeric',month:'short',year:'numeric'}); };
 const dayTitle=dk=>{
   if(dk===todayKey()) return 'Today';
   if(dk===shiftDay(todayKey(),-1)) return 'Yesterday';
@@ -908,7 +919,6 @@ function renderDashboard(app){
   const staff=VAS.filter(v=>v.role==='va');
   let teamAppts=0, teamDms=0, working=0, submitted=0, verified=0, totalH=0, vaH=0;
   const plat={}, acct={}; PLATFORMS.forEach(p=>plat[p]={dms:0,appts:0});
-  const alerts=[];
   const rows=VAS.map(va=>{
     const e=getEntry(va.id,dk), sup=va.role==='supervisor', t=totals(e);
     const live=isToday&&!!e.signIn&&!e.signOut;
@@ -925,12 +935,6 @@ function renderDashboard(app){
     const stateTxt=live?'Working':(e.signIn&&e.signOut?'Signed out':(e.signIn?'No sign-out':'Not signed in'));
     const late=va.shiftStart!=null&&e.signIn&&mins(new Date(e.signIn))>va.shiftStart*60+5;
     const early=va.shiftEnd!=null&&e.signOut&&mins(new Date(e.signOut))<va.shiftEnd*60;
-    if(isToday&&va.shiftStart!=null){
-      if(!e.signIn&&nowMin>va.shiftStart*60+5) alerts.push({m:`${va.name} hasn't signed in yet.`,va:va.id});
-      if(e.signIn&&!e.signOut&&nowMin>va.shiftEnd*60) alerts.push({m:`${va.name} is still clocked in past shift end.`,va:va.id});
-      if(e.signIn&&!e.submitted&&nowMin>va.shiftEnd*60) alerts.push({m:`${va.name} hasn't submitted today's log.`});
-    }
-    if(!sup&&e.submitted&&!e.verifiedByNoor) alerts.push({m:`${va.name}'s day awaits verification.`,info:1,verify:va.id});
     return {va,e,t,sup,live,hrs,state,stateTxt,late,early};
   });
   const nStaff=staff.length;
@@ -951,18 +955,12 @@ function renderDashboard(app){
       : `<span class="muted">Viewing a past day · live time ${fmtNow(now).replace(/^.*?,\s*/,'')} · <a href="#" id="dBackToday" style="color:inherit;font-weight:600;">Back to today</a></span>`}</div>
     <div class="dash-tools">
       <button id="dPrev" aria-label="Previous day">‹</button>
-      <input type="date" id="dDate" value="${dk}" max="${today}">
+      <span class="dwrap"><span class="dlabel">${dayShort(dk)}</span><input type="date" id="dDate" value="${dk}" max="${today}"></span>
       <button id="dNext" aria-label="Next day" ${isToday?'disabled':''}>›</button>
       <button id="dToday" ${isToday?'disabled':''}>Today</button>
       ${adminMode?`<button id="admEditAny" class="adm-go">✎ Edit anyone's time</button>`:''}
     </div>`;
   wrap.appendChild(bar);
-
-  if(alerts.length){
-    const al=document.createElement('div'); al.className='alerts';
-    al.innerHTML=alerts.map(a=>`<div class="alert ${a.info?'info':''}">${a.m}${a.verify&&adminMode?`<button class="ed" data-vfy="${a.verify}">✓ Verify</button>`:''}${a.va&&adminMode?`<button class="ed" data-edit-time="${a.va}|${dk}">✎ Fix time</button>`:''}</div>`).join('');
-    wrap.appendChild(al);
-  }
 
   const grid=document.createElement('div'); grid.className='vc-grid'; grid.style.marginTop='14px';
   wrap.appendChild(grid);
@@ -1129,6 +1127,21 @@ function renderSupervisionPage(app, noor){
 }
 
 // ---------- VA page ----------
+// ---------- per-member notifications (shown only on that member's own tab) ----------
+function mountMemberAlerts(parent, va){
+  if(va.shiftStart==null) return;
+  const d=todayKey(), e=getEntry(va.id,d), now=new Date(), nowMin=now.getHours()*60+now.getMinutes();
+  const list=[];
+  if(!e.signIn && nowMin>va.shiftStart*60+5) list.push({m:`You haven't signed in yet.`});
+  if(e.signIn && !e.signOut && nowMin>va.shiftEnd*60) list.push({m:`You're still clocked in past your shift end.`});
+  if(e.signIn && !e.submitted && nowMin>va.shiftEnd*60) list.push({m:`You haven't submitted today's log.`});
+  if(e.submitted && !e.verifiedByNoor) list.push({m:`Your day is submitted and awaiting verification.`,info:1});
+  if(!list.length) return;
+  const al=document.createElement('div'); al.className='alerts'; al.style.marginBottom='14px';
+  al.innerHTML=list.map(a=>`<div class="alert ${a.info?'info':''}">${a.m}${adminMode&&!a.info?`<button class="ed" data-edit-time="${va.id}|${d}">✎ Fix time</button>`:''}</div>`).join('');
+  parent.appendChild(al);
+}
+
 function renderVaPage(app, vaId){
   const va = VAS.find(v=>v.id===vaId);
   if(!isUnlocked(vaId)){ renderGate(app, va); return; }
@@ -1147,6 +1160,7 @@ function renderVaPage(app, vaId){
   const earlyOut = e.signOut && minutesOfDay(new Date(e.signOut)) < va.shiftEnd*60;
 
   mountStatusCard(app, va, {actions:true});
+  mountMemberAlerts(app, va);
 
   const form = document.createElement('div');
   form.className='card';
