@@ -352,6 +352,7 @@ table.sheet td.del{width:44px;text-align:center;}
 <div id="printRoot" aria-hidden="true"></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script type="text/plain" id="gsScript">// book. -> Google Sheet. Adds each booking as a row (and updates it when you edit it in the admin).
+// The booking page sends its own column list, so new columns appear here by themselves.
 const COLS = [
   ['code','Code'], ['createdAt','Booked at'], ['kind','Call with'], ['date','Date'], ['time','Time'],
   ['name','Client'], ['phone','WhatsApp'], ['city','City'], ['age','Age'], ['email','Email'],
@@ -370,14 +371,23 @@ function doPost(e) {
   try {
     const data = JSON.parse(e.postData.contents);
     const list = Array.isArray(data.bookings) ? data.bookings.slice(0, 500) : [];
-    const sh = sheet_();
+    const cols = Array.isArray(data.cols) && data.cols.length ? data.cols.slice(0, 60) : COLS;
+    const sh = sheet_(cols);
+    const head = sh.getRange(1, 1, 1, sh.getLastColumn()).getValues()[0].map(String);
+    const at = {};
+    cols.forEach(([k, label]) => { at[k] = head.indexOf(label); });
+    const codeCol = head.indexOf('Code');
     const last = sh.getLastRow();
-    const codes = last > 1 ? sh.getRange(2, 1, last - 1, 1).getValues().map(r => String(r[0])) : [];
+    const codes = last > 1 ? sh.getRange(2, codeCol + 1, last - 1, 1).getValues().map(r => String(r[0])) : [];
     list.forEach(b => {
       const code = String(b.code || '');
       if (!/^[A-Z0-9]{4,12}$/.test(code)) return;
-      const row = COLS.map(([k]) => k === 'kind' ? (b.kind === 'team' ? 'Fellow dietitian' : 'Dr. Tehreem') : cell_(b[k]));
       const i = codes.indexOf(code);
+      const row = i >= 0 ? sh.getRange(i + 2, 1, 1, head.length).getValues()[0] : head.map(() => '');
+      cols.forEach(([k]) => {
+        if (at[k] < 0) return;
+        row[at[k]] = k === 'kind' ? (b.kind === 'team' ? 'Fellow dietitian' : b.kind === 'visit' ? 'Office visit' : 'Dr. Tehreem') : cell_(b[k]);
+      });
       if (i >= 0) sh.getRange(i + 2, 1, 1, row.length).setValues([row]);
       else { sh.appendRow(row); codes.push(code); }
     });
@@ -385,13 +395,19 @@ function doPost(e) {
   } finally { lock.releaseLock(); }
 }
 
-function sheet_() {
+// makes sure the tab exists and has a heading for every column (new headings are added at the end)
+function sheet_(cols) {
   const ss = SpreadsheetApp.openById(SHEET_ID);
   const sh = ss.getSheetByName(TAB) || ss.insertSheet(TAB);
+  const labels = cols.map(c => c[1]);
   if (sh.getLastRow() === 0) {
-    sh.appendRow(COLS.map(c => c[1]));
-    sh.getRange(1, 1, 1, COLS.length).setFontWeight('bold');
+    sh.appendRow(labels);
+    sh.getRange(1, 1, 1, labels.length).setFontWeight('bold');
     sh.setFrozenRows(1);
+  } else {
+    const head = sh.getRange(1, 1, 1, sh.getLastColumn()).getValues()[0].map(String);
+    const missing = labels.filter(l => head.indexOf(l) < 0);
+    if (missing.length) sh.getRange(1, head.length + 1, 1, missing.length).setValues([missing]).setFontWeight('bold');
   }
   return sh;
 }
@@ -452,16 +468,17 @@ const PAY_METHODS = ['JazzCash','Easypaisa','Bank transfer','Cash','Other'];
 const KINDS = {
   team:   {label:"Free call with one of Dr. Tehreem's fellow dietitians", short:'Fellow dietitian', price:0},
   doctor: {label:'Call with Dr. Tehreem', short:'Dr. Tehreem', price:6000},
+  visit:  {label:'Office visit (in hospital)', short:'Office visit', price:0},   // admin only — not offered on the booking page
 };
-const kindOf = x => (x && x.kind === 'team') ? 'team' : 'doctor';   // older bookings had no kind: they were Dr. Tehreem's
+const kindOf = x => (x && (x.kind === 'team' || x.kind === 'visit')) ? x.kind : 'doctor';   // older bookings had no kind: they were Dr. Tehreem's
 const INVEST_MIN = 16000, INVEST_MAX = 120000, INVEST_STEP = 1000;
 const HEARD_OPTS = ['Instagram','Facebook','TikTok','YouTube','Friend or family','Other'];
-const STATUS_OPTS = [['booked','Booked'],['completed','Completed'],['no-show','No-show'],['cancelled','Cancelled'],['blocked','Blocked']];
+const STATUS_OPTS = [['pending','Pending'],['booked','Booked'],['completed','Completed'],['no-show','No-show'],['cancelled','Cancelled'],['blocked','Blocked']];
 const SOURCES = ['Website','Instagram','Facebook','TikTok','WhatsApp','Other'];
 const COLS = [
   {k:'date',l:'Date',t:'date',w:140},
   {k:'time',l:'Time',t:'time',w:110},
-  {k:'kind',l:'Call with',t:'select',opts:[['doctor','Dr. Tehreem'],['team','Fellow dietitian']],w:150},
+  {k:'kind',l:'Call with',t:'select',opts:[['doctor','Dr. Tehreem'],['team','Fellow dietitian'],['visit','Office visit']],w:150},
   {k:'name',l:'Client',t:'text',w:170},
   {k:'phone',l:'WhatsApp',t:'text',w:150},
   {k:'city',l:'City',t:'text',w:130},
@@ -476,6 +493,12 @@ const COLS = [
   {k:'invest',l:'Can invest',t:'number',w:120},
   {k:'notes',l:'Needs help with',t:'text',w:260},
   {k:'adminNote',l:'My notes',t:'text',w:200},
+  {k:'platform',l:'Platform',t:'text',w:200},
+  {k:'va',l:'VA',t:'text',w:110},
+  {k:'loggedAt',l:'Logged on',t:'date',w:140},
+  {k:'apptNote',l:'Appointment (as written)',t:'text',w:260},
+  {k:'bookedAs',l:'Booked as (original)',t:'text',w:220},
+  {k:'extra',l:'Other info',t:'text',w:240},
 ];
 
 /* =====================================================================
@@ -500,7 +523,7 @@ const plural = (n,w) => n + ' ' + w + (n===1?'':'s');
 const waNumber = n => { let d = String(n||'').replace(/\D/g,''); if (d.startsWith('00')) d = d.slice(2); else if (d.startsWith('0')) d = '92' + d.slice(1); return d; };
 const CODE_CHARS = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
 const genCode = () => { let s=''; for (let i=0;i<6;i++) s += CODE_CHARS[Math.floor(Math.random()*CODE_CHARS.length)]; return s; };
-const takenKey = (date,time,kind) => (kind === 'team' ? 'team_' : '') + date + '_' + String(time).replace(':','');
+const takenKey = (date,time,kind) => (kind === 'team' || kind === 'visit' ? kind + '_' : '') + date + '_' + String(time).replace(':','');
 
 function nowTz(){
   const p = new Intl.DateTimeFormat('en-CA',{timeZone:TZ,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date());
@@ -655,10 +678,15 @@ async function saveBooking(id, patch){
 const SHEET_URL_RE = /^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec$/;
 const DEFAULT_SHEET_URL = 'https://script.google.com/macros/s/AKfycbzDEH_ookUBvK-r2d8uodLnPmA9698TtD4_ADoFYsVO0SL8CpYgYXl6VFCJ3Gc5IDmlgw/exec';
 const sheetUrl = () => settings.sheetUrl || DEFAULT_SHEET_URL;   // a URL saved in Settings wins
+const SHEET_COLS = [['code','Code'],['createdAt','Booked at'],['kindLabel','Call with'],['date','Date'],['time','Time'],['name','Client'],['phone','WhatsApp'],
+  ['city','City'],['age','Age'],['email','Email'],['invest','Can invest (PKR)'],['notes','Needs help with'],['heard','Heard via'],['amount','Fee'],
+  ['payStatus','Payment'],['status','Status'],['payRef','Payment ref'],['source','Source'],['adminNote','My notes'],
+  ['platform','Platform'],['va','VA'],['loggedAt','Logged on'],['apptNote','Appointment (as written)'],['bookedAs','Booked as (original)'],['extra','Other info']];
 function pushToSheet(list){
   const url = sheetUrl();
   if (!url || !SHEET_URL_RE.test(url) || !list.length) return Promise.resolve(false);
-  return fetch(url, {method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify({bookings:list})})
+  const bookings = list.map(b => Object.assign({}, b, {kindLabel: KINDS[kindOf(b)].short}));
+  return fetch(url, {method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify({cols:SHEET_COLS, bookings})})
     .then(() => true, () => false);
 }
 async function deleteBooking(id){
@@ -1026,7 +1054,7 @@ function sheetRows(){
   let rows = bookingsList().filter(b =>
     (sheetStatus === 'all' || b.status === sheetStatus) &&
     (sheetPay === 'all' || b.payStatus === sheetPay) &&
-    (!q || [b.name,b.phone,b.email,b.code,b.payRef,b.notes,b.adminNote].some(x => String(x||'').toLowerCase().includes(q))));
+    (!q || [b.name,b.phone,b.email,b.code,b.payRef,b.notes,b.adminNote,b.va,b.platform,b.apptNote,b.extra].some(x => String(x||'').toLowerCase().includes(q))));
   rows.sort(sheetSort === 'date' ? byWhen : (a,b) => String(b.createdAt||'').localeCompare(String(a.createdAt||'')));
   return rows;
 }
@@ -1035,7 +1063,8 @@ let impOpen = false, impPrev = null, impBusy = false, impDmy = true;
 // header text (lowercased, letters/digits only) -> booking field
 const IMP_HEAD = {
   code:['code','bookingcode'], createdAt:['bookedat','createdat','timestamp','submittedat','bookingdate'],
-  kind:['callwith','call','calltype','type','consultation','consultationtype'],
+  kind:['callwith','call','calltype','type','consultation','consultationtype','whatwasbooked','booked','service'],
+  loggedAt:['datelogged','loggedon','logged','dateadded'], va:['va','agent','loggedby','csr','addedby','staff'], platform:['platform','channel','handle'],
   date:['date','appointmentdate','calldate','day'], time:['time','slot','appointmenttime','calltime'],
   name:['client','name','fullname','clientname','yourfullname','patientname'],
   phone:['whatsapp','phone','number','mobile','contact','whatsappnumber','phonenumber','yourwhatsappnumber','cell'],
@@ -1044,7 +1073,7 @@ const IMP_HEAD = {
   notes:['needshelpwith','notes','concern','problem','whatdoyouneedhelpwith','issue','details'],
   heard:['heardvia','howdidyouhearaboutus','referral'], amount:['fee','amount','price','paid'],
   payStatus:['payment','paymentstatus','paystatus'], status:['status','bookingstatus'],
-  payRef:['paymentref','transactionid','tid','paymentreference','ref'], source:['source','platform'],
+  payRef:['paymentref','transactionid','tid','paymentreference','ref'], source:['source'],
   adminNote:['mynotes','adminnote','comments','remarks','note'],
 };
 function parseTable(text){
@@ -1070,7 +1099,7 @@ function impDate(v){
     const dayFirst = a > 12 ? true : b > 12 ? false : impDmy;
     return dayFirst ? ymd(y, b, a) : ymd(y, a, b);
   }
-  if ((m = /(\d{1,2})(?:st|nd|rd|th)?\s+([a-z]{3})[a-z]*,?\s+(\d{4})/i.exec(v))) return ymd(+m[3], MONTHS.indexOf(m[2].toLowerCase()) + 1, +m[1]);
+  if ((m = /(\d{1,2})(?:st|nd|rd|th)?[\s\-\/]+([a-z]{3})[a-z]*[,\s\-\/]+(\d{4})/i.exec(v))) return ymd(+m[3], MONTHS.indexOf(m[2].toLowerCase()) + 1, +m[1]);
   if ((m = /([a-z]{3})[a-z]*\s+(\d{1,2})(?:st|nd|rd|th)?,?\s+(\d{4})/i.exec(v))) return ymd(+m[3], MONTHS.indexOf(m[1].toLowerCase()) + 1, +m[2]);
   return null;
 }
@@ -1094,42 +1123,68 @@ function impPhone(v){
 function impPay(v, amount){
   const t = String(v || '').toLowerCase();
   if (/refund/.test(t)) return 'refunded'; if (/proof/.test(t)) return 'proof';
-  if (/unpaid|not paid|pending|due/.test(t)) return 'unpaid'; if (/paid|done|received|yes/.test(t)) return 'paid';
+  if (/unpaid|not paid|pending|due|visit/.test(t)) return 'unpaid'; if (/paid|done|received|yes|confirm/.test(t)) return 'paid';
   if (/free/.test(t)) return 'free'; return amount > 0 ? 'unpaid' : 'free';
 }
-function impStatus(v){
+function impStatus(v, hasSlot){
   const t = String(v || '').toLowerCase();
+  if (!t.trim()) return hasSlot ? 'booked' : 'pending';
+  if (/pending|waiting|awaiting|tbc|tentative/.test(t)) return 'pending';
   if (/cancel/.test(t)) return 'cancelled'; if (/no.?show/.test(t)) return 'no-show';
   if (/complete|done|attended/.test(t)) return 'completed'; if (/block/.test(t)) return 'blocked';
   return 'booked';
 }
 const dupKey = b => norm(b.name) + '|' + String(b.phone || '').replace(/\D/g,'').slice(-10) + '|' + (b.date || '') + '|' + (b.time || '');
+// pull a date / time out of free text such as "Mon; 9pm (5th-10-26)" or "29-09-26 (2pm-Coach atufa)"
+function impDateIn(v){
+  const t = String(v || '').trim(); if (!t) return '';
+  const d = impDate(t); if (d) return d;
+  const m = /(\d{1,2})(?:st|nd|rd|th)?[-\/.](\d{1,2})[-\/.](\d{2,4})/.exec(t);
+  return m ? impDate(m[1] + '-' + m[2] + '-' + m[3]) : (d === null && /^\s*[\d\/.\-]+\s*$/.test(t) ? null : '');
+}
+function impTimeIn(v){
+  const m = /(\d{1,2})(?:[.:](\d{2}))?\s*([ap])\.?m\b/i.exec(String(v || ''));
+  return m ? impTime(m[1] + ':' + (m[2] || '00') + ' ' + m[3] + 'm') : '';
+}
 function buildImport(text){
   const rows = parseTable(text); if (rows.length < 2) return {error:'Paste the header row and at least one booking.'};
   const head = rows[0].map(h => norm(h)), map = {}, used = new Set();
   Object.entries(IMP_HEAD).forEach(([k, names]) => { const i = head.findIndex((h, j) => !used.has(j) && names.includes(h)); if (i >= 0){ map[k] = i; used.add(i); } });
-  [['name','name'],['phone','whatsapp'],['phone','phone'],['email','email'],['notes','help'],['invest','invest']].forEach(([k, w]) => {
+  [['loggedAt','logged'],['name','name'],['phone','whatsapp'],['phone','phone'],['email','email'],['notes','help'],['invest','invest'],['date','appointment'],['status','status'],['kind','booked']].forEach(([k, w]) => {
     if (map[k] === undefined){ const i = head.findIndex((h, j) => !used.has(j) && h.includes(w)); if (i >= 0){ map[k] = i; used.add(i); } }
   });
   if (map.name === undefined && map.phone === undefined) return {error:'Could not find a name or WhatsApp column. Make sure you copied the header row too.'};
   const have = bookingsList(), codes = new Set(have.map(b => b.code)), keys = new Set(have.map(dupKey)), out = [];
+  const extraCols = rows[0].map((h, i) => i).filter(i => !used.has(i) && rows[0][i]);   // anything not matched is kept in "Other info"
+  let lastLogged = '';
   rows.slice(1).forEach((r, n) => {
     const g = k => map[k] === undefined ? '' : (r[map[k]] || '');
-    const kindTxt = g('kind').toLowerCase(), kind = /fellow|team|dietitian|free/.test(kindTxt) && !/tehreem/.test(kindTxt) ? 'team' : 'doctor';
-    const amount = map.amount !== undefined ? impNum(g('amount')) : KINDS[kind].price;
-    const date = impDate(g('date')), time = impTime(g('time')), created = impDate(g('createdAt'));
+    const kt = g('kind').toLowerCase();
+    const kind = /visit|hospital|office/.test(kt) ? 'visit' : /tehreem/.test(kt) ? 'doctor' : /fellow|team|dietitian|dietician|free|coach/.test(kt) ? 'team' : 'doctor';
+    const payTxt = g('payStatus').toLowerCase(), amtTxt = g('amount');
+    const amount = map.amount !== undefined && /\d/.test(amtTxt) ? impNum(amtTxt) : (/free/.test(payTxt) ? 0 : KINDS[kind].price);
+    const rawDate = g('date'), date = impDateIn(rawDate), time = map.time !== undefined ? impTime(g('time')) : impTimeIn(rawDate);
+    const logged = impDateIn(g('loggedAt')); if (logged) lastLogged = logged;              // a blank "date logged" means the same day as the row above
+    const created = impDate(g('createdAt')) || lastLogged;
+    const plat = g('platform'), src = (SOURCES.find(x => plat.toLowerCase().includes(x.toLowerCase())) || '');
+    const extra = extraCols.map(i => (r[i] || '').trim() ? rows[0][i] + ': ' + r[i].trim() : '').filter(Boolean).join(' · ');
     const code0 = String(g('code')).toUpperCase().replace(/[^A-Z0-9]/g, '');
     const b = {code: /^[A-Z0-9]{4,12}$/.test(code0) ? code0 : '', kind, date: date || '', time: time || '', duration: settings.duration,
       name: g('name').slice(0, 80), phone: impPhone(g('phone')).slice(0, 20), city: g('city').slice(0, 60), age: impNum(g('age')) || '',
       email: g('email').slice(0, 120), invest: impNum(g('invest')) || '', notes: g('notes').slice(0, 500), heard: g('heard').slice(0, 60),
       amount, payStatus: impPay(g('payStatus'), amount), status: impStatus(g('status')), payRef: g('payRef').slice(0, 60),
-      source: g('source').slice(0, 40) || 'Google Sheet', adminNote: g('adminNote').slice(0, 200),
-      createdAt: created ? created + 'T00:00:00.000Z' : new Date(Date.now() + n).toISOString()};
+      source: (g('source') || src || 'Google Sheet').slice(0, 40), adminNote: g('adminNote').slice(0, 200),
+      platform: plat.slice(0, 120), va: g('va').slice(0, 60), loggedAt: lastLogged, bookedAs: g('kind').trim().slice(0, 120),
+      apptNote: rawDate && !/^\s*[\d\/.\-]+\s*$/.test(rawDate) ? rawDate.slice(0, 300) : '', extra: extra.slice(0, 1000),
+      createdAt: created ? created + 'T00:00:' + pad(Math.min(n, 59)) + '.000Z' : new Date(Date.now() + n).toISOString()};
+    b.status = impStatus(g('status'), !!(b.date && b.time));
     const warn = [];
     if (!b.name && !b.phone) return;                                   // blank / separator rows
-    if (date === null) warn.push('date not understood: ' + g('date'));
+    if (g('phone') && !/\d/.test(g('phone'))){ out.push({b, warn, skip:'example row — not imported'}); return; }
+    if (date === null) warn.push('date not understood: ' + rawDate);
+    if (b.date && b.loggedAt && b.date < b.loggedAt) warn.push('appointment is before the date it was logged — check the date');
     if (time === null) warn.push('time not understood: ' + g('time'));
-    if (!b.date || !b.time) warn.push('no date/time — added without holding a slot');
+    if (!b.date || !b.time) warn.push(b.apptNote ? 'no exact date/time — kept as written' : 'no date/time — added without holding a slot');
     const skip = (b.code && codes.has(b.code)) ? 'already in admin' : keys.has(dupKey(b)) ? 'already in admin' : '';
     if (!skip){ if (b.code) codes.add(b.code); keys.add(dupKey(b)); }
     out.push({b, warn, skip});
@@ -1142,7 +1197,7 @@ function importHtml(){
   const p = impPrev, todo = p && p.list ? p.list.filter(x => !x.skip) : [];
   let prev = '';
   if (p && p.error) prev = '<div class="banner err">' + esc(p.error) + '</div>';
-  else if (p) prev = '<p class="muted" style="margin:14px 0 6px">Found <b>' + p.list.length + '</b> rows · <b>' + todo.length + '</b> new · ' + (p.list.length - todo.length) + ' already in admin.<br>Columns used: ' + esc(p.cols.join(', ')) + (p.ignored.length ? '<br>Ignored: ' + esc(p.ignored.join(', ')) : '') + '</p>' +
+  else if (p) prev = '<p class="muted" style="margin:14px 0 6px">Found <b>' + p.list.length + '</b> rows · <b>' + todo.length + '</b> to import' + (p.list.length - todo.length ? ' · ' + (p.list.length - todo.length) + ' skipped (already in admin or example row)' : '') + '.<br>Columns used: ' + esc(p.cols.join(', ')) + (p.ignored.length ? '<br>Ignored: ' + esc(p.ignored.join(', ')) : '') + '</p>' +
     '<div class="overflow" style="max-height:340px"><table><thead><tr><th>Client</th><th>WhatsApp</th><th>Call</th><th>Date</th><th>Time</th><th class="num">Fee</th><th></th></tr></thead><tbody>' +
     p.list.map(x => '<tr' + (x.skip ? ' class="rowcancel"' : '') + '><td>' + esc(x.b.name || '—') + '</td><td>' + esc(x.b.phone || '—') + '</td><td>' + esc(KINDS[x.b.kind].short) + '</td><td>' + (x.b.date ? esc(fmtDayShort(x.b.date)) : '—') + '</td><td>' + (x.b.time ? fmt12(x.b.time) : '—') + '</td><td class="num">' + esc(fmtMoney(x.b.amount)) + '</td>' +
       '<td class="muted" style="font-size:12px">' + esc(x.skip || x.warn.join('; ')) + '</td></tr>').join('') + '</tbody></table></div>' +
