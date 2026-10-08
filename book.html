@@ -198,6 +198,10 @@ a.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line);}
 .cform input[type=range]:focus{box-shadow:0 0 0 4px rgba(216,255,41,.6);}
 .cform input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:28px;height:28px;border-radius:50%;background:var(--lime);border:3px solid var(--ink);}
 .cform input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--lime);border:3px solid var(--ink);}
+.invest-val.unset{font-size:17px;color:var(--sub);}
+.invest-val.unset span{background:none;padding:0;}
+.cform input[type=range].unset::-webkit-slider-thumb{background:#fff;border-color:#bbb;}
+.cform input[type=range].unset::-moz-range-thumb{background:#fff;border-color:#bbb;}
 .range-ends{display:flex;justify-content:space-between;font-size:13px;color:var(--sub);margin-top:8px;font-weight:700;}
 .cform select{width:100%;padding:16px 14px;font-size:17px;border:1.5px solid #d9d9d9;border-radius:14px;background:#fff;color:var(--ink);transition:border-color .15s,box-shadow .15s;}
 .cform select:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 4px rgba(216,255,41,.6);}
@@ -713,13 +717,22 @@ function timeStepHtml(){
 const investVal = () => Math.min(INVEST_MAX, Math.max(INVEST_MIN, Number(formVals.invest) || INVEST_MIN));
 const investPct = v => ((v - INVEST_MIN) / (INVEST_MAX - INVEST_MIN) * 100).toFixed(1) + '%';
 const investTxt = v => 'Rs ' + fmtMoney(v) + (v >= INVEST_MAX ? '+' : '');
+const investSet = () => formVals.invest !== '';
 function investFieldHtml(){
-  const v = investVal();
+  const v = investVal(), set = investSet(), txt = set ? investTxt(v) : 'Slide to choose an amount';
   return '<div class="field"><label for="f-invest">How much can you invest in yourself?</label>' +
-    '<p class="invest-val" aria-hidden="true"><span id="investOut">' + esc(investTxt(v)) + '</span></p>' +
-    '<input id="f-invest" data-form="invest" type="range" min="' + INVEST_MIN + '" max="' + INVEST_MAX + '" step="' + INVEST_STEP + '" value="' + v + '" style="--p:' + investPct(v) + '" aria-valuetext="' + esc(investTxt(v)) + '">' +
+    '<p class="invest-val' + (set ? '' : ' unset') + '" id="investBox" aria-hidden="true"><span id="investOut">' + esc(txt) + '</span></p>' +
+    '<input id="f-invest" data-form="invest" type="range"' + (set ? '' : ' class="unset"') + ' min="' + INVEST_MIN + '" max="' + INVEST_MAX + '" step="' + INVEST_STEP + '" value="' + v + '" style="--p:' + (set ? investPct(v) : '0%') + '" aria-valuetext="' + esc(txt) + '">' +
     '<div class="range-ends"><span>Rs 16,000</span><span>Rs 120,000+</span></div>' +
     '<p class="hint">Slide to the amount that suits you.</p></div>';
+}
+// called on any slider interaction — also a plain tap, so Rs 16,000 can be chosen without dragging
+function setInvest(t){
+  formVals.invest = t.value;
+  const v = investVal(), o = document.getElementById('investOut'), box = document.getElementById('investBox');
+  if (o) o.textContent = investTxt(v);
+  if (box) box.classList.remove('unset');
+  t.classList.remove('unset'); t.style.setProperty('--p', investPct(v)); t.setAttribute('aria-valuetext', investTxt(v));
 }
 function formStepHtml(){
   const s = settings, t = fromMin(selTime);
@@ -781,6 +794,7 @@ async function submitBooking(){
   if (city.length < 2){ formErr = 'Please type your city.'; return render(); }
   if (ageN && !(Number(ageN) >= 10 && Number(ageN) <= 99)){ formErr = 'Please check your age. Use a number between 10 and 99.'; return render(); }
   if (notes.length < 3){ formErr = 'Please write a few words about what you need help with.'; return render(); }
+  if (!investSet()){ formErr = 'Please use the slider to choose how much you can invest.'; return render(); }
   if (email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ formErr = 'That email address doesn\'t look right.'; return render(); }
   if (!db || pubErr){ formErr = 'Booking is not working right now. Please try again soon.'; return render(); }
   if (!selDate || selTime == null || !openSlots(selDate).includes(selTime)){
@@ -1448,15 +1462,11 @@ document.addEventListener('input', e => {
   if (t.dataset && (t.dataset.inv || t.dataset.item !== undefined)){ onInvInput(t); }
   else if (t.dataset && t.dataset.keep){ keep[t.dataset.keep] = t.value; }
   else if (t.dataset && t.dataset.form){
-    formVals[t.dataset.form] = t.value;
-    if (t.dataset.form === 'invest'){
-      const v = investVal(), o = document.getElementById('investOut');
-      if (o) o.textContent = investTxt(v);
-      t.style.setProperty('--p', investPct(v)); t.setAttribute('aria-valuetext', investTxt(v));
-    }
+    if (t.dataset.form === 'invest') setInvest(t); else formVals[t.dataset.form] = t.value;
   }
   else if (t.dataset && t.dataset.sheet === 'q'){ sheetQ = t.value; renderSheetBody(); }
 });
+['pointerup','keyup'].forEach(ev => document.addEventListener(ev, e => { if (e.target && e.target.id === 'f-invest') setInvest(e.target); }));
 document.addEventListener('change', e => {
   const t = e.target;
   if (t.classList && t.classList.contains('cell')) onCellChange(t);
