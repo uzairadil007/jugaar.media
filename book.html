@@ -191,18 +191,40 @@ a.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line);}
 .cform input:focus,.cform textarea:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 4px rgba(216,255,41,.6);}
 .row2{display:grid;grid-template-columns:1fr 130px;gap:12px;}
 .opt{font-weight:400;color:var(--sub);}
-.invest-val{font-size:26px;font-weight:800;margin:0 0 10px;}
-.invest-val span{background:linear-gradient(transparent 62%,var(--lime) 62%);padding:0 2px;}
-.cform input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:8px;padding:0;border:0;border-radius:8px;box-shadow:none;cursor:pointer;
-  background:linear-gradient(to right,var(--ink) 0,var(--ink) var(--p,0%),#e6e6e6 var(--p,0%),#e6e6e6 100%);}
-.cform input[type=range]:focus{box-shadow:0 0 0 4px rgba(216,255,41,.6);}
-.cform input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:28px;height:28px;border-radius:50%;background:var(--lime);border:3px solid var(--ink);}
-.cform input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--lime);border:3px solid var(--ink);}
-.invest-val.unset{font-size:17px;color:var(--sub);}
-.invest-val.unset span{background:none;padding:0;}
-.cform input[type=range].unset::-webkit-slider-thumb{background:#fff;border-color:#bbb;}
-.cform input[type=range].unset::-moz-range-thumb{background:#fff;border-color:#bbb;}
-.range-ends{display:flex;justify-content:space-between;font-size:13px;color:var(--sub);margin-top:8px;font-weight:700;}
+.invest{background:var(--ink);color:#fff;border-radius:20px;padding:20px 18px 16px;position:relative;overflow:hidden;}
+.invest::before{content:'';position:absolute;right:-50px;top:-60px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(216,255,41,.28),transparent 70%);pointer-events:none;}
+.invest-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:20px;position:relative;}
+.invest-val{font-size:34px;font-weight:800;font-style:italic;color:var(--lime);margin:0;line-height:1.1;font-variant-numeric:tabular-nums;}
+.invest-val.unset{font-size:18px;font-style:normal;color:#9a9a9a;}
+.invest-cur{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--ink);background:var(--lime);border-radius:20px;padding:4px 10px;}
+.cform .invest input[type=range]{-webkit-appearance:none;appearance:none;display:block;width:100%;height:12px;padding:0;margin:0;border:0;border-radius:12px;box-shadow:none;cursor:pointer;position:relative;
+  background:linear-gradient(to right,#9fcc00 0,var(--lime) var(--p,0%),#2e2e2e var(--p,0%),#2e2e2e 100%);}
+.cform .invest input[type=range]:focus{outline:none;box-shadow:none;}
+.cform .invest input[type=range]:focus-visible{outline:2px solid var(--lime);outline-offset:8px;}
+.cform .invest input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:32px;height:32px;border-radius:50%;background:#fff;border:5px solid var(--lime);
+  box-shadow:0 0 0 7px rgba(216,255,41,.18),0 4px 12px rgba(0,0,0,.6);transition:transform .15s;}
+.cform .invest input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:#fff;border:5px solid var(--lime);box-shadow:0 0 0 7px rgba(216,255,41,.18),0 4px 12px rgba(0,0,0,.6);}
+.cform .invest input[type=range]:active::-webkit-slider-thumb{transform:scale(1.15);}
+.cform .invest input[type=range].unset::-webkit-slider-thumb{border-color:#666;box-shadow:0 4px 12px rgba(0,0,0,.6);}
+.cform .invest input[type=range].unset::-moz-range-thumb{border-color:#666;box-shadow:0 4px 12px rgba(0,0,0,.6);}
+.range-ticks{display:flex;justify-content:space-between;margin-top:14px;font-size:12px;color:#8a8a8a;font-weight:700;position:relative;}
+.invest .hint{color:#9a9a9a;margin:10px 0 0;position:relative;}
+
+.kinds{display:grid;gap:14px;}
+.kindcard{border:2px solid var(--ink);border-radius:20px;padding:18px;cursor:pointer;background:#fff;transition:transform .15s,box-shadow .15s;}
+.kindcard:hover{transform:translateY(-2px);box-shadow:0 6px 0 var(--ink);}
+.kindcard.doc{background:var(--ink);color:#fff;}
+.kc-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:6px;}
+.kc-title{font-size:19px;font-weight:800;line-height:1.3;}
+.kc-price{flex:none;font-weight:800;font-size:15px;border-radius:30px;padding:6px 13px;background:var(--lime);color:var(--ink);white-space:nowrap;}
+.kc-list{list-style:none;padding:0;margin:12px 0 0;font-size:15px;line-height:1.5;}
+.kc-list li{display:flex;gap:10px;padding:5px 0;}
+.kc-list .i{flex:none;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;margin-top:1px;}
+.kc-list .yes{background:var(--lime);color:var(--ink);}
+.kc-list .no{background:#3a3a3a;color:#fff;}
+.kc-note{font-size:13.5px;color:#a8a8a8;margin:10px 0 0;line-height:1.45;}
+.kindcard .bigbtn{margin-top:16px;font-size:16px;padding:14px;}
+.kindcard.doc .bigbtn{border-color:var(--lime);}
 .cform select{width:100%;padding:16px 14px;font-size:17px;border:1.5px solid #d9d9d9;border-radius:14px;background:#fff;color:var(--ink);transition:border-color .15s,box-shadow .15s;}
 .cform select:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 4px rgba(216,255,41,.6);}
 .cform .hint{font-size:13.5px;color:var(--sub);margin:7px 0 0;line-height:1.4;}
@@ -373,6 +395,12 @@ const DEFAULTS = {
 const OCC = ['booked','completed','no-show','blocked']; // statuses that hold a slot
 const PAY_OPTS = [['unpaid','Unpaid'],['proof','Proof sent'],['paid','Paid'],['refunded','Refunded'],['free','Free']];
 const PAY_METHODS = ['JazzCash','Easypaisa','Bank transfer','Cash','Other'];
+// the two calls a client can book — each has its own calendar
+const KINDS = {
+  team:   {label:"Free call with one of Dr. Tehreem's fellow dietitians", short:'Fellow dietitian', price:0},
+  doctor: {label:'Call with Dr. Tehreem', short:'Dr. Tehreem', price:6000},
+};
+const kindOf = x => (x && x.kind === 'team') ? 'team' : 'doctor';   // older bookings had no kind: they were Dr. Tehreem's
 const INVEST_MIN = 16000, INVEST_MAX = 120000, INVEST_STEP = 1000;
 const HEARD_OPTS = ['Instagram','Facebook','TikTok','YouTube','Friend or family','Other'];
 const STATUS_OPTS = [['booked','Booked'],['completed','Completed'],['no-show','No-show'],['cancelled','Cancelled'],['blocked','Blocked']];
@@ -380,6 +408,7 @@ const SOURCES = ['Website','Instagram','Facebook','TikTok','WhatsApp','Other'];
 const COLS = [
   {k:'date',l:'Date',t:'date',w:140},
   {k:'time',l:'Time',t:'time',w:110},
+  {k:'kind',l:'Call with',t:'select',opts:[['doctor','Dr. Tehreem'],['team','Fellow dietitian']],w:150},
   {k:'name',l:'Client',t:'text',w:170},
   {k:'phone',l:'WhatsApp',t:'text',w:150},
   {k:'city',l:'City',t:'text',w:130},
@@ -418,7 +447,7 @@ const plural = (n,w) => n + ' ' + w + (n===1?'':'s');
 const waNumber = n => { let d = String(n||'').replace(/\D/g,''); if (d.startsWith('00')) d = d.slice(2); else if (d.startsWith('0')) d = '92' + d.slice(1); return d; };
 const CODE_CHARS = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
 const genCode = () => { let s=''; for (let i=0;i<6;i++) s += CODE_CHARS[Math.floor(Math.random()*CODE_CHARS.length)]; return s; };
-const takenKey = (date,time) => date + '_' + String(time).replace(':','');
+const takenKey = (date,time,kind) => (kind === 'team' ? 'team_' : '') + date + '_' + String(time).replace(':','');
 
 function nowTz(){
   const p = new Intl.DateTimeFormat('en-CA',{timeZone:TZ,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date());
@@ -455,7 +484,7 @@ let bookingsById = {};          // admin only
 let pubErr = null, bkErr = null, authErr = '', loadedS = false, loadedT = false, slow = false;
 const clientReady = () => !!pubErr || (loadedS && loadedT);
 let view = (location.hash === '#admin') ? 'login' : 'book';
-let step = 'day', selDate = null, selTime = null, showAllDays = false, anim = true, dir = 'fwd';
+let step = 'type', selKind = null, selDate = null, selTime = null, showAllDays = false, anim = true, dir = 'fwd';
 let formVals = {name:'',phone:'',city:'',age:'',email:'',notes:'',invest:'',heard:'',ref:'',hp:''}, formErr = '', busy = false, lastBooking = null;
 let ovFilter = 'all', sheetQ = '', sheetStatus = 'all', sheetPay = 'all', sheetSort = 'new';
 let invMode = 'list', invDraft = null, invFilter = 'all', unsubI = null;
@@ -483,7 +512,7 @@ function isPast(date,t){
   if (date > n.date) return false;
   return t < n.min + settings.notice*60;
 }
-const overlapsTaken = (date,t,dur) => taken.some(k => k.date === date && t < k.end && k.start < t + dur);
+const overlapsTaken = (date,t,dur) => taken.some(k => k.date === date && kindOf(k) === kindOf({kind:selKind}) && t < k.end && k.start < t + dur);
 const capacity = date => slotTimes(date).filter(t => !isPast(date,t)).length;
 const openSlots = date => slotTimes(date).filter(t => !isPast(date,t) && !overlapsTaken(date,t,settings.duration));
 const maxDate = () => addDays(nowTz().date, settings.horizon);
@@ -506,7 +535,7 @@ function openThisWeek(){
    FIREBASE
    ===================================================================== */
 const T = id => db.collection('bk_taken').doc(id);
-const occKey = b => (OCC.includes(b.status) && parseDate(b.date) && !isNaN(toMin(b.time))) ? takenKey(b.date,b.time) : null;
+const occKey = b => (OCC.includes(b.status) && parseDate(b.date) && !isNaN(toMin(b.time))) ? takenKey(b.date,b.time,kindOf(b)) : null;
 
 function initFirebase(){
   try {
@@ -562,7 +591,7 @@ async function saveBooking(id, patch){
     if (pk && pk !== nk && pSnap && pSnap.exists && pSnap.data().code === id) tx.delete(T(pk));
     if (nk){
       const start = toMin(next.time);
-      tx.set(T(nk), {date:next.date, start, end:start + (Number(next.duration) || settings.duration), code:id});
+      tx.set(T(nk), {date:next.date, start, end:start + (Number(next.duration) || settings.duration), code:id, kind:kindOf(next)});
     }
     tx.set(bref, next);
   });
@@ -654,8 +683,8 @@ function dayName(date){
 }
 
 function stepperHtml(animate){
-  const n = {day:1, time:2, form:3}[step], L = ['Choose day','Choose time','Your details'];
-  return '<ol class="stepper" aria-label="Step ' + n + ' of 3">' + L.map((l,i) => {
+  const n = {type:1, day:2, time:3, form:4}[step], L = ['Call','Day','Time','Details'];
+  return '<ol class="stepper" aria-label="Step ' + n + ' of 4">' + L.map((l,i) => {
     const k = i + 1, c = k < n ? 'done' : (k === n ? 'now' + (animate ? ' grow' : '') : '');
     return '<li class="' + c + '"' + (k === n ? ' aria-current="step"' : '') + '><span class="bar"><i></i></span>' + k + '. ' + l + '</li>';
   }).join('') + '</ol>';
@@ -665,33 +694,49 @@ function heroHtml(animate){
   const kids = [
     s.host ? '<div class="eyebrow">' + esc(s.host) + '</div>' : '',
     '<h1><span>' + esc(s.title) + '</span></h1>',
-    '<div class="facts"><span class="fact">' + s.duration + ' minutes</span><span class="fact lime">' + (s.price > 0 ? esc(moneyTxt(s.price)) : 'Free') + '</span></div>',
+    '<div class="facts"><span class="fact">' + s.duration + ' minutes</span><span class="fact lime">Free or ' + esc(moneyTxt(KINDS.doctor.price)) + '</span></div>',
     '<p>' + (hrs.length ? 'Open ' + esc(hrs.join(' · ')) + '.' : 'Opening hours coming soon.') + ' Takes about 1 minute to book. No account needed.</p>',
   ].filter(Boolean);
   return '<div class="hero' + (animate ? ' enter' : '') + '">' + kids.map((k,i) => k.replace(/^<(\w+)/, '<$1 style="--i:' + i + '"')).join('') + '</div>';
 }
 function bookHtml(animate){
   if (!clientReady()) return '<div class="loading" role="status"><span class="spin"></span>' + (slow ? 'This is taking longer than usual. Please check your internet.' : 'Loading available days…') + '</div>';
+  if (step !== 'type' && step !== 'done' && !selKind) step = 'type';
   if ((step === 'time' || step === 'form') && !selDate) step = 'day';
   if (step === 'form' && selTime == null) step = 'time';
   let banner = '';
   if (pubErr) banner = '<div class="banner err">Booking is not working right now. Please try again in a little while.' + (isAdmin() ? ' <b>(Admin: see Settings → Firebase setup.)</b>' : '') + '</div>';
   else if (isAdmin()) banner = '<div class="banner ok">You are previewing the client page. Bookings made here are real.</div>';
-  else if (lastBooking && step === 'day' && lastBooking.date >= nowTz().date)
+  else if (lastBooking && step === 'type' && lastBooking.date >= nowTz().date)
     banner = '<div class="banner ok">You already have a booking: <b>' + esc(fmtDayShort(lastBooking.date)) + ', ' + fmt12(lastBooking.time) + '</b>. <button type="button" class="btn sm" data-act="viewLast">See details</button></div>';
-  const body = step === 'time' ? timeStepHtml() : step === 'form' ? formStepHtml() : step === 'done' ? doneHtml(animate) : dayStepHtml();
-  const head = step === 'day' ? heroHtml(animate) : '';
+  const body = step === 'time' ? timeStepHtml() : step === 'form' ? formStepHtml() : step === 'done' ? doneHtml(animate) : step === 'day' ? dayStepHtml() : typeStepHtml();
+  const head = step === 'type' ? heroHtml(animate) : '';
   const bar = step === 'done' ? '' : stepperHtml(animate);
   return banner + head + bar + '<section class="stage' + (animate ? ' enter ' + dir : '') + '" aria-live="polite">' + body + '</section>';
 }
 
+function typeStepHtml(){
+  const pick = k => ' data-act="pickKind" data-k="' + k + '"';
+  return '<h2 class="sec-title">Who would you like to speak with?</h2><p class="sec-sub">Choose one of the two calls.</p><div class="kinds">' +
+    '<div class="kindcard"' + pick('team') + '><div class="kc-top"><div class="kc-title">Book a call for free with one of Dr. Tehreem\'s fellow dietitians</div><span class="kc-price">Free</span></div>' +
+      '<button type="button" class="bigbtn"' + pick('team') + '>Book the free call →</button></div>' +
+    '<div class="kindcard doc"' + pick('doctor') + '><div class="kc-top"><div class="kc-title">Book a call with Dr. Tehreem</div><span class="kc-price">' + esc(moneyTxt(KINDS.doctor.price)) + '</span></div>' +
+      '<ul class="kc-list">' +
+        '<li><span class="i yes" aria-hidden="true">✓</span><span>All of the things that you\'re suffering from will be analysed by Dr. Tehreem and a solution will be provided to fix your concern.</span></li>' +
+        '<li><span class="i no" aria-hidden="true">✕</span><span>Diet plan isn\'t included in the call.</span></li>' +
+      '</ul><p class="kc-note">These are the only things that are being provided in the consultation call.</p>' +
+      '<button type="button" class="bigbtn"' + pick('doctor') + '>Book with Dr. Tehreem →</button></div></div>';
+}
+const kindPrice = () => { const k = KINDS[kindOf({kind:selKind})]; return k.price > 0 ? moneyTxt(k.price) : 'Free'; };
 function dayStepHtml(){
   const today = nowTz().date, all = [];
   for (let i = 0; i <= settings.horizon; i++){ const d = addDays(today,i); if (capacity(d) > 0) all.push({d, open:openSlots(d).length}); }
-  if (!all.length) return '<div class="empty"><b>No days are open right now.</b><br>Please check again soon.</div>';
+  if (!all.length) return '<button type="button" class="backbtn" data-act="back">← Back</button><div class="empty"><b>No days are open right now.</b><br>Please check again soon.</div>';
   const shown = showAllDays ? all : all.slice(0,6), nx = nextAvailable();
   const quick = nx ? '<button type="button" class="quick" data-act="jumpNext" style="--i:0"><span><small>Earliest time</small><b>' + esc(dayName(nx.date)) + ' · ' + fmt12(fromMin(nx.t)) + '</b></span><span class="go">Book this →</span></button>' : '';
-  return quick + '<h2 class="sec-title">Which day suits you?</h2><p class="sec-sub">Tap a day to see the times.</p><div class="daygrid">' +
+  return '<button type="button" class="backbtn" data-act="back">← Back</button>' +
+    '<div class="chosen"><div><b>' + esc(KINDS[kindOf({kind:selKind})].short) + '</b><span>' + esc(kindPrice()) + ' · ' + settings.duration + ' minutes</span></div><button type="button" data-act="back">Change</button></div>' +
+    quick + '<h2 class="sec-title">Which day suits you?</h2><p class="sec-sub">Tap a day to see the times.</p><div class="daygrid">' +
     shown.map((x,i) => {
       const dt = parseDate(x.d), mon = dt.toLocaleDateString('en-GB',{timeZone:'UTC',month:'short'});
       const label = fmtDay(x.d) + ', ' + (x.open ? timesLeft(x.open) : 'fully booked');
@@ -719,12 +764,12 @@ const investPct = v => ((v - INVEST_MIN) / (INVEST_MAX - INVEST_MIN) * 100).toFi
 const investTxt = v => 'Rs ' + fmtMoney(v) + (v >= INVEST_MAX ? '+' : '');
 const investSet = () => formVals.invest !== '';
 function investFieldHtml(){
-  const v = investVal(), set = investSet(), txt = set ? investTxt(v) : 'Slide to choose an amount';
-  return '<div class="field"><label for="f-invest">How much can you invest in yourself?</label>' +
-    '<p class="invest-val' + (set ? '' : ' unset') + '" id="investBox" aria-hidden="true"><span id="investOut">' + esc(txt) + '</span></p>' +
+  const v = investVal(), set = investSet(), txt = set ? investTxt(v) : 'Slide to choose';
+  return '<div class="field"><label for="f-invest">How much can you invest in yourself?</label><div class="invest">' +
+    '<div class="invest-top"><p class="invest-val' + (set ? '' : ' unset') + '" id="investBox" aria-hidden="true"><span id="investOut">' + esc(txt) + '</span></p><span class="invest-cur">PKR</span></div>' +
     '<input id="f-invest" data-form="invest" type="range"' + (set ? '' : ' class="unset"') + ' min="' + INVEST_MIN + '" max="' + INVEST_MAX + '" step="' + INVEST_STEP + '" value="' + v + '" style="--p:' + (set ? investPct(v) : '0%') + '" aria-valuetext="' + esc(txt) + '">' +
-    '<div class="range-ends"><span>Rs 16,000</span><span>Rs 120,000+</span></div>' +
-    '<p class="hint">Slide to the amount that suits you.</p></div>';
+    '<div class="range-ticks" aria-hidden="true"><span>16k</span><span>42k</span><span>68k</span><span>94k</span><span>120k+</span></div>' +
+    '<p class="hint">Slide to the amount that suits you.</p></div></div>';
 }
 // called on any slider interaction — also a plain tap, so Rs 16,000 can be chosen without dragging
 function setInvest(t){
@@ -735,9 +780,9 @@ function setInvest(t){
   t.classList.remove('unset'); t.style.setProperty('--p', investPct(v)); t.setAttribute('aria-valuetext', investTxt(v));
 }
 function formStepHtml(){
-  const s = settings, t = fromMin(selTime);
+  const s = settings, t = fromMin(selTime), price = KINDS[kindOf({kind:selKind})].price;
   return '<button type="button" class="backbtn" data-act="back">← Back</button>' +
-    '<div class="chosen"><div><b>' + esc(fmtDay(selDate)) + '</b><span>' + fmt12(t) + ' · ' + s.duration + ' minutes</span></div><button type="button" data-act="back">Change</button></div>' +
+    '<div class="chosen"><div><b>' + esc(fmtDay(selDate)) + '</b><span>' + fmt12(t) + ' · ' + s.duration + ' minutes · ' + esc(KINDS[kindOf({kind:selKind})].short) + ' · ' + esc(kindPrice()) + '</span></div><button type="button" data-act="back">Change</button></div>' +
     '<h2 class="sec-title">Your details</h2><p class="sec-sub">A few details help us prepare for your consultation. We only use them to contact you.</p>' +
     '<form id="bookForm" class="cform" novalidate>' +
     '<div class="field"><label for="f-name">Your full name</label><input id="f-name" data-form="name" type="text" maxlength="80" autocomplete="name" value="' + esc(formVals.name) + '"></div>' +
@@ -749,17 +794,17 @@ function formStepHtml(){
     '<div class="field"><label for="f-email">Email <span class="opt">(optional)</span></label><input id="f-email" data-form="email" type="email" inputmode="email" maxlength="120" autocomplete="email" value="' + esc(formVals.email) + '"></div>' +
     '<div class="field"><label for="f-heard">How did you hear about us? <span class="opt">(optional)</span></label><select id="f-heard" data-form="heard"><option value="">Choose one</option>' +
       HEARD_OPTS.map(o => '<option value="' + esc(o) + '"' + (formVals.heard === o ? ' selected' : '') + '>' + esc(o) + '</option>').join('') + '</select></div>' +
-    (s.price > 0 ? '<details' + (formVals.ref ? ' open' : '') + '><summary>I have already paid</summary><div class="field"><label for="f-ref">Your payment transaction ID</label><input id="f-ref" data-form="ref" type="text" maxlength="60" value="' + esc(formVals.ref) + '"></div></details>' : '') +
+    (price > 0 ? '<details' + (formVals.ref ? ' open' : '') + '><summary>I have already paid</summary><div class="field"><label for="f-ref">Your payment transaction ID</label><input id="f-ref" data-form="ref" type="text" maxlength="60" value="' + esc(formVals.ref) + '"></div></details>' : '') +
     '<div class="hp" aria-hidden="true"><label>Leave empty<input data-form="hp" type="text" tabindex="-1" autocomplete="off" value="' + esc(formVals.hp) + '"></label></div>' +
     '<p class="err-msg" role="alert">' + esc(formErr) + '</p>' +
-    '<p class="fee-note">' + (s.price > 0 ? 'Fee: <b>' + esc(moneyTxt(s.price)) + '</b>. You pay after booking — we will show you how.' : 'This consultation is <b>free</b>.') + '</p>' +
+    '<p class="fee-note">' + (price > 0 ? 'Fee: <b>' + esc(moneyTxt(price)) + '</b>. You pay after booking — we will show you how.' : 'This call is <b>free</b>.') + '</p>' +
     '<button class="bigbtn" type="submit"' + (busy || pubErr ? ' disabled' : '') + '>' + (busy ? '<span class="spin"></span>Booking…' : 'Book my consultation') + '</button></form>';
 }
 function doneHtml(){
   const b = lastBooking, s = settings; if (!b) return '';
   const start = instantUTC(b.date,b.time), end = new Date(start.getTime() + (b.duration || s.duration) * 60000);
   const f = d => d.getUTCFullYear() + pad(d.getUTCMonth()+1) + pad(d.getUTCDate()) + 'T' + pad(d.getUTCHours()) + pad(d.getUTCMinutes()) + '00Z';
-  const gcal = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent(s.title + (s.host ? ' — ' + s.host : '')) + '&dates=' + f(start) + '/' + f(end) + '&details=' + encodeURIComponent('Booking code: ' + b.code);
+  const gcal = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent(KINDS[kindOf(b)].label) + '&dates=' + f(start) + '/' + f(end) + '&details=' + encodeURIComponent('Booking code: ' + b.code);
   const localDiff = -new Date().getTimezoneOffset() !== TZ_OFFSET_MIN;
   const localNote = localDiff ? '<p class="fine">In your local time: ' + esc(start.toLocaleString([], {weekday:'short',day:'numeric',month:'short',hour:'numeric',minute:'2-digit'})) + '</p>' : '';
   const wa = waNumber(s.whatsapp);
@@ -776,7 +821,7 @@ function doneHtml(){
     steps.push('<b>Keep your booking code</b>Show it to us if you ever need to change your time.');
   }
   return '<div class="done"><div class="tick"><svg viewBox="0 0 92 92" aria-hidden="true"><circle class="fillc" cx="46" cy="46" r="38"/><circle class="ring" cx="46" cy="46" r="38"/><path class="chk" d="M30 47 L42 59 L63 35"/></svg></div>' +
-    '<h2>You are booked!</h2>' +
+    '<h2>You are booked!</h2><p class="sub">' + esc(KINDS[kindOf(b)].label) + '</p>' +
     '<div class="when">' + esc(fmtDay(b.date)) + ' · ' + fmt12(b.time) + '</div><p class="sub">' + (b.duration || s.duration) + ' minutes · Pakistan time</p>' + localNote +
     '<div class="codewrap done-rise" style="--i:0"><small>Your booking code</small><div class="codebox">' + esc(b.code) + '</div></div>' +
     '<ol class="todo">' + steps.map((x,i) => '<li class="done-rise" style="--i:' + (i+1) + '"><span class="n">' + (i+1) + '</span><div class="t">' + x + '</div></li>').join('') + '</ol>' +
@@ -801,14 +846,14 @@ async function submitBooking(){
     formErr = ''; step = 'time'; dir = 'back'; anim = true; toast('That time was just taken. Please pick another time.'); return render();
   }
   busy = true; formErr = ''; render();
-  const code = genCode(), time = fromMin(selTime);
-  const booking = {code, date:selDate, time, duration:s.duration, name, phone, city, age: ageN ? Number(ageN) : '', email, notes, invest, heard: HEARD_OPTS.includes(heard) ? heard : '',
-    amount:s.price, payStatus: s.price > 0 ? (ref ? 'proof' : 'unpaid') : 'free', payRef:ref,
+  const code = genCode(), time = fromMin(selTime), kind = kindOf({kind:selKind}), price = KINDS[kind].price;
+  const booking = {code, kind, date:selDate, time, duration:s.duration, name, phone, city, age: ageN ? Number(ageN) : '', email, notes, invest, heard: HEARD_OPTS.includes(heard) ? heard : '',
+    amount:price, payStatus: price > 0 ? (ref ? 'proof' : 'unpaid') : 'free', payRef: price > 0 ? ref : '',
     status:'booked', source:'Website', adminNote:'', createdAt:new Date().toISOString()};
-  const tk = {date:selDate, start:selTime, end:selTime + s.duration, code};
+  const tk = {date:selDate, start:selTime, end:selTime + s.duration, code, kind};
   try {
     await db.runTransaction(async tx => {
-      const r = T(takenKey(selDate,time)), snap = await tx.get(r);
+      const r = T(takenKey(selDate,time,kind)), snap = await tx.get(r);
       if (snap.exists) throw new Error('SLOT_TAKEN');
       tx.set(r, tk);
       tx.set(db.collection('bk_bookings').doc(code), booking);
@@ -898,7 +943,7 @@ function overviewHtml(){
       rows.map(b => {
         const wa = waNumber(b.phone);
         return '<tr><td><b>' + esc(fmtDayShort(b.date)) + '</b><br><span class="muted">' + fmt12(b.time) + '</span></td>' +
-          '<td>' + esc(b.name || '—') + '<br><span class="muted">' + esc(b.code) + (b.city ? ' · ' + esc(b.city) : '') + (b.age ? ' · ' + esc(b.age) + ' yrs' : '') + (b.invest ? ' · can invest ' + esc(investTxt(Number(b.invest))) : '') + '</span>' + (b.notes ? '<div class="need">' + esc(b.notes) + '</div>' : '') + '</td>' +
+          '<td>' + esc(b.name || '—') + '<br><span class="muted">' + esc(KINDS[kindOf(b)].short) + ' · ' + esc(b.code) + (b.city ? ' · ' + esc(b.city) : '') + (b.age ? ' · ' + esc(b.age) + ' yrs' : '') + (b.invest ? ' · can invest ' + esc(investTxt(Number(b.invest))) : '') + '</span>' + (b.notes ? '<div class="need">' + esc(b.notes) + '</div>' : '') + '</td>' +
           '<td>' + (wa ? '<a class="wa" href="https://wa.me/' + wa + '" target="_blank" rel="noopener">' + esc(b.phone) + '</a>' : '—') + '</td>' +
           '<td class="num">' + esc(settings.currency) + ' ' + fmtMoney(b.amount) + '</td><td>' + payTag(b.payStatus) + '</td>' +
           '<td><div class="actions">' + (b.payStatus === 'paid' || b.payStatus === 'free' ? '' : '<button type="button" class="btn lime sm" data-act="markPaid" data-id="' + esc(b.code) + '">Mark paid</button>') +
@@ -979,8 +1024,8 @@ async function onCellChange(el){
 }
 async function addRow(){
   const id = genCode(), n = nowTz();
-  const b = {code:id, date:n.date, time:'', duration:settings.duration, name:'', phone:'', email:'', notes:'',
-    amount:settings.price, payStatus: settings.price > 0 ? 'unpaid' : 'free', payRef:'', status:'booked', source:'WhatsApp', adminNote:'', createdAt:new Date().toISOString()};
+  const b = {code:id, kind:'doctor', date:n.date, time:'', duration:settings.duration, name:'', phone:'', email:'', notes:'',
+    amount:KINDS.doctor.price, payStatus:'unpaid', payRef:'', status:'booked', source:'WhatsApp', adminNote:'', createdAt:new Date().toISOString()};
   try {
     await db.collection('bk_bookings').doc(id).set(b);
     bookingsById[id] = b;
@@ -1135,7 +1180,7 @@ function newDraft(b){
     number:null, bookingCode: b ? b.code : '', clientName: b ? (b.name || '') : '', clientPhone: b ? (b.phone || '') : '',
     clientEmail: b ? (b.email || '') : '', clientCity: b ? (b.city || '') : '',
     issueDate: today, dueDate: addDays(today, 7),
-    items: [{desc: b ? (s.title + ' — ' + fmtDayShort(b.date) + ', ' + fmt12(b.time)) : '', qty: 1, price: b ? (Number(b.amount) || 0) : 0}],
+    items: [{desc: b ? (KINDS[kindOf(b)].label + ' — ' + fmtDayShort(b.date) + ', ' + fmt12(b.time)) : '', qty: 1, price: b ? (Number(b.amount) || 0) : 0}],
     discount: 0, taxPct: Number(s.invTax) || 0, notes: s.invNote || '', status:'unpaid', void:false,
   };
 }
@@ -1292,7 +1337,10 @@ function rulesText(){
     "    // existing VA tracker (unchanged)\n    match /entries/{id} { allow read, write: if true; }\n\n" +
     "    // booking page\n    match /bk_settings/{id} { allow read: if true; allow write: if isAdmin(); }\n" +
     "    match /bk_taken/{id} { allow read: if true; allow create: if true; allow update, delete: if isAdmin(); }\n" +
-    "    match /bk_bookings/{id} { allow create: if true; allow read, update, delete: if isAdmin(); }\n" +
+    "    // a website booking must carry the right price for the call it picked\n" +
+    "    function validBooking() {\n      let d = request.resource.data;\n" +
+    "      return d.status == 'booked' && ((d.kind == 'doctor' && d.amount == 6000) || (d.kind == 'team' && d.amount == 0));\n    }\n" +
+    "    match /bk_bookings/{id} { allow create: if isAdmin() || validBooking(); allow read, update, delete: if isAdmin(); }\n" +
     "    match /bk_invoices/{id} { allow read, write: if isAdmin(); }\n  }\n}\n";
 }
 function settingsHtml(){
@@ -1301,7 +1349,8 @@ function settingsHtml(){
     '<div class="two"><div class="field"><label for="st-title">Title</label><input id="st-title" type="text" maxlength="60" value="' + esc(s.title) + '"></div>' +
     '<div class="field"><label for="st-host">Your name / brand</label><input id="st-host" type="text" maxlength="60" value="' + esc(s.host) + '"></div></div>' +
     '<div class="field"><label for="st-desc">Description</label><textarea id="st-desc" maxlength="400">' + esc(s.description) + '</textarea></div>' +
-    '<div class="two"><div class="field"><label for="st-price">Price (0 = free)</label><input id="st-price" type="number" min="0" step="1" value="' + esc(s.price) + '"></div>' +
+    '<p class="muted" style="margin:0 0 14px">Prices are fixed on the booking page: <b>Dr. Tehreem ' + esc(moneyTxt(KINDS.doctor.price)) + '</b>, fellow dietitian <b>free</b>.</p>' +
+    '<div class="two">' +
     '<div class="field"><label for="st-cur">Currency</label><input id="st-cur" type="text" maxlength="5" value="' + esc(s.currency) + '"></div></div>' +
     '<div class="field"><label for="st-wa">Your WhatsApp number (clients send payment proof here)</label><input id="st-wa" type="tel" maxlength="20" placeholder="03xx xxxxxxx or 923xxxxxxxxx" value="' + esc(s.whatsapp) + '"></div>' +
     '<p class="muted" style="margin:-4px 0 16px">Your bank / JazzCash / Easypaisa details are on the <b>Payments</b> tab.</p>' +
@@ -1334,7 +1383,7 @@ async function saveAvail(){
 }
 async function saveGeneral(){
   const patch = {title:val('st-title').trim() || 'Consultation', host:val('st-host').trim(), description:val('st-desc').trim(),
-    price:Math.max(0, Number(val('st-price')) || 0), currency:val('st-cur').trim() || 'PKR', whatsapp:val('st-wa').trim()};
+    currency:val('st-cur').trim() || 'PKR', whatsapp:val('st-wa').trim()};
   try { await saveSettings(patch); toast('Details saved'); } catch(e){ toast('Could not save. Check your connection.'); }
 }
 async function addBlock(){
@@ -1357,17 +1406,18 @@ async function rmBlock(d){
 const ACT = {
   go(el){
     const v = el.dataset.v; view = v; authErr = ''; anim = true; dir = 'fwd';
-    if (v === 'book'){ step = 'day'; if (location.hash) history.replaceState(null,'',location.pathname + location.search); }
+    if (v === 'book'){ step = 'type'; if (location.hash) history.replaceState(null,'',location.pathname + location.search); }
     render(); window.scrollTo(0,0);
   },
   logo(){ view = isAdmin() ? 'ov' : 'login'; authErr = ''; anim = true; dir = 'fwd'; render(); window.scrollTo(0,0); },
   signOut(){ if (auth) auth.signOut(); },
+  pickKind(el){ selKind = el.dataset.k === 'team' ? 'team' : 'doctor'; selDate = null; selTime = null; showAllDays = false; step = 'day'; formErr = ''; dir = 'fwd'; anim = true; render(); window.scrollTo(0,0); },
   pickDay(el){ selDate = el.dataset.date; selTime = null; step = 'time'; dir = 'fwd'; anim = true; render(); window.scrollTo(0,0); },
   pickSlot(el){ selTime = Number(el.dataset.t); step = 'form'; formErr = ''; dir = 'fwd'; anim = true; render(); window.scrollTo(0,0); },
-  back(){ step = step === 'form' ? 'time' : 'day'; if (step === 'day'){ selTime = null; } formErr = ''; dir = 'back'; anim = true; render(); window.scrollTo(0,0); },
+  back(){ step = step === 'form' ? 'time' : step === 'time' ? 'day' : 'type'; if (step === 'day' || step === 'type'){ selTime = null; } formErr = ''; dir = 'back'; anim = true; render(); window.scrollTo(0,0); },
   jumpNext(){ const nx = nextAvailable(); if (!nx) return; selDate = nx.date; selTime = nx.t; step = 'form'; formErr = ''; dir = 'fwd'; anim = true; render(); window.scrollTo(0,0); },
   moreDays(){ showAllDays = true; anim = false; render(); },
-  bookAnother(){ step = 'day'; selDate = null; selTime = null; dir = 'back'; anim = true; render(); window.scrollTo(0,0); },
+  bookAnother(){ step = 'type'; selKind = null; selDate = null; selTime = null; dir = 'back'; anim = true; render(); window.scrollTo(0,0); },
   viewLast(){ step = 'done'; dir = 'fwd'; anim = true; render(); },
   ovF(el){ ovFilter = el.dataset.f; render(); },
   payF(el){ payFilter = el.dataset.f; render(); },
