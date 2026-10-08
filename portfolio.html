@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Uzair Adil — UGC Creator</title>
+<title>Uzair Adil — Portfolio</title>
+<meta name="description" content="Uzair Adil — web developer, graphic designer and social media growth manager.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -29,7 +30,10 @@
   h1 span{color:var(--blue)}
   .hr{display:grid;grid-template-rows:1fr auto}
   .vid{background:var(--blue);display:grid;place-items:center;position:relative;color:#fff}
-  .vid .play{width:90px;height:90px;border:3px solid #fff;border-radius:50%;display:grid;place-items:center;font-size:28px}
+  .code{font-family:"Space Mono",monospace;font-size:14px;line-height:1.9;padding:60px 28px 50px;width:100%;max-width:420px}
+  .code i{font-style:normal;opacity:.6}
+  .code b{color:var(--ink);background:#fff;padding:0 4px}
+  .code .cur{display:inline-block;width:9px;height:16px;background:#fff;vertical-align:middle;animation:blink 1s infinite}
   .vid .rec{position:absolute;top:18px;left:18px;font-family:"Space Mono";font-size:12px;display:flex;gap:8px;align-items:center}
   .vid .rec::before{content:"";width:10px;height:10px;background:var(--red);border-radius:50%;animation:blink 1s infinite}
   @keyframes blink{50%{opacity:0}}
@@ -59,12 +63,12 @@
   .row h3{font-size:28px;letter-spacing:-.02em}
   .row p{font-size:15px;opacity:.8}
   .row .arr{font-size:28px;text-align:right}
-  .brands{display:grid;grid-template-columns:repeat(3,1fr);border-top:3px solid var(--ink)}
+  .brands{display:grid;grid-template-columns:repeat(4,1fr);border-top:3px solid var(--ink)}
   .brand{padding:40px 30px 60px;border-right:3px solid var(--ink)}
   .brand:first-child{padding-left:0}
   .brand:last-child{border-right:none}
   .brand .mono{color:var(--blue);font-size:13px}
-  .brand h3{font-size:36px;letter-spacing:-.03em;margin:14px 0;text-transform:uppercase;line-height:1}
+  .brand h3{font-size:30px;letter-spacing:-.03em;margin:14px 0;text-transform:uppercase;line-height:1}
   .brand p{color:var(--mute)}
   .steps{display:grid;grid-template-columns:repeat(4,1fr);border-top:3px solid var(--ink)}
   .st{padding:34px 24px 60px;border-right:3px solid var(--ink)}
@@ -97,6 +101,7 @@
     .steps{grid-template-columns:1fr 1fr}
     .st,.st:first-child{padding:28px 16px;border-bottom:3px solid var(--ink)}
     .st:nth-child(2){border-right:none}
+    .code{padding:56px 20px 46px;font-size:13px}
     .row{grid-template-columns:50px 1fr 40px}
     .row p{display:none}
     .clinks a,.clinks a:first-child{border-right:none;border-bottom:1px solid #444;padding-left:0}
@@ -104,21 +109,31 @@
 </style>
 </head>
 <body>
-<div class="bar">● NOW BOOKING — UGC / ADS / PRODUCT CONTENT — PAKISTAN</div>
+<div class="bar">● NOW BOOKING — WEB / DESIGN / SOCIAL GROWTH — PAKISTAN</div>
 <nav><div class="wrap">
   <a href="#" class="logo">UZAIR_ADIL</a>
-  <ul><li><a href="#about">About</a></li><li><a href="#services">Services</a></li><li><a href="#brands">Brands</a></li><li><a href="#contact">Contact ↗</a></li></ul>
+  <ul><li><a href="#about">About</a></li><li><a href="#services">Services</a></li><li><a href="#work">Work</a></li><li><a href="#contact">Contact ↗</a></li></ul>
 </div></nav>
 
 <header><div class="wrap">
   <div class="hl">
-    <span class="mono">[ UGC CREATOR / CONTENT STRATEGIST ]</span>
-    <h1>Real people.<br>Real <span>results.</span></h1>
-    <div class="cta"><a href="#contact" class="btn">Hire me →</a><a href="#services" class="btn o">View services</a></div>
+    <span class="mono">[ WEB DEVELOPER / GRAPHIC DESIGNER / SOCIAL MEDIA GROWTH MANAGER ]</span>
+    <h1>Build it.<br>Design it.<br><span>Grow it.</span></h1>
+    <div class="cta"><a href="#contact" class="btn">Hire me →</a><a href="#work" class="btn o">View work</a></div>
   </div>
   <div class="hr">
-    <div class="vid"><span class="rec">REC</span><div class="play">▶</div><span class="tc">00:00:15:00</span></div>
-    <p>Native, high-converting UGC for brands that want content that doesn't look like an ad — but performs better than one.</p>
+    <div class="vid">
+      <span class="rec">LIVE</span>
+      <div class="code">
+        <div><i>01</i>&nbsp; const brand = {</div>
+        <div><i>02</i>&nbsp;&nbsp;&nbsp; site: <b>"fast"</b>,</div>
+        <div><i>03</i>&nbsp;&nbsp;&nbsp; design: <b>"sharp"</b>,</div>
+        <div><i>04</i>&nbsp;&nbsp;&nbsp; socials: <b>"growing"</b></div>
+        <div><i>05</i>&nbsp; };<span class="cur"></span></div>
+      </div>
+      <span class="tc">index.html</span>
+    </div>
+    <p>Websites, visuals and social growth under one roof — so your brand looks good, loads fast and actually gets seen.</p>
   </div>
 </div></header>
 
@@ -126,47 +141,49 @@
   <div class="head"><h2>Who<br>am I</h2><span class="mono">// 01 — ABOUT</span></div>
   <div class="about">
     <div>
-      <p>I'm Uzair Adil — a UGC creator and the founder of Jugaar Media, a creative and influencer marketing agency in Pakistan.</p>
-      <p>I also run a fitness management agency representing coaches across three major cities. I bring both sides to every project: the creator on camera and the strategist behind it.</p>
+      <p>I'm Uzair Adil — a web developer, graphic designer and social media growth manager, and the founder of Jugaar Media, a creative and influencer marketing agency in Pakistan.</p>
+      <p>I build the website, design the brand and run the socials. Because one person handles all three, everything looks, sounds and performs like it belongs together.</p>
     </div>
     <div class="spec">
       <div><span>NAME</span><b>UZAIR ADIL</b></div>
-      <div><span>ROLE</span><b>UGC CREATOR / CEO</b></div>
+      <div><span>ROLE</span><b>DEV / DESIGN / SOCIAL</b></div>
       <div><span>AGENCY</span><b>JUGAAR MEDIA</b></div>
-      <div><span>COACHES MANAGED</span><b>50+</b></div>
-      <div><span>CITIES</span><b>ISB / KHI / LHE</b></div>
+      <div><span>BASED IN</span><b>PAKISTAN</b></div>
+      <div><span>WORKS WITH</span><b>CLIENTS WORLDWIDE</b></div>
       <div><span>STATUS</span><b>AVAILABLE</b></div>
     </div>
   </div>
 </div></section>
 
 <section id="services"><div class="wrap">
-  <div class="head"><h2>What<br>I make</h2><span class="mono">// 02 — SERVICES</span></div>
+  <div class="head"><h2>What<br>I do</h2><span class="mono">// 02 — SERVICES</span></div>
   <div class="table">
-    <div class="row"><span class="mono">S—01</span><h3>UGC Video Ads</h3><p>Paid-ready creatives for Meta & TikTok with hook variations.</p><span class="arr">→</span></div>
-    <div class="row"><span class="mono">S—02</span><h3>Unboxing / Demo</h3><p>First impressions and product walkthroughs.</p><span class="arr">→</span></div>
-    <div class="row"><span class="mono">S—03</span><h3>Testimonials</h3><p>Story-led reviews that remove buyer doubts.</p><span class="arr">→</span></div>
-    <div class="row"><span class="mono">S—04</span><h3>Lifestyle Reels</h3><p>Organic content that fits your product into daily life.</p><span class="arr">→</span></div>
-    <div class="row"><span class="mono">S—05</span><h3>Strategy & Scripts</h3><p>Angles, scripts and content calendars.</p><span class="arr">→</span></div>
+    <div class="row"><span class="mono">WEB—01</span><h3>Websites & Landing Pages</h3><p>Fast, responsive sites built to turn visitors into customers.</p><span class="arr">→</span></div>
+    <div class="row"><span class="mono">WEB—02</span><h3>Web Apps & Dashboards</h3><p>Booking systems, admin panels and custom tools for your business.</p><span class="arr">→</span></div>
+    <div class="row"><span class="mono">GFX—03</span><h3>Brand Identity</h3><p>Logos, colour systems and brand guidelines that stay consistent.</p><span class="arr">→</span></div>
+    <div class="row"><span class="mono">GFX—04</span><h3>Social & Ad Creatives</h3><p>Posts, carousels, thumbnails and paid-ad graphics.</p><span class="arr">→</span></div>
+    <div class="row"><span class="mono">SMM—05</span><h3>Social Media Management</h3><p>Content calendars, posting and community management.</p><span class="arr">→</span></div>
+    <div class="row"><span class="mono">SMM—06</span><h3>Growth Strategy</h3><p>Audits, analytics and a plan to grow reach, followers and sales.</p><span class="arr">→</span></div>
   </div>
 </div></section>
 
-<section id="brands"><div class="wrap">
+<section id="work"><div class="wrap">
   <div class="head"><h2>Brands I<br>work with</h2><span class="mono">// 03 — CLIENTS</span></div>
   <div class="brands">
+    <div class="brand"><span class="mono">jugaar.media</span><h3>Jugaar Media</h3><p>Agency website, booking flow and admin dashboard.</p></div>
     <div class="brand"><span class="mono">@tsk_diet</span><h3>TSK Diet</h3><p>Nutrition coaching. Educational and trust-building content.</p></div>
     <div class="brand"><span class="mono">@hustlersonly.official</span><h3>Hustlers Only</h3><p>Lifestyle & motivation. High-energy brand content.</p></div>
-    <div class="brand"><span class="mono">@irongear_fitness</span><h3>IronGear Fitness</h3><p>Fitness equipment. Demos and in-gym content.</p></div>
+    <div class="brand"><span class="mono">@irongear_fitness</span><h3>IronGear Fitness</h3><p>Fitness equipment. Product visuals and social content.</p></div>
   </div>
 </div></section>
 
 <section><div class="wrap">
   <div class="head"><h2>How it<br>works</h2><span class="mono">// 04 — PROCESS</span></div>
   <div class="steps">
-    <div class="st"><div class="big">01</div><h3>Brief</h3><p>Product, audience, goal.</p></div>
-    <div class="st"><div class="big">02</div><h3>Script</h3><p>Hooks + angles approved by you.</p></div>
-    <div class="st"><div class="big">03</div><h3>Shoot</h3><p>Filmed, edited, captioned.</p></div>
-    <div class="st"><div class="big">04</div><h3>Ship</h3><p>Final files + 1 revision.</p></div>
+    <div class="st"><div class="big">01</div><h3>Discover</h3><p>Your brand, audience and goals.</p></div>
+    <div class="st"><div class="big">02</div><h3>Design</h3><p>Visuals and layouts approved by you.</p></div>
+    <div class="st"><div class="big">03</div><h3>Build</h3><p>Site, assets and content, ready to launch.</p></div>
+    <div class="st"><div class="big">04</div><h3>Grow</h3><p>Post, track, improve — month after month.</p></div>
   </div>
 </div></section>
 
