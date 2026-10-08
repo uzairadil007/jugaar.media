@@ -191,6 +191,14 @@ a.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line);}
 .cform input:focus,.cform textarea:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 4px rgba(216,255,41,.6);}
 .row2{display:grid;grid-template-columns:1fr 130px;gap:12px;}
 .opt{font-weight:400;color:var(--sub);}
+.invest-val{font-size:26px;font-weight:800;margin:0 0 10px;}
+.invest-val span{background:linear-gradient(transparent 62%,var(--lime) 62%);padding:0 2px;}
+.cform input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:8px;padding:0;border:0;border-radius:8px;box-shadow:none;cursor:pointer;
+  background:linear-gradient(to right,var(--ink) 0,var(--ink) var(--p,0%),#e6e6e6 var(--p,0%),#e6e6e6 100%);}
+.cform input[type=range]:focus{box-shadow:0 0 0 4px rgba(216,255,41,.6);}
+.cform input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:28px;height:28px;border-radius:50%;background:var(--lime);border:3px solid var(--ink);}
+.cform input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--lime);border:3px solid var(--ink);}
+.range-ends{display:flex;justify-content:space-between;font-size:13px;color:var(--sub);margin-top:8px;font-weight:700;}
 .cform select{width:100%;padding:16px 14px;font-size:17px;border:1.5px solid #d9d9d9;border-radius:14px;background:#fff;color:var(--ink);transition:border-color .15s,box-shadow .15s;}
 .cform select:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 4px rgba(216,255,41,.6);}
 .cform .hint{font-size:13.5px;color:var(--sub);margin:7px 0 0;line-height:1.4;}
@@ -361,6 +369,7 @@ const DEFAULTS = {
 const OCC = ['booked','completed','no-show','blocked']; // statuses that hold a slot
 const PAY_OPTS = [['unpaid','Unpaid'],['proof','Proof sent'],['paid','Paid'],['refunded','Refunded'],['free','Free']];
 const PAY_METHODS = ['JazzCash','Easypaisa','Bank transfer','Cash','Other'];
+const INVEST_MIN = 16000, INVEST_MAX = 120000, INVEST_STEP = 1000;
 const HEARD_OPTS = ['Instagram','Facebook','TikTok','YouTube','Friend or family','Other'];
 const STATUS_OPTS = [['booked','Booked'],['completed','Completed'],['no-show','No-show'],['cancelled','Cancelled'],['blocked','Blocked']];
 const SOURCES = ['Website','Instagram','Facebook','TikTok','WhatsApp','Other'];
@@ -378,6 +387,7 @@ const COLS = [
   {k:'payRef',l:'Payment ref',t:'text',w:150},
   {k:'source',l:'Source',t:'select',opts:SOURCES.map(s=>[s,s]),w:120},
   {k:'heard',l:'Heard via',t:'select',opts:[['','—']].concat(HEARD_OPTS.map(x => [x,x])),w:140},
+  {k:'invest',l:'Can invest',t:'number',w:120},
   {k:'notes',l:'Needs help with',t:'text',w:260},
   {k:'adminNote',l:'My notes',t:'text',w:200},
 ];
@@ -442,7 +452,7 @@ let pubErr = null, bkErr = null, authErr = '', loadedS = false, loadedT = false,
 const clientReady = () => !!pubErr || (loadedS && loadedT);
 let view = (location.hash === '#admin') ? 'login' : 'book';
 let step = 'day', selDate = null, selTime = null, showAllDays = false, anim = true, dir = 'fwd';
-let formVals = {name:'',phone:'',city:'',age:'',email:'',notes:'',heard:'',ref:'',hp:''}, formErr = '', busy = false, lastBooking = null;
+let formVals = {name:'',phone:'',city:'',age:'',email:'',notes:'',invest:'',heard:'',ref:'',hp:''}, formErr = '', busy = false, lastBooking = null;
 let ovFilter = 'all', sheetQ = '', sheetStatus = 'all', sheetPay = 'all', sheetSort = 'new';
 let invMode = 'list', invDraft = null, invFilter = 'all', unsubI = null;
 let payFilter = 'check', payOpen = null, payMatches = null, invs = {};
@@ -700,6 +710,17 @@ function timeStepHtml(){
       g.map(t => '<button type="button" class="slot" style="--i:' + (i++) + '" data-act="pickSlot" data-t="' + t + '">' + fmt12(fromMin(t)) + '</button>').join('') + '</div>';
   }).join('');
 }
+const investVal = () => Math.min(INVEST_MAX, Math.max(INVEST_MIN, Number(formVals.invest) || INVEST_MIN));
+const investPct = v => ((v - INVEST_MIN) / (INVEST_MAX - INVEST_MIN) * 100).toFixed(1) + '%';
+const investTxt = v => 'Rs ' + fmtMoney(v) + (v >= INVEST_MAX ? '+' : '');
+function investFieldHtml(){
+  const v = investVal();
+  return '<div class="field"><label for="f-invest">How much can you invest in yourself?</label>' +
+    '<p class="invest-val" aria-hidden="true"><span id="investOut">' + esc(investTxt(v)) + '</span></p>' +
+    '<input id="f-invest" data-form="invest" type="range" min="' + INVEST_MIN + '" max="' + INVEST_MAX + '" step="' + INVEST_STEP + '" value="' + v + '" style="--p:' + investPct(v) + '" aria-valuetext="' + esc(investTxt(v)) + '">' +
+    '<div class="range-ends"><span>Rs 16,000</span><span>Rs 120,000+</span></div>' +
+    '<p class="hint">Slide to the amount that suits you.</p></div>';
+}
 function formStepHtml(){
   const s = settings, t = fromMin(selTime);
   return '<button type="button" class="backbtn" data-act="back">← Back</button>' +
@@ -711,6 +732,7 @@ function formStepHtml(){
     '<div class="row2"><div class="field"><label for="f-city">Your city</label><input id="f-city" data-form="city" type="text" maxlength="60" autocomplete="address-level2" placeholder="e.g. Lahore" value="' + esc(formVals.city) + '"></div>' +
     '<div class="field"><label for="f-age">Age <span class="opt">(optional)</span></label><input id="f-age" data-form="age" type="number" inputmode="numeric" min="10" max="99" value="' + esc(formVals.age) + '"></div></div>' +
     '<div class="field"><label for="f-notes">What do you need help with?</label><textarea id="f-notes" data-form="notes" maxlength="500" placeholder="A short sentence is enough.">' + esc(formVals.notes) + '</textarea></div>' +
+    investFieldHtml() +
     '<div class="field"><label for="f-email">Email <span class="opt">(optional)</span></label><input id="f-email" data-form="email" type="email" inputmode="email" maxlength="120" autocomplete="email" value="' + esc(formVals.email) + '"></div>' +
     '<div class="field"><label for="f-heard">How did you hear about us? <span class="opt">(optional)</span></label><select id="f-heard" data-form="heard"><option value="">Choose one</option>' +
       HEARD_OPTS.map(o => '<option value="' + esc(o) + '"' + (formVals.heard === o ? ' selected' : '') + '>' + esc(o) + '</option>').join('') + '</select></div>' +
@@ -753,7 +775,7 @@ async function submitBooking(){
   if (busy) return;
   const v = formVals, s = settings;
   if (v.hp){ formErr = 'Something went wrong. Please reload the page and try again.'; return render(); } // honeypot — bots fill it, people never see it
-  const name = v.name.trim(), phone = v.phone.replace(/[\s\-()]/g,''), email = v.email.trim(), notes = v.notes.trim(), ref = v.ref.trim(), city = v.city.trim(), heard = v.heard, ageN = String(v.age).trim();
+  const name = v.name.trim(), phone = v.phone.replace(/[\s\-()]/g,''), email = v.email.trim(), notes = v.notes.trim(), ref = v.ref.trim(), city = v.city.trim(), invest = investVal(), heard = v.heard, ageN = String(v.age).trim();
   if (name.length < 2){ formErr = 'Please type your name.'; return render(); }
   if (!/^\+?\d{7,15}$/.test(phone)){ formErr = 'Please check your WhatsApp number. Use digits only, like 03001234567.'; return render(); }
   if (city.length < 2){ formErr = 'Please type your city.'; return render(); }
@@ -766,7 +788,7 @@ async function submitBooking(){
   }
   busy = true; formErr = ''; render();
   const code = genCode(), time = fromMin(selTime);
-  const booking = {code, date:selDate, time, duration:s.duration, name, phone, city, age: ageN ? Number(ageN) : '', email, notes, heard: HEARD_OPTS.includes(heard) ? heard : '',
+  const booking = {code, date:selDate, time, duration:s.duration, name, phone, city, age: ageN ? Number(ageN) : '', email, notes, invest, heard: HEARD_OPTS.includes(heard) ? heard : '',
     amount:s.price, payStatus: s.price > 0 ? (ref ? 'proof' : 'unpaid') : 'free', payRef:ref,
     status:'booked', source:'Website', adminNote:'', createdAt:new Date().toISOString()};
   const tk = {date:selDate, start:selTime, end:selTime + s.duration, code};
@@ -779,7 +801,7 @@ async function submitBooking(){
     });
     lastBooking = booking;
     try { localStorage.setItem('book_last', JSON.stringify(booking)); } catch(e) {}
-    formVals = {name:'',phone:'',city:'',age:'',email:'',notes:'',heard:'',ref:'',hp:''};
+    formVals = {name:'',phone:'',city:'',age:'',email:'',notes:'',invest:'',heard:'',ref:'',hp:''};
     step = 'done'; dir = 'fwd'; anim = true;
   } catch(e){
     if (e && e.message === 'SLOT_TAKEN'){ step = 'time'; dir = 'back'; anim = true; toast('Sorry, someone just booked that time. Please pick another time.'); }
@@ -862,7 +884,7 @@ function overviewHtml(){
       rows.map(b => {
         const wa = waNumber(b.phone);
         return '<tr><td><b>' + esc(fmtDayShort(b.date)) + '</b><br><span class="muted">' + fmt12(b.time) + '</span></td>' +
-          '<td>' + esc(b.name || '—') + '<br><span class="muted">' + esc(b.code) + (b.city ? ' · ' + esc(b.city) : '') + (b.age ? ' · ' + esc(b.age) + ' yrs' : '') + '</span>' + (b.notes ? '<div class="need">' + esc(b.notes) + '</div>' : '') + '</td>' +
+          '<td>' + esc(b.name || '—') + '<br><span class="muted">' + esc(b.code) + (b.city ? ' · ' + esc(b.city) : '') + (b.age ? ' · ' + esc(b.age) + ' yrs' : '') + (b.invest ? ' · can invest ' + esc(investTxt(Number(b.invest))) : '') + '</span>' + (b.notes ? '<div class="need">' + esc(b.notes) + '</div>' : '') + '</td>' +
           '<td>' + (wa ? '<a class="wa" href="https://wa.me/' + wa + '" target="_blank" rel="noopener">' + esc(b.phone) + '</a>' : '—') + '</td>' +
           '<td class="num">' + esc(settings.currency) + ' ' + fmtMoney(b.amount) + '</td><td>' + payTag(b.payStatus) + '</td>' +
           '<td><div class="actions">' + (b.payStatus === 'paid' || b.payStatus === 'free' ? '' : '<button type="button" class="btn lime sm" data-act="markPaid" data-id="' + esc(b.code) + '">Mark paid</button>') +
@@ -1425,7 +1447,14 @@ document.addEventListener('input', e => {
   const t = e.target;
   if (t.dataset && (t.dataset.inv || t.dataset.item !== undefined)){ onInvInput(t); }
   else if (t.dataset && t.dataset.keep){ keep[t.dataset.keep] = t.value; }
-  else if (t.dataset && t.dataset.form){ formVals[t.dataset.form] = t.value; }
+  else if (t.dataset && t.dataset.form){
+    formVals[t.dataset.form] = t.value;
+    if (t.dataset.form === 'invest'){
+      const v = investVal(), o = document.getElementById('investOut');
+      if (o) o.textContent = investTxt(v);
+      t.style.setProperty('--p', investPct(v)); t.setAttribute('aria-valuetext', investTxt(v));
+    }
+  }
   else if (t.dataset && t.dataset.sheet === 'q'){ sheetQ = t.value; renderSheetBody(); }
 });
 document.addEventListener('change', e => {
