@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Uzair Adil — UGC Creator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#eeeee8;--ink:#0d0d0d;--blue:#2337ff;--red:#ff3b1f;--mute:#555}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:"Space Grotesk",sans-serif;line-height:1.5}
+  a{color:inherit;text-decoration:none}
+  .mono{font-family:"Space Mono",monospace}
+  .wrap{max-width:1200px;margin:0 auto;padding:0 24px}
+  .bar{background:var(--blue);color:#fff;font-family:"Space Mono";font-size:12px;padding:8px 0;text-align:center;letter-spacing:.06em}
+  nav{border-bottom:3px solid var(--ink)}
+  nav .wrap{display:flex;justify-content:space-between;align-items:stretch;height:70px}
+  .logo{display:flex;align-items:center;font-weight:700;font-size:22px}
+  nav ul{display:flex;list-style:none}
+  nav li a{display:flex;align-items:center;height:100%;padding:0 22px;border-left:3px solid var(--ink);font-family:"Space Mono";font-size:13px;text-transform:uppercase}
+  nav li a:hover{background:var(--blue);color:#fff}
+  nav li:last-child a{border-right:3px solid var(--ink);background:var(--ink);color:#fff}
+  header{border-bottom:3px solid var(--ink)}
+  header .wrap{display:grid;grid-template-columns:1.4fr 1fr;min-height:560px}
+  .hl{padding:70px 40px 70px 0;border-right:3px solid var(--ink);display:flex;flex-direction:column;justify-content:space-between;gap:40px}
+  .hl .mono{font-size:13px;color:var(--blue)}
+  h1{font-size:clamp(52px,8vw,112px);font-weight:700;line-height:.9;letter-spacing:-.05em;text-transform:uppercase}
+  h1 span{color:var(--blue)}
+  .hr{display:grid;grid-template-rows:1fr auto}
+  .vid{background:var(--blue);display:grid;place-items:center;position:relative;color:#fff}
+  .vid .play{width:90px;height:90px;border:3px solid #fff;border-radius:50%;display:grid;place-items:center;font-size:28px}
+  .vid .rec{position:absolute;top:18px;left:18px;font-family:"Space Mono";font-size:12px;display:flex;gap:8px;align-items:center}
+  .vid .rec::before{content:"";width:10px;height:10px;background:var(--red);border-radius:50%;animation:blink 1s infinite}
+  @keyframes blink{50%{opacity:0}}
+  .vid .tc{position:absolute;bottom:18px;right:18px;font-family:"Space Mono";font-size:12px}
+  .hr p{padding:28px;border-top:3px solid var(--ink);font-size:17px}
+  .btn{display:inline-block;background:var(--ink);color:#fff;padding:16px 26px;font-family:"Space Mono";font-size:14px;text-transform:uppercase;border:3px solid var(--ink);transition:all .15s}
+  .btn:hover{background:var(--blue);border-color:var(--blue)}
+  .btn.o{background:transparent;color:var(--ink)}
+  .btn.o:hover{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .cta{display:flex;gap:12px;flex-wrap:wrap}
+  section{border-bottom:3px solid var(--ink)}
+  .head{display:flex;justify-content:space-between;align-items:end;padding:60px 0 36px;gap:20px;flex-wrap:wrap}
+  .head .mono{font-size:13px;color:var(--blue)}
+  h2{font-size:clamp(40px,6vw,80px);font-weight:700;line-height:.92;letter-spacing:-.04em;text-transform:uppercase}
+  .about{display:grid;grid-template-columns:1fr 1fr;border-top:3px solid var(--ink)}
+  .about>div{padding:44px 40px 60px 0}
+  .about>div+div{border-left:3px solid var(--ink);padding-left:40px;padding-right:0}
+  .about p{font-size:19px;margin-bottom:18px}
+  .spec{font-family:"Space Mono";font-size:14px}
+  .spec div{display:flex;justify-content:space-between;padding:16px 0;border-bottom:1px dashed var(--ink)}
+  .spec b{color:var(--blue)}
+  .table{border-top:3px solid var(--ink)}
+  .row{display:grid;grid-template-columns:90px 1fr 1.4fr 60px;padding:26px 0;border-bottom:1px solid var(--ink);align-items:center;gap:16px;transition:background .15s,padding .15s}
+  .row:last-child{border-bottom:none;padding-bottom:60px}
+  .row:hover{background:var(--blue);color:#fff;padding-left:16px;padding-right:16px}
+  .row .mono{font-size:13px}
+  .row h3{font-size:28px;letter-spacing:-.02em}
+  .row p{font-size:15px;opacity:.8}
+  .row .arr{font-size:28px;text-align:right}
+  .brands{display:grid;grid-template-columns:repeat(3,1fr);border-top:3px solid var(--ink)}
+  .brand{padding:40px 30px 60px;border-right:3px solid var(--ink)}
+  .brand:first-child{padding-left:0}
+  .brand:last-child{border-right:none}
+  .brand .mono{color:var(--blue);font-size:13px}
+  .brand h3{font-size:36px;letter-spacing:-.03em;margin:14px 0;text-transform:uppercase;line-height:1}
+  .brand p{color:var(--mute)}
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);border-top:3px solid var(--ink)}
+  .st{padding:34px 24px 60px;border-right:3px solid var(--ink)}
+  .st:first-child{padding-left:0}.st:last-child{border-right:none}
+  .st .big{font-size:72px;font-weight:700;color:var(--blue);line-height:1;letter-spacing:-.05em}
+  .st h3{font-size:22px;margin:16px 0 6px;text-transform:uppercase}
+  .st p{font-size:15px;color:var(--mute)}
+  .contact{background:var(--ink);color:#fff;border-bottom:none}
+  .contact .wrap{padding-top:90px;padding-bottom:90px}
+  .contact h2{font-size:clamp(48px,10vw,150px);margin-bottom:40px}
+  .contact h2 span{color:var(--blue)}
+  .clinks{display:grid;grid-template-columns:repeat(3,1fr);border-top:3px solid #fff}
+  .clinks a{padding:28px 0;border-right:3px solid #fff;padding-left:20px}
+  .clinks a:first-child{padding-left:0}
+  .clinks a:last-child{border-right:none}
+  .clinks a:hover{color:var(--blue)}
+  .clinks small{display:block;font-family:"Space Mono";font-size:12px;color:#999;margin-bottom:8px}
+  .clinks b{font-size:20px}
+  footer{background:var(--ink);color:#888;font-family:"Space Mono";font-size:12px;padding:20px 0;border-top:1px solid #333}
+  footer .wrap{display:flex;justify-content:space-between}
+  @media(max-width:880px){
+    nav ul li:not(:last-child){display:none}
+    header .wrap,.about,.brands,.clinks{grid-template-columns:1fr}
+    .hl{border-right:none;padding:50px 0}
+    .hr{margin:0 -24px}
+    .about>div,.about>div+div{padding:32px 0;border-left:none}
+    .about>div+div{border-top:3px solid var(--ink)}
+    .brand,.brand:first-child{padding:32px 0;border-right:none;border-bottom:3px solid var(--ink)}
+    .brand:last-child{border-bottom:none}
+    .steps{grid-template-columns:1fr 1fr}
+    .st,.st:first-child{padding:28px 16px;border-bottom:3px solid var(--ink)}
+    .st:nth-child(2){border-right:none}
+    .row{grid-template-columns:50px 1fr 40px}
+    .row p{display:none}
+    .clinks a,.clinks a:first-child{border-right:none;border-bottom:1px solid #444;padding-left:0}
+  }
+</style>
+</head>
+<body>
+<div class="bar">● NOW BOOKING — UGC / ADS / PRODUCT CONTENT — PAKISTAN</div>
+<nav><div class="wrap">
+  <a href="#" class="logo">UZAIR_ADIL</a>
+  <ul><li><a href="#about">About</a></li><li><a href="#services">Services</a></li><li><a href="#brands">Brands</a></li><li><a href="#contact">Contact ↗</a></li></ul>
+</div></nav>
+
+<header><div class="wrap">
+  <div class="hl">
+    <span class="mono">[ UGC CREATOR / CONTENT STRATEGIST ]</span>
+    <h1>Real people.<br>Real <span>results.</span></h1>
+    <div class="cta"><a href="#contact" class="btn">Hire me →</a><a href="#services" class="btn o">View services</a></div>
+  </div>
+  <div class="hr">
+    <div class="vid"><span class="rec">REC</span><div class="play">▶</div><span class="tc">00:00:15:00</span></div>
+    <p>Native, high-converting UGC for brands that want content that doesn't look like an ad — but performs better than one.</p>
+  </div>
+</div></header>
+
+<section id="about"><div class="wrap">
+  <div class="head"><h2>Who<br>am I</h2><span class="mono">// 01 — ABOUT</span></div>
+  <div class="about">
+    <div>
+      <p>I'm Uzair Adil — a UGC creator and the founder of Jugaar Media, a creative and influencer marketing agency in Pakistan.</p>
+      <p>I also run a fitness management agency representing coaches across three major cities. I bring both sides to every project: the creator on camera and the strategist behind it.</p>
+    </div>
+    <div class="spec">
+      <div><span>NAME</span><b>UZAIR ADIL</b></div>
+      <div><span>ROLE</span><b>UGC CREATOR / CEO</b></div>
+      <div><span>AGENCY</span><b>JUGAAR MEDIA</b></div>
+      <div><span>COACHES MANAGED</span><b>50+</b></div>
+      <div><span>CITIES</span><b>ISB / KHI / LHE</b></div>
+      <div><span>STATUS</span><b>AVAILABLE</b></div>
+    </div>
+  </div>
+</div></section>
+
+<section id="services"><div class="wrap">
+  <div class="head"><h2>What<br>I make</h2><span class="mono">// 02 — SERVICES</span></div>
+  <div class="table">
+    <div class="row"><span class="mono">S—01</span><h3>UGC Video Ads</h3><p>Paid-ready creatives for Meta & TikTok with hook variations.</p><span class="arr">→</span></div>
+    <div class="row"><span class="mono">S—02</span><h3>Unboxing / Demo</h3><p>First impressions and product walkthroughs.</p><span class="arr">→</span></div>
+    <div class="row"><span class="mono">S—03</span><h3>Testimonials</h3><p>Story-led reviews that remove buyer doubts.</p><span class="arr">→</span></div>
+    <div class="row"><span class="mono">S—04</span><h3>Lifestyle Reels</h3><p>Organic content that fits your product into daily life.</p><span class="arr">→</span></div>
+    <div class="row"><span class="mono">S—05</span><h3>Strategy & Scripts</h3><p>Angles, scripts and content calendars.</p><span class="arr">→</span></div>
+  </div>
+</div></section>
+
+<section id="brands"><div class="wrap">
+  <div class="head"><h2>Brands I<br>work with</h2><span class="mono">// 03 — CLIENTS</span></div>
+  <div class="brands">
+    <div class="brand"><span class="mono">@tsk_diet</span><h3>TSK Diet</h3><p>Nutrition coaching. Educational and trust-building content.</p></div>
+    <div class="brand"><span class="mono">@hustlersonly.official</span><h3>Hustlers Only</h3><p>Lifestyle & motivation. High-energy brand content.</p></div>
+    <div class="brand"><span class="mono">@irongear_fitness</span><h3>IronGear Fitness</h3><p>Fitness equipment. Demos and in-gym content.</p></div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="head"><h2>How it<br>works</h2><span class="mono">// 04 — PROCESS</span></div>
+  <div class="steps">
+    <div class="st"><div class="big">01</div><h3>Brief</h3><p>Product, audience, goal.</p></div>
+    <div class="st"><div class="big">02</div><h3>Script</h3><p>Hooks + angles approved by you.</p></div>
+    <div class="st"><div class="big">03</div><h3>Shoot</h3><p>Filmed, edited, captioned.</p></div>
+    <div class="st"><div class="big">04</div><h3>Ship</h3><p>Final files + 1 revision.</p></div>
+  </div>
+</div></section>
+
+<section id="contact" class="contact"><div class="wrap">
+  <span class="mono" style="color:var(--blue);font-size:13px">// 05 — CONTACT</span>
+  <h2>Let's<br><span>work.</span></h2>
+  <div class="clinks">
+    <a href="mailto:support@jugaar.media"><small>EMAIL</small><b>support@jugaar.media ↗</b></a>
+    <a href="https://wa.me/923285969092"><small>WHATSAPP</small><b>0328 5969092 ↗</b></a>
+    <a href="https://jugaar.media"><small>AGENCY</small><b>jugaar.media ↗</b></a>
+  </div>
+</div></section>
+<footer><div class="wrap"><span>© 2026 UZAIR ADIL</span><span>BUILT IN PAKISTAN</span></div></footer>
+</body>
+</html>
