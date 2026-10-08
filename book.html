@@ -22,7 +22,7 @@ header :focus-visible,.book-info :focus-visible{outline-color:var(--lime);}
 /* ---------- header (same as the tracker) ---------- */
 header{position:sticky;top:0;z-index:10;background:var(--ink);color:#fff;padding:14px 20px;padding-top:calc(14px + env(safe-area-inset-top,0px));
   display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;flex-shrink:0;}
-.brand{display:flex;align-items:center;font-size:19px;}
+.brand{display:flex;align-items:center;font-size:19px;background:none;border:0;color:inherit;cursor:pointer;padding:4px 8px;margin:-4px -8px;border-radius:8px;font-family:inherit;}
 .brand .logo{font-style:italic;font-weight:800;letter-spacing:.01em;color:#fff;}
 .brand .logo-dot{color:var(--lime);}
 nav{display:flex;gap:4px;background:#161616;border-radius:10px;padding:4px;flex-wrap:wrap;}
@@ -77,6 +77,42 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;}
 .actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
 a.wa{color:var(--ink);font-weight:700;text-decoration:underline;text-decoration-color:var(--lime);text-decoration-thickness:3px;text-underline-offset:2px;}
 .rowcancel{opacity:.5;}
+
+/* ---------- invoices ---------- */
+.invlayout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:start;}
+@media (max-width:900px){.invlayout{grid-template-columns:1fr;}}
+.itemrow{display:grid;grid-template-columns:1fr 70px 100px 38px;gap:8px;margin-bottom:8px;align-items:center;}
+.itemrow.head{font-size:11.5px;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.06em;}
+.invpaper{background:#fff;border:1px solid var(--line);border-radius:12px;padding:22px;box-shadow:0 6px 24px rgba(0,0,0,.06);}
+.invdoc{font-size:13px;color:#111;line-height:1.5;}
+.inv-top{display:flex;justify-content:space-between;gap:16px;margin-bottom:22px;}
+.inv-from{font-size:18px;font-weight:800;}
+.inv-small{font-size:12px;color:#666;}
+.inv-title{font-size:26px;font-weight:800;font-style:italic;text-align:right;}
+.inv-stamp{display:block;font-size:12px;font-style:normal;font-weight:800;background:var(--lime);border-radius:20px;padding:3px 10px;margin-top:6px;text-align:center;}
+.inv-stamp.void{background:#eee;color:#777;}
+.inv-meta{display:flex;justify-content:space-between;gap:16px;margin-bottom:20px;}
+.inv-meta small,.inv-pay small{display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:#888;font-weight:700;}
+.inv-items{width:100%;border-collapse:collapse;margin-bottom:12px;}
+.inv-items th{background:#111;color:#fff;font-size:11px;text-transform:uppercase;letter-spacing:.06em;padding:8px;text-align:left;}
+.inv-items td{padding:9px 8px;border-bottom:1px solid #eee;vertical-align:top;}
+.inv-items .num{text-align:right;white-space:nowrap;}
+.inv-sum{margin-left:auto;max-width:260px;}
+.inv-sum div{display:flex;justify-content:space-between;padding:4px 0;}
+.inv-sum .grand{border-top:2px solid #111;margin-top:4px;padding-top:8px;font-size:16px;font-weight:800;}
+.inv-pay{background:#f6ffd1;border-radius:10px;padding:12px 14px;margin-top:18px;}
+.inv-notes{margin-top:16px;color:#555;font-size:12.5px;}
+#printRoot{display:none;}
+@media print{
+  body.printing > *:not(#printRoot){display:none !important;}
+  body.printing #printRoot{display:block !important;padding:0;}
+  body.printing{background:#fff;}
+  .inv-items th,.inv-stamp,.inv-pay{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+}
+.matchcard{display:flex;justify-content:space-between;align-items:center;gap:14px;border:1.5px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:10px;}
+.matchcard .why{font-size:12.5px;color:#3a4200;background:#f6ffd1;display:inline-block;border-radius:8px;padding:3px 8px;margin-top:6px;}
+tr.payrow.sel td{background:#fbffe6;}
+.need{font-size:12.5px;color:var(--sub);margin-top:3px;max-width:280px;line-height:1.4;}
 pre.rules{background:#101010;color:var(--lime);padding:14px;border-radius:10px;font-size:12px;line-height:1.5;overflow:auto;max-height:280px;white-space:pre;margin:10px 0;}
 .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--lime);
   padding:12px 18px;border-radius:12px;font-size:13px;font-weight:700;opacity:0;pointer-events:none;transition:all .2s;z-index:50;max-width:90vw;text-align:center;}
@@ -153,6 +189,10 @@ a.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line);}
 .cform input,.cform textarea{padding:16px 14px;font-size:17px;border:1.5px solid #d9d9d9;border-radius:14px;transition:border-color .15s,box-shadow .15s;}
 .cform textarea{min-height:96px;}
 .cform input:focus,.cform textarea:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 4px rgba(216,255,41,.6);}
+.row2{display:grid;grid-template-columns:1fr 130px;gap:12px;}
+.opt{font-weight:400;color:var(--sub);}
+.cform select{width:100%;padding:16px 14px;font-size:17px;border:1.5px solid #d9d9d9;border-radius:14px;background:#fff;color:var(--ink);transition:border-color .15s,box-shadow .15s;}
+.cform select:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 4px rgba(216,255,41,.6);}
 .cform .hint{font-size:13.5px;color:var(--sub);margin:7px 0 0;line-height:1.4;}
 .cform details{margin-bottom:20px;}
 .cform summary{cursor:pointer;font-weight:800;font-size:15px;padding:8px 0;}
@@ -187,6 +227,7 @@ a.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line);}
 .todo .bigbtn{margin-top:12px;text-decoration:none;font-size:16px;padding:15px;}
 .done .actions{justify-content:center;margin-top:18px;}
 .linkbtn{background:none;border:0;color:var(--sub);font-size:12.5px;cursor:pointer;text-decoration:underline;padding:6px;}
+.linkbtn.plain{color:inherit;text-decoration:none;font:inherit;padding:0;}
 
 /* ---------- motion (only plays when the screen changes — see `animate` in render) ---------- */
 @keyframes up{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:none;}}
@@ -221,7 +262,7 @@ a.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line);}
 .toolbar .grow{flex:1 1 200px;min-width:160px;}
 .toolbar select{min-width:130px;}
 .sheet-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px;max-height:68vh;}
-table.sheet{border-collapse:separate;border-spacing:0;min-width:1500px;font-size:13px;}
+table.sheet{border-collapse:separate;border-spacing:0;min-width:2000px;font-size:13px;}
 table.sheet th{position:sticky;top:0;background:var(--soft);z-index:2;border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:9px 8px;white-space:nowrap;}
 table.sheet td{padding:0;border-bottom:1px solid var(--line);border-right:1px solid var(--line);background:#fff;}
 table.sheet td.rn{background:var(--soft);text-align:center;color:var(--sub);font-size:11px;width:38px;position:sticky;left:0;z-index:1;}
@@ -266,15 +307,15 @@ table.sheet td.del{width:44px;text-align:center;}
 </head>
 <body>
 <header>
-  <div class="brand"><span class="logo">book<span class="logo-dot">.</span></span></div>
+  <button type="button" class="brand" data-act="logo" aria-label="book. — admin"><span class="logo">book<span class="logo-dot">.</span></span></button>
   <nav id="tabs"></nav>
   <div class="hdr-right" id="hdrRight"></div>
 </header>
 <main id="app"></main>
 <footer class="site-footer">
-  book. by <a href="https://www.jugaar.media" target="_blank" rel="noopener">@jugaar.media</a> ·
-  <button type="button" class="linkbtn" data-act="go" data-v="login">Admin</button>
+  <button type="button" class="linkbtn plain" data-act="logo" aria-label="book. — admin">book.</button> by <a href="https://www.jugaar.media" target="_blank" rel="noopener">@jugaar.media</a>
 </footer>
+<div id="printRoot" aria-hidden="true"></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
@@ -304,6 +345,7 @@ const DEFAULTS = {
   description: 'A one-on-one consultation. Pick a day and a time that suits you and book it in under a minute.',
   duration: 30, buffer: 0, horizon: 21, notice: 3,
   price: 0, currency: 'PKR', whatsapp: '', payInstructions: '',
+  invName: '', invDetails: '', invNote: 'Thank you for your business.', invTax: 0,
   blocked: [],
   weekly: {
     0:{on:false,start:'11:00',end:'19:00'},
@@ -317,7 +359,9 @@ const DEFAULTS = {
 };
 
 const OCC = ['booked','completed','no-show','blocked']; // statuses that hold a slot
-const PAY_OPTS = [['unpaid','Unpaid'],['proof','Proof sent'],['paid','Paid'],['free','Free']];
+const PAY_OPTS = [['unpaid','Unpaid'],['proof','Proof sent'],['paid','Paid'],['refunded','Refunded'],['free','Free']];
+const PAY_METHODS = ['JazzCash','Easypaisa','Bank transfer','Cash','Other'];
+const HEARD_OPTS = ['Instagram','Facebook','TikTok','YouTube','Friend or family','Other'];
 const STATUS_OPTS = [['booked','Booked'],['completed','Completed'],['no-show','No-show'],['cancelled','Cancelled'],['blocked','Blocked']];
 const SOURCES = ['Website','Instagram','Facebook','TikTok','WhatsApp','Other'];
 const COLS = [
@@ -325,13 +369,16 @@ const COLS = [
   {k:'time',l:'Time',t:'time',w:110},
   {k:'name',l:'Client',t:'text',w:170},
   {k:'phone',l:'WhatsApp',t:'text',w:150},
+  {k:'city',l:'City',t:'text',w:130},
+  {k:'age',l:'Age',t:'number',w:80},
   {k:'email',l:'Email',t:'text',w:180},
   {k:'amount',l:'Amount',t:'number',w:100},
   {k:'payStatus',l:'Payment',t:'select',opts:PAY_OPTS,w:130},
   {k:'status',l:'Status',t:'select',opts:STATUS_OPTS,w:130},
   {k:'payRef',l:'Payment ref',t:'text',w:150},
   {k:'source',l:'Source',t:'select',opts:SOURCES.map(s=>[s,s]),w:120},
-  {k:'notes',l:'Client note',t:'text',w:200},
+  {k:'heard',l:'Heard via',t:'select',opts:[['','—']].concat(HEARD_OPTS.map(x => [x,x])),w:140},
+  {k:'notes',l:'Needs help with',t:'text',w:260},
   {k:'adminNote',l:'My notes',t:'text',w:200},
 ];
 
@@ -352,7 +399,7 @@ const weekday = s => parseDate(s).getUTCDay();
 const fmtDay = s => { const d = parseDate(s); return d ? d.toLocaleDateString('en-GB',{timeZone:'UTC',weekday:'long',day:'numeric',month:'long'}) : '—'; };
 const fmtDayShort = s => { const d = parseDate(s); return d ? d.toLocaleDateString('en-GB',{timeZone:'UTC',weekday:'short',day:'numeric',month:'short'}) : '—'; };
 const fmtMonth = ym => { const [y,m] = ym.split('-').map(Number); return new Date(Date.UTC(y,m-1,1)).toLocaleDateString('en-GB',{timeZone:'UTC',month:'long',year:'numeric'}); };
-const fmtMoney = n => Number(n||0).toLocaleString('en-US');
+const fmtMoney = n => Number(n||0).toLocaleString('en-US',{maximumFractionDigits:2});
 const plural = (n,w) => n + ' ' + w + (n===1?'':'s');
 const waNumber = n => { let d = String(n||'').replace(/\D/g,''); if (d.startsWith('00')) d = d.slice(2); else if (d.startsWith('0')) d = '92' + d.slice(1); return d; };
 const CODE_CHARS = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
@@ -395,8 +442,11 @@ let pubErr = null, bkErr = null, authErr = '', loadedS = false, loadedT = false,
 const clientReady = () => !!pubErr || (loadedS && loadedT);
 let view = (location.hash === '#admin') ? 'login' : 'book';
 let step = 'day', selDate = null, selTime = null, showAllDays = false, anim = true, dir = 'fwd';
-let formVals = {name:'',phone:'',email:'',notes:'',ref:'',hp:''}, formErr = '', busy = false, lastBooking = null;
+let formVals = {name:'',phone:'',city:'',age:'',email:'',notes:'',heard:'',ref:'',hp:''}, formErr = '', busy = false, lastBooking = null;
 let ovFilter = 'all', sheetQ = '', sheetStatus = 'all', sheetPay = 'all', sheetSort = 'new';
+let invMode = 'list', invDraft = null, invFilter = 'all', unsubI = null;
+let payFilter = 'check', payOpen = null, payMatches = null, invs = {};
+const keep = {};            // unsaved text in admin panels survives background refreshes
 let pendingRender = false, pendingFocus = null, unsubB = null, loginBusy = false;
 try { lastBooking = JSON.parse(localStorage.getItem('book_last') || 'null'); } catch(e) {}
 const isAdmin = () => !!user;
@@ -454,7 +504,7 @@ function initFirebase(){
 
   db.collection('bk_settings').doc('config').onSnapshot(snap => {
     settingsExists = snap.exists; settings = mergeSettings(snap.exists ? snap.data() : {}); loadedS = true;
-    pubErr = null; softRender(['book','ov','avail','settings']);
+    pubErr = null; softRender(['book','ov','pay','avail','settings']);
   }, err => { pubErr = err.code || 'error'; render(); });
 
   db.collection('bk_taken').where('date','>=',nowTz().date).onSnapshot(snap => {
@@ -474,13 +524,14 @@ function initFirebase(){
 }
 function subBookings(){
   if (unsubB) return;
+  subInvoices();
   unsubB = db.collection('bk_bookings').onSnapshot(snap => {
     bookingsById = {};
     snap.docs.forEach(d => { bookingsById[d.id] = Object.assign({code:d.id}, d.data()); });
-    bkErr = null; softRender(['ov','sheet']);
+    bkErr = null; softRender(['ov','sheet','pay']);
   }, err => { bkErr = err.code || 'error'; render(); });
 }
-function unsubBookings(){ if (unsubB){ unsubB(); unsubB = null; } bookingsById = {}; bkErr = null; }
+function unsubBookings(){ unsubInvoices(); if (unsubB){ unsubB(); unsubB = null; } bookingsById = {}; bkErr = null; }
 
 async function saveBooking(id, patch){
   const prev = bookingsById[id]; if (!prev) return;
@@ -539,6 +590,8 @@ function render(){
   if (view === 'login') main.innerHTML = loginHtml();
   else if (view === 'ov') main.innerHTML = overviewHtml();
   else if (view === 'sheet'){ main.innerHTML = sheetHtml(); renderSheetBody(); }
+  else if (view === 'pay') main.innerHTML = payHtml();
+  else if (view === 'inv') main.innerHTML = invHtml();
   else if (view === 'avail') main.innerHTML = availHtml();
   else if (view === 'settings') main.innerHTML = settingsHtml();
   else main.innerHTML = bookHtml(animate);
@@ -551,7 +604,7 @@ function render(){
 function renderHeader(){
   const tabs = $('#tabs'), right = $('#hdrRight');
   if (isAdmin()){
-    const TABS = [['book','Booking page'],['ov','Overview'],['sheet','Sheet'],['avail','Availability'],['settings','Settings']];
+    const TABS = [['book','Booking page'],['ov','Overview'],['sheet','Sheet'],['pay','Payments'],['inv','Invoices'],['avail','Availability'],['settings','Settings']];
     tabs.innerHTML = TABS.map(t => '<button type="button" data-act="go" data-v="' + t[0] + '" class="' + (view===t[0]?'active':'') + '">' + t[1] + '</button>').join('');
     tabs.style.display = '';
     right.innerHTML = '<span class="admin-pill">ADMIN</span><button type="button" class="hdr-btn" data-act="signOut">Sign out</button>';
@@ -651,11 +704,16 @@ function formStepHtml(){
   const s = settings, t = fromMin(selTime);
   return '<button type="button" class="backbtn" data-act="back">← Back</button>' +
     '<div class="chosen"><div><b>' + esc(fmtDay(selDate)) + '</b><span>' + fmt12(t) + ' · ' + s.duration + ' minutes</span></div><button type="button" data-act="back">Change</button></div>' +
-    '<h2 class="sec-title">Your details</h2><p class="sec-sub">We only use these to contact you about your booking.</p>' +
+    '<h2 class="sec-title">Your details</h2><p class="sec-sub">A few details help us prepare for your consultation. We only use them to contact you.</p>' +
     '<form id="bookForm" class="cform" novalidate>' +
-    '<div class="field"><label for="f-name">Your name</label><input id="f-name" data-form="name" type="text" maxlength="80" autocomplete="name" value="' + esc(formVals.name) + '"></div>' +
+    '<div class="field"><label for="f-name">Your full name</label><input id="f-name" data-form="name" type="text" maxlength="80" autocomplete="name" value="' + esc(formVals.name) + '"></div>' +
     '<div class="field"><label for="f-phone">Your WhatsApp number</label><input id="f-phone" data-form="phone" type="tel" inputmode="tel" maxlength="20" autocomplete="tel" placeholder="03XX XXXXXXX" value="' + esc(formVals.phone) + '"><p class="hint">We will message you on this number.</p></div>' +
-    '<div class="field"><label for="f-notes">Anything you want us to know? <span style="font-weight:400;color:var(--sub)">(optional)</span></label><textarea id="f-notes" data-form="notes" maxlength="500">' + esc(formVals.notes) + '</textarea></div>' +
+    '<div class="row2"><div class="field"><label for="f-city">Your city</label><input id="f-city" data-form="city" type="text" maxlength="60" autocomplete="address-level2" placeholder="e.g. Lahore" value="' + esc(formVals.city) + '"></div>' +
+    '<div class="field"><label for="f-age">Age <span class="opt">(optional)</span></label><input id="f-age" data-form="age" type="number" inputmode="numeric" min="10" max="99" value="' + esc(formVals.age) + '"></div></div>' +
+    '<div class="field"><label for="f-notes">What do you need help with?</label><textarea id="f-notes" data-form="notes" maxlength="500" placeholder="A short sentence is enough.">' + esc(formVals.notes) + '</textarea></div>' +
+    '<div class="field"><label for="f-email">Email <span class="opt">(optional)</span></label><input id="f-email" data-form="email" type="email" inputmode="email" maxlength="120" autocomplete="email" value="' + esc(formVals.email) + '"></div>' +
+    '<div class="field"><label for="f-heard">How did you hear about us? <span class="opt">(optional)</span></label><select id="f-heard" data-form="heard"><option value="">Choose one</option>' +
+      HEARD_OPTS.map(o => '<option value="' + esc(o) + '"' + (formVals.heard === o ? ' selected' : '') + '>' + esc(o) + '</option>').join('') + '</select></div>' +
     (s.price > 0 ? '<details' + (formVals.ref ? ' open' : '') + '><summary>I have already paid</summary><div class="field"><label for="f-ref">Your payment transaction ID</label><input id="f-ref" data-form="ref" type="text" maxlength="60" value="' + esc(formVals.ref) + '"></div></details>' : '') +
     '<div class="hp" aria-hidden="true"><label>Leave empty<input data-form="hp" type="text" tabindex="-1" autocomplete="off" value="' + esc(formVals.hp) + '"></label></div>' +
     '<p class="err-msg" role="alert">' + esc(formErr) + '</p>' +
@@ -695,9 +753,12 @@ async function submitBooking(){
   if (busy) return;
   const v = formVals, s = settings;
   if (v.hp){ formErr = 'Something went wrong. Please reload the page and try again.'; return render(); } // honeypot — bots fill it, people never see it
-  const name = v.name.trim(), phone = v.phone.replace(/[\s\-()]/g,''), email = v.email.trim(), notes = v.notes.trim(), ref = v.ref.trim();
+  const name = v.name.trim(), phone = v.phone.replace(/[\s\-()]/g,''), email = v.email.trim(), notes = v.notes.trim(), ref = v.ref.trim(), city = v.city.trim(), heard = v.heard, ageN = String(v.age).trim();
   if (name.length < 2){ formErr = 'Please type your name.'; return render(); }
   if (!/^\+?\d{7,15}$/.test(phone)){ formErr = 'Please check your WhatsApp number. Use digits only, like 03001234567.'; return render(); }
+  if (city.length < 2){ formErr = 'Please type your city.'; return render(); }
+  if (ageN && !(Number(ageN) >= 10 && Number(ageN) <= 99)){ formErr = 'Please check your age. Use a number between 10 and 99.'; return render(); }
+  if (notes.length < 3){ formErr = 'Please write a few words about what you need help with.'; return render(); }
   if (email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ formErr = 'That email address doesn\'t look right.'; return render(); }
   if (!db || pubErr){ formErr = 'Booking is not working right now. Please try again soon.'; return render(); }
   if (!selDate || selTime == null || !openSlots(selDate).includes(selTime)){
@@ -705,7 +766,7 @@ async function submitBooking(){
   }
   busy = true; formErr = ''; render();
   const code = genCode(), time = fromMin(selTime);
-  const booking = {code, date:selDate, time, duration:s.duration, name, phone, email, notes,
+  const booking = {code, date:selDate, time, duration:s.duration, name, phone, city, age: ageN ? Number(ageN) : '', email, notes, heard: HEARD_OPTS.includes(heard) ? heard : '',
     amount:s.price, payStatus: s.price > 0 ? (ref ? 'proof' : 'unpaid') : 'free', payRef:ref,
     status:'booked', source:'Website', adminNote:'', createdAt:new Date().toISOString()};
   const tk = {date:selDate, start:selTime, end:selTime + s.duration, code};
@@ -718,7 +779,7 @@ async function submitBooking(){
     });
     lastBooking = booking;
     try { localStorage.setItem('book_last', JSON.stringify(booking)); } catch(e) {}
-    formVals = {name:'',phone:'',email:'',notes:'',ref:'',hp:''};
+    formVals = {name:'',phone:'',city:'',age:'',email:'',notes:'',heard:'',ref:'',hp:''};
     step = 'done'; dir = 'fwd'; anim = true;
   } catch(e){
     if (e && e.message === 'SLOT_TAKEN'){ step = 'time'; dir = 'back'; anim = true; toast('Sorry, someone just booked that time. Please pick another time.'); }
@@ -768,7 +829,7 @@ function isUpcoming(b){
   return b.date > n.date || (b.date === n.date && toMin(b.time) + (Number(b.duration)||settings.duration) >= n.min);
 }
 const byWhen = (a,b) => (a.date + ' ' + (a.time||'99:99')).localeCompare(b.date + ' ' + (b.time||'99:99'));
-const payTag = p => p === 'paid' ? '<span class="tag ok">Paid ✓</span>' : p === 'proof' ? '<span class="tag warn">Proof sent</span>' : p === 'free' ? '<span class="tag off">Free</span>' : '<span class="tag off">Unpaid</span>';
+const payTag = p => p === 'paid' ? '<span class="tag ok">Paid ✓</span>' : p === 'proof' ? '<span class="tag warn">Proof sent</span>' : p === 'free' ? '<span class="tag off">Free</span>' : p === 'refunded' ? '<span class="tag off">Refunded</span>' : '<span class="tag off">Unpaid</span>';
 
 function bkBanner(){
   if (!bkErr) return '';
@@ -801,7 +862,7 @@ function overviewHtml(){
       rows.map(b => {
         const wa = waNumber(b.phone);
         return '<tr><td><b>' + esc(fmtDayShort(b.date)) + '</b><br><span class="muted">' + fmt12(b.time) + '</span></td>' +
-          '<td>' + esc(b.name || '—') + '<br><span class="muted">' + esc(b.code) + (b.payRef ? ' · ref ' + esc(b.payRef) : '') + '</span></td>' +
+          '<td>' + esc(b.name || '—') + '<br><span class="muted">' + esc(b.code) + (b.city ? ' · ' + esc(b.city) : '') + (b.age ? ' · ' + esc(b.age) + ' yrs' : '') + '</span>' + (b.notes ? '<div class="need">' + esc(b.notes) + '</div>' : '') + '</td>' +
           '<td>' + (wa ? '<a class="wa" href="https://wa.me/' + wa + '" target="_blank" rel="noopener">' + esc(b.phone) + '</a>' : '—') + '</td>' +
           '<td class="num">' + esc(settings.currency) + ' ' + fmtMoney(b.amount) + '</td><td>' + payTag(b.payStatus) + '</td>' +
           '<td><div class="actions">' + (b.payStatus === 'paid' || b.payStatus === 'free' ? '' : '<button type="button" class="btn lime sm" data-act="markPaid" data-id="' + esc(b.code) + '">Mark paid</button>') +
@@ -861,6 +922,7 @@ function renderSheetBody(){
 async function onCellChange(el){
   const id = el.dataset.id, k = el.dataset.k; let v = el.value;
   if (k === 'amount') v = Math.max(0, Number(v) || 0);
+  if (k === 'age') v = v === '' ? '' : Math.max(0, Math.round(Number(v)) || 0);
   if (typeof v === 'string') v = v.trim();
   const patch = {[k]: v};
   if (k === 'payStatus' && v === 'paid') patch.paidAt = new Date().toISOString();
@@ -903,6 +965,270 @@ function exportCsv(){
 }
 
 /* =====================================================================
+   ADMIN: payments — your payment details, paste-a-message check, manual verify
+   ===================================================================== */
+const norm = s => String(s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+const kv = (k, d) => keep[k] !== undefined ? keep[k] : d;
+const clearKeep = prefix => Object.keys(keep).forEach(k => { if (k.startsWith(prefix)) delete keep[k]; });
+
+function payRows(){
+  const f = payFilter;
+  return bookingsList().filter(b => {
+    if (!(Number(b.amount) > 0) || b.payStatus === 'free' || b.status === 'blocked') return false;
+    if (b.status === 'cancelled' && !['paid','proof','refunded'].includes(b.payStatus)) return false;
+    if (f === 'check') return b.payStatus === 'unpaid' || b.payStatus === 'proof';
+    if (f === 'paid') return b.payStatus === 'paid';
+    return true;
+  }).sort(byWhen);
+}
+// Read an amount and transaction IDs out of a pasted SMS / receipt. Heuristic — the admin always confirms.
+function parsePayment(t){
+  const text = String(t || ''); let amount = null, m;
+  const pats = [
+    /(?:amount|amt|received|paid|sent|transferred)[^\d\n]{0,24}(?:rs\.?|pkr|₨)?\s*(\d[\d,]*(?:\.\d{1,2})?)/i,
+    /(?:rs\.?|pkr|₨)\s*(\d[\d,]*(?:\.\d{1,2})?)/i,
+    /(\d[\d,]*(?:\.\d{1,2})?)\s*(?:rs\b|pkr\b|rupees)/i,
+  ];
+  for (const re of pats){
+    m = re.exec(text); if (!m) continue;
+    const raw = m[1].replace(/,/g,''), v = Number(raw);
+    if (v > 0 && v < 10000000 && !/^0\d{9,}$/.test(raw)){ amount = v; break; } // skip phone numbers
+  }
+  const ids = [];
+  const idRe = /(?:tid|txn|trx|trans(?:action)?|ref(?:erence)?|id)\s*(?:id|no|number|#)?\s*[:#.\-]?\s*([A-Za-z0-9]{6,})/gi;
+  while ((m = idRe.exec(text))) if (!ids.includes(m[1])) ids.push(m[1]);
+  (text.match(/\b[A-Za-z0-9]{8,}\b/g) || []).forEach(x => { if ((x.match(/\d/g) || []).length >= 6 && !ids.includes(x)) ids.push(x); });
+  return {amount, ids};
+}
+function matchPayments(text, p){
+  const nt = norm(text), low = String(text).toLowerCase(), digits = String(text).replace(/\D/g,''), out = [];
+  bookingsList().forEach(b => {
+    if (!(Number(b.amount) > 0) || ['paid','free'].includes(b.payStatus) || ['cancelled','blocked'].includes(b.status)) return;
+    const why = []; let strong = false, score = 0; const ref = norm(b.payRef);
+    if (ref.length >= 5 && nt.includes(ref)){ why.push('Transaction ID ' + b.payRef + ' is in the message'); strong = true; score += 100; }
+    const toks = String(b.name || '').toLowerCase().split(/\s+/).filter(x => x.length >= 3);
+    if (toks.length && toks.some(x => low.includes(x))){ why.push('Name found in the message'); strong = true; score += 25; }
+    const ph = String(b.phone || '').replace(/\D/g,'').slice(-10);
+    if (ph.length === 10 && digits.includes(ph)){ why.push('Phone number found'); strong = true; score += 25; }
+    if (p.amount && Math.abs(p.amount - Number(b.amount)) < 0.01){ why.push('Amount matches (' + moneyTxt(p.amount) + ')'); score += 30; }
+    if (score > 0) out.push({b, why, strong, score});
+  });
+  return out.sort((a,b) => b.score - a.score).slice(0, 6);
+}
+
+function matchesHtml(){
+  if (!payMatches) return '';
+  const m = payMatches, p = m.parsed;
+  const found = [p.amount ? 'amount ' + esc(moneyTxt(p.amount)) : '', p.ids.length ? 'ID ' + esc(p.ids[0]) : ''].filter(Boolean).join(' · ');
+  const head = '<p class="muted" style="margin:16px 0 10px">' + (found ? 'Found in the message: <b>' + found + '</b>' : 'Could not read an amount or ID from this message.') + '</p>';
+  if (!m.list.length) return head + '<div class="empty">No unpaid booking matches this message.<br>Check the name and amount, or open a booking in the list below.</div>';
+  return head + m.list.map(x =>
+    '<div class="matchcard"><div><b>' + esc(x.b.name || x.b.code) + '</b> <span class="muted">· ' + esc(fmtDayShort(x.b.date)) + ' ' + fmt12(x.b.time) + ' · fee ' + esc(moneyTxt(x.b.amount)) + '</span>' +
+    '<div class="why">' + x.why.map(esc).join(' · ') + (x.strong ? '' : ' — only the amount matched, check the name first') + '</div></div>' +
+    '<button type="button" class="btn lime sm" data-act="confirmMatch" data-id="' + esc(x.b.code) + '">Confirm payment</button></div>').join('');
+}
+function payPanelHtml(){
+  const b = bookingsById[payOpen]; if (!b) return '';
+  const due = Number(b.amount) || 0, recv = Number(kv('pd-recv', b.payReceived || '')) || 0;
+  let warn = '';
+  if (recv > 0 && recv < due) warn = 'Received ' + moneyTxt(recv) + ' — that is ' + moneyTxt(due - recv) + ' short of the ' + moneyTxt(due) + ' fee.';
+  else if (recv > due) warn = 'Received ' + moneyTxt(recv) + ' — that is ' + moneyTxt(recv - due) + ' more than the ' + moneyTxt(due) + ' fee.';
+  const inv = Object.values(invs).find(i => i.bookingCode === b.code && !i.void);
+  const sel = (id, opts, cur) => '<select id="' + id + '" data-keep="' + id + '">' + opts.map(o => '<option value="' + esc(o[0]) + '"' + (o[0] === cur ? ' selected' : '') + '>' + esc(o[1]) + '</option>').join('') + '</select>';
+  return '<div class="card" id="payPanel"><div class="actions" style="justify-content:space-between;margin-bottom:6px"><div><h2>' + esc(b.name || b.code) + '</h2>' +
+    '<div class="muted">' + esc(b.code) + ' · ' + esc(fmtDayShort(b.date)) + ' ' + fmt12(b.time) + (b.phone ? ' · ' + esc(b.phone) : '') + ' · fee <b>' + esc(moneyTxt(due)) + '</b></div></div>' +
+    '<button type="button" class="btn ghost sm" data-act="closePay">Close</button></div>' +
+    '<div class="two" style="margin-top:14px"><div class="field"><label for="pd-status">Payment status</label>' + sel('pd-status', PAY_OPTS.filter(o => o[0] !== 'free'), kv('pd-status', b.payStatus)) + '</div>' +
+    '<div class="field"><label for="pd-method">How did they pay?</label>' + sel('pd-method', [['','Choose…']].concat(PAY_METHODS.map(x => [x,x])), kv('pd-method', b.payMethod || '')) + '</div>' +
+    '<div class="field"><label for="pd-recv">Amount received</label><input id="pd-recv" data-keep="pd-recv" type="number" min="0" step="1" value="' + esc(kv('pd-recv', b.payReceived || '')) + '"></div>' +
+    '<div class="field"><label for="pd-date">Date received</label><input id="pd-date" data-keep="pd-date" type="date" value="' + esc(kv('pd-date', b.payDate || '')) + '"></div></div>' +
+    (warn ? '<div class="banner">' + esc(warn) + '</div>' : '') +
+    '<div class="field"><label for="pd-ref">Transaction ID</label><input id="pd-ref" data-keep="pd-ref" type="text" maxlength="60" value="' + esc(kv('pd-ref', b.payRef || '')) + '"></div>' +
+    '<div class="field"><label for="pd-details">Payment details — paste the message or receipt text here</label><textarea id="pd-details" data-keep="pd-details" maxlength="1500" placeholder="e.g. the JazzCash / Easypaisa / bank SMS">' + esc(kv('pd-details', b.payDetails || '')) + '</textarea></div>' +
+    '<div class="actions"><button type="button" class="btn lime" data-act="verifyPay">✓ Verify &amp; mark paid</button>' +
+    '<button type="button" class="btn" data-act="savePay">Save details</button>' +
+    '<button type="button" class="btn ghost" data-act="notRecv">Payment not received</button>' +
+    (inv ? '<button type="button" class="btn ghost" data-act="editInv" data-id="' + esc(inv.number) + '">Open invoice ' + esc(inv.number) + '</button>'
+         : '<button type="button" class="btn ghost" data-act="invFromBooking" data-id="' + esc(b.code) + '">Create invoice</button>') + '</div></div>';
+}
+function payHtml(){
+  const rows = payRows(), F = [['check','Needs checking'],['paid','Paid'],['all','All']];
+  return bkBanner() +
+    '<div class="card"><h2>Your payment details</h2><p class="muted" style="margin:0 0 14px">Paste your bank, JazzCash or Easypaisa details here. Clients see this text right after they book, and it is printed on your invoices.</p>' +
+    '<div class="field"><textarea id="pay-instr" data-keep="instr" maxlength="1000" placeholder="JazzCash: 03XX XXXXXXX (account name)&#10;Bank: … &nbsp; IBAN: …">' + esc(kv('instr', settings.payInstructions)) + '</textarea></div>' +
+    '<button type="button" class="btn lime" data-act="saveInstr">Save payment details</button></div>' +
+    '<div class="card"><h2>Check a payment</h2><p class="muted" style="margin:0 0 14px">Got a payment message or receipt? Paste it here and we will find the booking it belongs to.</p>' +
+    '<div class="field"><textarea id="pc-text" data-keep="paste" maxlength="1500" placeholder="Paste the SMS or receipt text">' + esc(kv('paste', '')) + '</textarea></div>' +
+    '<button type="button" class="btn" data-act="findPay">Find booking</button>' + matchesHtml() + '</div>' +
+    '<div class="card"><h3>Payments</h3><div class="chips">' +
+    F.map(f => '<button type="button" class="chipbtn' + (payFilter === f[0] ? ' active' : '') + '" data-act="payF" data-f="' + f[0] + '">' + f[1] + '</button>').join('') + '</div>' +
+    (rows.length ? '<div class="overflow"><table><thead><tr><th>When</th><th>Client</th><th class="num">Fee</th><th class="num">Received</th><th>Status</th><th></th></tr></thead><tbody>' +
+      rows.map(b => '<tr class="payrow' + (b.code === payOpen ? ' sel' : '') + '"><td><b>' + esc(fmtDayShort(b.date)) + '</b><br><span class="muted">' + fmt12(b.time) + '</span></td>' +
+        '<td>' + esc(b.name || '—') + '<br><span class="muted">' + esc(b.code) + (b.payMethod ? ' · ' + esc(b.payMethod) : '') + (b.payRef ? ' · ' + esc(b.payRef) : '') + '</span></td>' +
+        '<td class="num">' + esc(moneyTxt(b.amount)) + '</td><td class="num">' + (b.payReceived ? esc(moneyTxt(b.payReceived)) : '—') + '</td><td>' + payTag(b.payStatus) + '</td>' +
+        '<td><button type="button" class="btn ghost sm" data-act="openPay" data-id="' + esc(b.code) + '">Open</button></td></tr>').join('') + '</tbody></table></div>'
+      : '<div class="empty">' + (payFilter === 'check' ? 'Nothing waiting to be checked. 🎉' : 'No payments here yet.') + '</div>') + '</div>' +
+    payPanelHtml();
+}
+async function savePay(mode){
+  const id = payOpen, b = bookingsById[id]; if (!b) return;
+  const patch = {payMethod:val('pd-method'), payReceived:Number(val('pd-recv')) || 0, payDate:val('pd-date'), payRef:val('pd-ref').trim(), payDetails:val('pd-details').trim(), payStatus:val('pd-status')};
+  if (mode === 'verify'){ patch.payStatus = 'paid'; if (!patch.payReceived) patch.payReceived = Number(b.amount) || 0; if (!patch.payDate) patch.payDate = nowTz().date; }
+  if (mode === 'notrecv'){ patch.payStatus = 'unpaid'; patch.payReceived = 0; }
+  patch.paidAt = patch.payStatus === 'paid' ? (b.paidAt || new Date().toISOString()) : null;
+  try { await saveBooking(id, patch); clearKeep('pd-'); toast(mode === 'verify' ? 'Payment verified ✓' : mode === 'notrecv' ? 'Marked as not received' : 'Saved'); }
+  catch(e){ toast('Could not save. Check your connection.'); }
+  render();
+}
+
+/* =====================================================================
+   ADMIN: invoices — numbered INV-0001…, editor with live preview, print / save as PDF
+   ===================================================================== */
+const round2 = n => Math.round((Number(n) || 0) * 100) / 100;
+const invPaid = i => !!i && !i.void && (i.status === 'paid' || (!!bookingsById[i.bookingCode] && bookingsById[i.bookingCode].payStatus === 'paid'));
+const invMoney = (n, cur) => ((cur || settings.currency) === 'PKR' ? 'Rs ' : (cur || settings.currency) + ' ') + fmtMoney(n);
+function invTotals(d){
+  const sub = round2((d.items || []).reduce((s, i) => s + (Number(i.qty) || 0) * (Number(i.price) || 0), 0));
+  const disc = round2(Math.min(Math.max(Number(d.discount) || 0, 0), sub));
+  const tax = round2((sub - disc) * (Number(d.taxPct) || 0) / 100);
+  return {sub, disc, tax, total: round2(sub - disc + tax)};
+}
+function newDraft(b){
+  const s = settings, today = nowTz().date;
+  return {
+    number:null, bookingCode: b ? b.code : '', clientName: b ? (b.name || '') : '', clientPhone: b ? (b.phone || '') : '',
+    clientEmail: b ? (b.email || '') : '', clientCity: b ? (b.city || '') : '',
+    issueDate: today, dueDate: addDays(today, 7),
+    items: [{desc: b ? (s.title + ' — ' + fmtDayShort(b.date) + ', ' + fmt12(b.time)) : '', qty: 1, price: b ? (Number(b.amount) || 0) : 0}],
+    discount: 0, taxPct: Number(s.invTax) || 0, notes: s.invNote || '', status:'unpaid', void:false,
+  };
+}
+function invoiceDoc(d){
+  const s = settings, t = invTotals(d), cur = d.currency || s.currency, paid = invPaid(d);
+  const from = (s.invName || s.host || s.title || '');
+  const lines = (d.items || []).filter(i => String(i.desc || '').trim() || Number(i.price));
+  return '<div class="invdoc">' +
+    '<div class="inv-top"><div><div class="inv-from">' + esc(from) + '</div>' + (s.invDetails ? '<div class="inv-small">' + esc(s.invDetails).replace(/\n/g,'<br>') + '</div>' : '') + '</div>' +
+    '<div class="inv-title">INVOICE' + (d.void ? '<span class="inv-stamp void">VOID</span>' : paid ? '<span class="inv-stamp">PAID</span>' : '') + '</div></div>' +
+    '<div class="inv-meta"><div><small>Billed to</small><b>' + esc(d.clientName || '—') + '</b>' +
+      [d.clientPhone, d.clientEmail, d.clientCity].filter(Boolean).map(x => '<div class="inv-small">' + esc(x) + '</div>').join('') + '</div>' +
+    '<div><small>Invoice no.</small><b>' + esc(d.number || 'DRAFT') + '</b><small style="margin-top:8px">Issued</small><b>' + esc(fmtDayShort(d.issueDate)) + '</b>' +
+      (d.dueDate ? '<small style="margin-top:8px">Due</small><b>' + esc(fmtDayShort(d.dueDate)) + '</b>' : '') + '</div></div>' +
+    '<table class="inv-items"><thead><tr><th>Description</th><th class="num">Qty</th><th class="num">Price</th><th class="num">Amount</th></tr></thead><tbody>' +
+    (lines.length ? lines.map(i => '<tr><td>' + esc(i.desc) + '</td><td class="num">' + esc(Number(i.qty) || 0) + '</td><td class="num">' + esc(invMoney(i.price, cur)) + '</td><td class="num">' + esc(invMoney((Number(i.qty) || 0) * (Number(i.price) || 0), cur)) + '</td></tr>').join('')
+      : '<tr><td colspan="4" class="muted">No items yet</td></tr>') + '</tbody></table>' +
+    '<div class="inv-sum">' + '<div><span>Subtotal</span><span>' + esc(invMoney(t.sub, cur)) + '</span></div>' +
+    (t.disc ? '<div><span>Discount</span><span>− ' + esc(invMoney(t.disc, cur)) + '</span></div>' : '') +
+    (t.tax ? '<div><span>Tax (' + esc(Number(d.taxPct)) + '%)</span><span>' + esc(invMoney(t.tax, cur)) + '</span></div>' : '') +
+    '<div class="grand"><span>Total</span><span>' + esc(invMoney(t.total, cur)) + '</span></div></div>' +
+    (!paid && !d.void && s.payInstructions ? '<div class="inv-pay"><small>How to pay</small><div>' + esc(s.payInstructions).replace(/\n/g,'<br>') + '</div></div>' : '') +
+    (d.notes ? '<div class="inv-notes">' + esc(d.notes).replace(/\n/g,'<br>') + '</div>' : '') + '</div>';
+}
+function invListHtml(){
+  const all = Object.values(invs).sort((a,b) => String(b.number).localeCompare(String(a.number)));
+  const st = i => i.void ? 'void' : invPaid(i) ? 'paid' : 'unpaid';
+  const rows = all.filter(i => invFilter === 'all' || st(i) === invFilter);
+  const sum = k => all.filter(i => st(i) === k).reduce((s,i) => s + (Number(i.total) || 0), 0);
+  const F = [['all','All'],['unpaid','Unpaid'],['paid','Paid'],['void','Void']];
+  const tag = i => st(i) === 'paid' ? '<span class="tag ok">Paid ✓</span>' : st(i) === 'void' ? '<span class="tag off">Void</span>' : '<span class="tag warn">Unpaid</span>';
+  return bkBanner() +
+    '<div class="grid3" style="margin-bottom:18px"><div class="stat hot"><b>' + esc(invMoney(sum('unpaid'))) + '</b><span>Waiting to be paid</span></div>' +
+    '<div class="stat"><b>' + esc(invMoney(sum('paid'))) + '</b><span>Paid</span></div>' +
+    '<div class="stat"><b>' + all.length + '</b><span>Invoices</span></div></div>' +
+    '<div class="card"><div class="actions" style="justify-content:space-between;margin-bottom:14px"><h2 style="margin:0">Invoices</h2><button type="button" class="btn lime" data-act="newInv">+ New invoice</button></div>' +
+    '<div class="chips">' + F.map(f => '<button type="button" class="chipbtn' + (invFilter === f[0] ? ' active' : '') + '" data-act="invF" data-f="' + f[0] + '">' + f[1] + '</button>').join('') + '</div>' +
+    (rows.length ? '<div class="overflow"><table><thead><tr><th>No.</th><th>Client</th><th>Issued</th><th class="num">Total</th><th>Status</th><th></th></tr></thead><tbody>' +
+      rows.map(i => '<tr><td><b>' + esc(i.number) + '</b></td><td>' + esc(i.clientName || '—') + '</td><td>' + esc(fmtDayShort(i.issueDate)) + '</td><td class="num">' + esc(invMoney(i.total, i.currency)) + '</td><td>' + tag(i) + '</td>' +
+        '<td><button type="button" class="btn ghost sm" data-act="editInv" data-id="' + esc(i.number) + '">Open</button></td></tr>').join('') + '</tbody></table></div>'
+      : '<div class="empty">' + (all.length ? 'No invoices in this filter.' : 'No invoices yet. Create one here, or from a booking on the Payments tab.') + '</div>') + '</div>';
+}
+function invEditHtml(){
+  const d = invDraft, locked = !!d.void;
+  const f = (id, label, type, key, extra) => '<div class="field"><label for="' + id + '">' + label + '</label><input id="' + id + '" type="' + type + '" data-inv="' + key + '" value="' + esc(d[key] == null ? '' : d[key]) + '"' + (extra || '') + '></div>';
+  const items = d.items.map((i, n) =>
+    '<div class="itemrow"><input type="text" aria-label="Item description" placeholder="Description" data-item="' + n + '" data-k="desc" value="' + esc(i.desc) + '" maxlength="120">' +
+    '<input type="number" aria-label="Quantity" min="0" step="1" data-item="' + n + '" data-k="qty" value="' + esc(i.qty) + '">' +
+    '<input type="number" aria-label="Price" min="0" step="1" data-item="' + n + '" data-k="price" value="' + esc(i.price) + '">' +
+    '<button type="button" class="btn ghost sm" data-act="rmItem" data-n="' + n + '" aria-label="Remove item">✕</button></div>').join('');
+  const wa = waNumber(d.clientPhone), t = invTotals(d);
+  const waLink = wa ? 'https://wa.me/' + wa + '?text=' + encodeURIComponent('Hi ' + (d.clientName || '') + ', here is your invoice ' + (d.number || '') + ' for ' + invMoney(t.total, d.currency) + (d.dueDate ? ', due ' + fmtDayShort(d.dueDate) : '') + '.' + (settings.payInstructions ? '\n\n' + settings.payInstructions : '')) : '';
+  return bkBanner() +
+    '<div class="actions" style="margin-bottom:14px"><button type="button" class="btn ghost" data-act="invBack">← All invoices</button><b style="align-self:center">' + esc(d.number || 'New invoice') + '</b></div>' +
+    '<div class="invlayout"><div><div class="card"><h3>Client</h3>' +
+    '<div class="two">' + f('iv-name','Name','text','clientName',' maxlength="80"') + f('iv-phone','WhatsApp number','tel','clientPhone',' maxlength="20"') + '</div>' +
+    '<div class="two">' + f('iv-email','Email','email','clientEmail',' maxlength="80"') + f('iv-city','City','text','clientCity',' maxlength="60"') + '</div>' +
+    '<div class="two">' + f('iv-issue','Issue date','date','issueDate') + f('iv-due','Due date','date','dueDate') + '</div></div>' +
+    '<div class="card"><h3>Items</h3><div class="itemrow head"><span>Description</span><span>Qty</span><span>Price</span><span></span></div>' + items +
+    '<button type="button" class="btn ghost sm" data-act="addItem">+ Add item</button>' +
+    '<div class="two" style="margin-top:14px">' + f('iv-disc','Discount (amount)','number','discount',' min="0" step="1"') + f('iv-tax','Tax %','number','taxPct',' min="0" max="100" step="0.5"') + '</div>' +
+    '<div class="field"><label for="iv-notes">Note on the invoice</label><textarea id="iv-notes" data-inv="notes" maxlength="600">' + esc(d.notes) + '</textarea></div></div>' +
+    '<div class="actions"><button type="button" class="btn lime" data-act="saveInv"' + (locked ? ' disabled' : '') + '>Save invoice</button>' +
+    '<button type="button" class="btn" data-act="printInv">Print / Save as PDF</button>' +
+    (waLink ? '<a class="btn ghost" id="ivWa" href="' + esc(waLink) + '" target="_blank" rel="noopener">Send on WhatsApp</a>' : '') +
+    (d.number && !locked ? '<button type="button" class="btn ghost" data-act="invPaidToggle">' + (invPaid(d) && d.status === 'paid' ? 'Mark as unpaid' : 'Mark as paid') + '</button>' : '') +
+    (d.number ? '<button type="button" class="btn ghost" data-act="invVoid">' + (locked ? 'Restore invoice' : 'Void invoice') + '</button>' : '') + '</div></div>' +
+    '<div><div class="muted" style="margin:0 0 8px;font-size:12.5px">Preview — this is what the client gets</div><div class="invpaper" id="invPrev">' + invoiceDoc(d) + '</div></div></div>';
+}
+function invHtml(){ return invMode === 'edit' && invDraft ? invEditHtml() : invListHtml(); }
+function refreshInvPreview(){ const p = document.getElementById('invPrev'); if (p && invDraft) p.innerHTML = invoiceDoc(invDraft); }
+function onInvInput(t){
+  if (!invDraft) return;
+  if (t.dataset.inv){
+    const k = t.dataset.inv; invDraft[k] = (t.type === 'number') ? (t.value === '' ? '' : Number(t.value)) : t.value;
+  } else if (t.dataset.item !== undefined){
+    const it = invDraft.items[Number(t.dataset.item)]; if (!it) return;
+    it[t.dataset.k] = (t.dataset.k === 'desc') ? t.value : (t.value === '' ? '' : Number(t.value));
+  } else return;
+  refreshInvPreview();
+}
+async function saveInvoice(){
+  const d = invDraft; if (!d) return false;
+  if (String(d.clientName).trim().length < 2){ toast('Please type the client name.'); return false; }
+  if (!d.items.some(i => Number(i.qty) > 0 && Number(i.price) > 0)){ toast('Add at least one item with a quantity and price.'); return false; }
+  const clean = Object.assign({}, d, {
+    clientName:String(d.clientName).trim(), items:d.items.filter(i => String(i.desc).trim() || Number(i.price)).map(i => ({desc:String(i.desc).trim(), qty:Number(i.qty) || 0, price:Number(i.price) || 0})),
+    discount:Number(d.discount) || 0, taxPct:Number(d.taxPct) || 0, currency:d.currency || settings.currency,
+  });
+  clean.total = invTotals(clean).total;
+  try {
+    if (!clean.number){
+      const cref = db.collection('bk_settings').doc('counters');
+      await db.runTransaction(async tx => {
+        const c = await tx.get(cref), n = ((c.exists && c.data().invoice) || 0) + 1;
+        clean.number = 'INV-' + String(n).padStart(4, '0'); clean.createdAt = new Date().toISOString();
+        tx.set(cref, {invoice:n}, {merge:true});
+        tx.set(db.collection('bk_invoices').doc(clean.number), clean);
+      });
+    } else await db.collection('bk_invoices').doc(clean.number).set(clean);
+    invs[clean.number] = clean; invDraft = Object.assign({}, clean, {items:clean.items.map(i => Object.assign({}, i))});
+    toast('Invoice ' + clean.number + ' saved'); return true;
+  } catch(e){ toast('Could not save. Check your connection and the Firebase rules.'); return false; }
+}
+async function patchInvoice(patch){
+  const d = invDraft; if (!d || !d.number) return;
+  try {
+    await db.collection('bk_invoices').doc(d.number).set(patch, {merge:true});
+    Object.assign(invs[d.number], patch); Object.assign(d, patch); return true;
+  } catch(e){ toast('Could not save. Check your connection.'); return false; }
+}
+function printInvoice(){
+  const root = document.getElementById('printRoot'); if (!root || !invDraft) return;
+  root.innerHTML = invoiceDoc(invDraft); document.body.classList.add('printing');
+  const done = () => { document.body.classList.remove('printing'); root.innerHTML = ''; window.removeEventListener('afterprint', done); };
+  window.addEventListener('afterprint', done);
+  try { window.print(); } catch(e){}
+  setTimeout(() => { if (document.body.classList.contains('printing') && !('onafterprint' in window)) done(); }, 1500);
+}
+function subInvoices(){
+  if (unsubI) return;
+  unsubI = db.collection('bk_invoices').onSnapshot(snap => {
+    invs = {}; snap.docs.forEach(d => { invs[d.id] = Object.assign({number:d.id}, d.data()); });
+    softRender(['inv','pay']);
+  }, err => { bkErr = err.code || 'error'; render(); });
+}
+function unsubInvoices(){ if (unsubI){ unsubI(); unsubI = null; } invs = {}; invDraft = null; invMode = 'list'; }
+
+/* =====================================================================
    ADMIN: availability + settings
    ===================================================================== */
 function availHtml(){
@@ -930,7 +1256,8 @@ function rulesText(){
     "    // existing VA tracker (unchanged)\n    match /entries/{id} { allow read, write: if true; }\n\n" +
     "    // booking page\n    match /bk_settings/{id} { allow read: if true; allow write: if isAdmin(); }\n" +
     "    match /bk_taken/{id} { allow read: if true; allow create: if true; allow update, delete: if isAdmin(); }\n" +
-    "    match /bk_bookings/{id} { allow create: if true; allow read, update, delete: if isAdmin(); }\n  }\n}\n";
+    "    match /bk_bookings/{id} { allow create: if true; allow read, update, delete: if isAdmin(); }\n" +
+    "    match /bk_invoices/{id} { allow read, write: if isAdmin(); }\n  }\n}\n";
 }
 function settingsHtml(){
   const s = settings;
@@ -941,8 +1268,14 @@ function settingsHtml(){
     '<div class="two"><div class="field"><label for="st-price">Price (0 = free)</label><input id="st-price" type="number" min="0" step="1" value="' + esc(s.price) + '"></div>' +
     '<div class="field"><label for="st-cur">Currency</label><input id="st-cur" type="text" maxlength="5" value="' + esc(s.currency) + '"></div></div>' +
     '<div class="field"><label for="st-wa">Your WhatsApp number (clients send payment proof here)</label><input id="st-wa" type="tel" maxlength="20" placeholder="03xx xxxxxxx or 923xxxxxxxxx" value="' + esc(s.whatsapp) + '"></div>' +
-    '<div class="field"><label for="st-pay">Payment instructions (shown after booking)</label><textarea id="st-pay" maxlength="600" placeholder="e.g. Bank name, account title, account number, or JazzCash / Easypaisa number">' + esc(s.payInstructions) + '</textarea></div>' +
+    '<p class="muted" style="margin:-4px 0 16px">Your bank / JazzCash / Easypaisa details are on the <b>Payments</b> tab.</p>' +
     '<button type="button" class="btn lime" data-act="saveGeneral">Save details</button></div>' +
+    '<div class="card"><h2>Invoice details</h2><p class="muted" style="margin:0 0 16px">Shown at the top of every invoice.</p>' +
+    '<div class="two"><div class="field"><label for="st-invname">Business name</label><input id="st-invname" type="text" maxlength="80" placeholder="' + esc(s.host || 'Your business') + '" value="' + esc(s.invName) + '"></div>' +
+    '<div class="field"><label for="st-invtax">Default tax % (0 = none)</label><input id="st-invtax" type="number" min="0" max="100" step="0.5" value="' + esc(s.invTax) + '"></div></div>' +
+    '<div class="field"><label for="st-invdet">Address, phone, NTN…</label><textarea id="st-invdet" maxlength="300">' + esc(s.invDetails) + '</textarea></div>' +
+    '<div class="field"><label for="st-invnote">Default note at the bottom</label><textarea id="st-invnote" maxlength="300">' + esc(s.invNote) + '</textarea></div>' +
+    '<button type="button" class="btn lime" data-act="saveInvSet">Save invoice details</button></div>' +
     '<div class="card"><h2>Firebase setup</h2><p class="muted" style="margin:0 0 6px">One-time. Without these rules anyone could read your clients\' details, so please do this before sharing the link.</p>' +
     '<ol class="muted" style="line-height:1.7;padding-left:18px;margin:8px 0">' +
     '<li>Firebase console → <b>Authentication</b> → Get started → <b>Email/Password</b> → Enable.</li>' +
@@ -965,7 +1298,7 @@ async function saveAvail(){
 }
 async function saveGeneral(){
   const patch = {title:val('st-title').trim() || 'Consultation', host:val('st-host').trim(), description:val('st-desc').trim(),
-    price:Math.max(0, Number(val('st-price')) || 0), currency:val('st-cur').trim() || 'PKR', whatsapp:val('st-wa').trim(), payInstructions:val('st-pay').trim()};
+    price:Math.max(0, Number(val('st-price')) || 0), currency:val('st-cur').trim() || 'PKR', whatsapp:val('st-wa').trim()};
   try { await saveSettings(patch); toast('Details saved'); } catch(e){ toast('Could not save. Check your connection.'); }
 }
 async function addBlock(){
@@ -991,6 +1324,7 @@ const ACT = {
     if (v === 'book'){ step = 'day'; if (location.hash) history.replaceState(null,'',location.pathname + location.search); }
     render(); window.scrollTo(0,0);
   },
+  logo(){ view = isAdmin() ? 'ov' : 'login'; authErr = ''; anim = true; dir = 'fwd'; render(); window.scrollTo(0,0); },
   signOut(){ if (auth) auth.signOut(); },
   pickDay(el){ selDate = el.dataset.date; selTime = null; step = 'time'; dir = 'fwd'; anim = true; render(); window.scrollTo(0,0); },
   pickSlot(el){ selTime = Number(el.dataset.t); step = 'form'; formErr = ''; dir = 'fwd'; anim = true; render(); window.scrollTo(0,0); },
@@ -1000,6 +1334,58 @@ const ACT = {
   bookAnother(){ step = 'day'; selDate = null; selTime = null; dir = 'back'; anim = true; render(); window.scrollTo(0,0); },
   viewLast(){ step = 'done'; dir = 'fwd'; anim = true; render(); },
   ovF(el){ ovFilter = el.dataset.f; render(); },
+  payF(el){ payFilter = el.dataset.f; render(); },
+  openPay(el){ clearKeep('pd-'); payOpen = el.dataset.id; render(); const p = document.getElementById('payPanel'); if (p && p.scrollIntoView) p.scrollIntoView({behavior:'smooth', block:'start'}); },
+  closePay(){ payOpen = null; clearKeep('pd-'); render(); },
+  savePay(){ savePay('save'); },
+  verifyPay(){ savePay('verify'); },
+  notRecv(){ savePay('notrecv'); },
+  async saveInstr(){
+    try { await saveSettings({payInstructions: val('pay-instr').trim()}); clearKeep('instr'); toast('Payment details saved'); }
+    catch(e){ toast('Could not save. Check your connection.'); }
+    render();
+  },
+  findPay(){
+    const text = val('pc-text').trim(); keep.paste = text;
+    if (text.length < 4){ toast('Paste the payment message first.'); return; }
+    const parsed = parsePayment(text); payMatches = {text, parsed, list:matchPayments(text, parsed)}; render();
+  },
+  async confirmMatch(el){
+    const m = payMatches, b = bookingsById[el.dataset.id]; if (!m || !b) return;
+    const patch = {payStatus:'paid', paidAt:new Date().toISOString(), payDetails:m.text, payReceived:m.parsed.amount || Number(b.amount) || 0, payDate:nowTz().date};
+    if (!b.payRef && m.parsed.ids[0]) patch.payRef = m.parsed.ids[0];
+    try { await saveBooking(b.code, patch); toast('Payment confirmed for ' + (b.name || b.code) + ' ✓'); m.list = m.list.filter(x => x.b.code !== b.code); }
+    catch(e){ toast('Could not save. Check your connection.'); }
+    render();
+  },
+  async saveInvSet(){
+    try { await saveSettings({invName:val('st-invname').trim(), invDetails:val('st-invdet').trim(), invNote:val('st-invnote').trim(), invTax:Math.max(0, Number(val('st-invtax')) || 0)}); toast('Invoice details saved'); }
+    catch(e){ toast('Could not save. Check your connection.'); }
+  },
+  invF(el){ invFilter = el.dataset.f; render(); },
+  newInv(){ invDraft = newDraft(null); invMode = 'edit'; anim = true; render(); window.scrollTo(0,0); },
+  invFromBooking(el){ const b = bookingsById[el.dataset.id]; if (!b) return; invDraft = newDraft(b); invMode = 'edit'; view = 'inv'; anim = true; render(); window.scrollTo(0,0); },
+  editInv(el){ const i = invs[el.dataset.id]; if (!i) return; invDraft = Object.assign({}, i, {items:(i.items || []).map(x => Object.assign({}, x))}); invMode = 'edit'; view = 'inv'; anim = true; render(); window.scrollTo(0,0); },
+  invBack(){ invMode = 'list'; invDraft = null; render(); window.scrollTo(0,0); },
+  addItem(){ invDraft.items.push({desc:'', qty:1, price:0}); render(); },
+  rmItem(el){ if (invDraft.items.length > 1) invDraft.items.splice(Number(el.dataset.n), 1); else invDraft.items[0] = {desc:'', qty:1, price:0}; render(); },
+  async saveInv(){ await saveInvoice(); render(); },
+  async printInv(){ if (!invDraft.number && !(await saveInvoice())) return; render(); printInvoice(); },
+  async invPaidToggle(){
+    const nowPaid = !(invDraft.status === 'paid');
+    if (await patchInvoice({status: nowPaid ? 'paid' : 'unpaid', paidAt: nowPaid ? new Date().toISOString() : null})){
+      const b = bookingsById[invDraft.bookingCode];
+      if (nowPaid && b && b.payStatus !== 'paid'){ try { await saveBooking(b.code, {payStatus:'paid', paidAt:new Date().toISOString(), payDate:nowTz().date, payReceived:b.payReceived || Number(b.amount) || 0}); } catch(e){} }
+      toast(nowPaid ? 'Marked as paid ✓' : 'Marked as unpaid');
+    }
+    render();
+  },
+  async invVoid(){
+    const v = !invDraft.void;
+    if (v && !confirm('Void invoice ' + invDraft.number + '? It stays in the list but is marked void.')) return;
+    if (await patchInvoice({void:v})) toast(v ? 'Invoice voided' : 'Invoice restored');
+    render();
+  },
   async markPaid(el){
     try { await saveBooking(el.dataset.id, {payStatus:'paid', paidAt:new Date().toISOString()}); toast('Payment confirmed'); }
     catch(e){ toast('Could not save. Check your connection.'); }
@@ -1037,12 +1423,16 @@ document.addEventListener('submit', e => {
 });
 document.addEventListener('input', e => {
   const t = e.target;
-  if (t.dataset && t.dataset.form){ formVals[t.dataset.form] = t.value; }
+  if (t.dataset && (t.dataset.inv || t.dataset.item !== undefined)){ onInvInput(t); }
+  else if (t.dataset && t.dataset.keep){ keep[t.dataset.keep] = t.value; }
+  else if (t.dataset && t.dataset.form){ formVals[t.dataset.form] = t.value; }
   else if (t.dataset && t.dataset.sheet === 'q'){ sheetQ = t.value; renderSheetBody(); }
 });
 document.addEventListener('change', e => {
   const t = e.target;
   if (t.classList && t.classList.contains('cell')) onCellChange(t);
+  else if (t.dataset && t.dataset.form){ formVals[t.dataset.form] = t.value; }
+  else if (t.dataset && t.dataset.keep){ keep[t.dataset.keep] = t.value; }
   else if (t.dataset && t.dataset.sheet){
     if (t.dataset.sheet === 'status') sheetStatus = t.value;
     else if (t.dataset.sheet === 'pay') sheetPay = t.value;
