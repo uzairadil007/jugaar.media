@@ -1030,8 +1030,162 @@ function sheetRows(){
   rows.sort(sheetSort === 'date' ? byWhen : (a,b) => String(b.createdAt||'').localeCompare(String(a.createdAt||'')));
   return rows;
 }
+/* ---------- import from Google Sheets (copy-paste or CSV) ---------- */
+let impOpen = false, impPrev = null, impBusy = false, impDmy = true;
+// header text (lowercased, letters/digits only) -> booking field
+const IMP_HEAD = {
+  code:['code','bookingcode'], createdAt:['bookedat','createdat','timestamp','submittedat','bookingdate'],
+  kind:['callwith','call','calltype','type','consultation','consultationtype'],
+  date:['date','appointmentdate','calldate','day'], time:['time','slot','appointmenttime','calltime'],
+  name:['client','name','fullname','clientname','yourfullname','patientname'],
+  phone:['whatsapp','phone','number','mobile','contact','whatsappnumber','phonenumber','yourwhatsappnumber','cell'],
+  city:['city','yourcity','location'], age:['age'], email:['email','emailaddress'],
+  invest:['caninvest','caninvestpkr','invest','investment','budget','howmuchcanyouinvestinyourself'],
+  notes:['needshelpwith','notes','concern','problem','whatdoyouneedhelpwith','issue','details'],
+  heard:['heardvia','howdidyouhearaboutus','referral'], amount:['fee','amount','price','paid'],
+  payStatus:['payment','paymentstatus','paystatus'], status:['status','bookingstatus'],
+  payRef:['paymentref','transactionid','tid','paymentreference','ref'], source:['source','platform'],
+  adminNote:['mynotes','adminnote','comments','remarks','note'],
+};
+function parseTable(text){
+  const t = String(text || '').replace(/\r\n?/g, '\n'), first = t.split('\n').find(l => l.trim()) || '';
+  const d = first.includes('\t') ? '\t' : ',', rows = []; let row = [], cur = '', q = false;
+  for (let i = 0; i < t.length; i++){
+    const c = t[i];
+    if (q){ if (c === '"'){ if (t[i+1] === '"'){ cur += '"'; i++; } else q = false; } else cur += c; }
+    else if (c === '"' && cur === '') q = true;
+    else if (c === d){ row.push(cur); cur = ''; }
+    else if (c === '\n'){ row.push(cur); rows.push(row); row = []; cur = ''; }
+    else cur += c;
+  }
+  row.push(cur); rows.push(row);
+  return rows.map(r => r.map(x => x.trim())).filter(r => r.some(Boolean));
+}
+const MONTHS = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+function impDate(v){
+  v = String(v || '').trim(); if (!v) return ''; let m;
+  if ((m = /^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})/.exec(v))) return ymd(+m[1], +m[2], +m[3]);
+  if ((m = /^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{2,4})/.exec(v))){
+    let a = +m[1], b = +m[2], y = +m[3]; if (y < 100) y += 2000;
+    const dayFirst = a > 12 ? true : b > 12 ? false : impDmy;
+    return dayFirst ? ymd(y, b, a) : ymd(y, a, b);
+  }
+  if ((m = /(\d{1,2})(?:st|nd|rd|th)?\s+([a-z]{3})[a-z]*,?\s+(\d{4})/i.exec(v))) return ymd(+m[3], MONTHS.indexOf(m[2].toLowerCase()) + 1, +m[1]);
+  if ((m = /([a-z]{3})[a-z]*\s+(\d{1,2})(?:st|nd|rd|th)?,?\s+(\d{4})/i.exec(v))) return ymd(+m[3], MONTHS.indexOf(m[1].toLowerCase()) + 1, +m[2]);
+  return null;
+}
+function ymd(y, mo, d){
+  if (!(mo >= 1 && mo <= 12 && d >= 1 && d <= 31 && y >= 2000 && y <= 2100)) return null;
+  const s = y + '-' + pad(mo) + '-' + pad(d); return dateStr(parseDate(s)) === s ? s : null;
+}
+function impTime(v){
+  const m = /(\d{1,2})(?:[:.](\d{2}))?(?::\d{2})?\s*([ap])?\.?m?\.?/i.exec(String(v || '').trim()); if (!m || !String(v).trim()) return '';
+  let h = +m[1]; const mi = +(m[2] || 0), ap = (m[3] || '').toLowerCase();
+  if (!m[2] && !ap) return null;
+  if (ap === 'p' && h < 12) h += 12; if (ap === 'a' && h === 12) h = 0;
+  return (h < 24 && mi < 60) ? pad(h) + ':' + pad(mi) : null;
+}
+const impNum = v => { const n = Number(String(v || '').replace(/[^\d.]/g, '')); return n > 0 ? n : 0; };
+function impPhone(v){
+  let d = String(v || '').replace(/[^\d+]/g, '');
+  if (/^3\d{9}$/.test(d)) d = '0' + d;              // Sheets drops the leading 0 of 03xx numbers
+  return d;
+}
+function impPay(v, amount){
+  const t = String(v || '').toLowerCase();
+  if (/refund/.test(t)) return 'refunded'; if (/proof/.test(t)) return 'proof';
+  if (/unpaid|not paid|pending|due/.test(t)) return 'unpaid'; if (/paid|done|received|yes/.test(t)) return 'paid';
+  if (/free/.test(t)) return 'free'; return amount > 0 ? 'unpaid' : 'free';
+}
+function impStatus(v){
+  const t = String(v || '').toLowerCase();
+  if (/cancel/.test(t)) return 'cancelled'; if (/no.?show/.test(t)) return 'no-show';
+  if (/complete|done|attended/.test(t)) return 'completed'; if (/block/.test(t)) return 'blocked';
+  return 'booked';
+}
+const dupKey = b => norm(b.name) + '|' + String(b.phone || '').replace(/\D/g,'').slice(-10) + '|' + (b.date || '') + '|' + (b.time || '');
+function buildImport(text){
+  const rows = parseTable(text); if (rows.length < 2) return {error:'Paste the header row and at least one booking.'};
+  const head = rows[0].map(h => norm(h)), map = {}, used = new Set();
+  Object.entries(IMP_HEAD).forEach(([k, names]) => { const i = head.findIndex((h, j) => !used.has(j) && names.includes(h)); if (i >= 0){ map[k] = i; used.add(i); } });
+  [['name','name'],['phone','whatsapp'],['phone','phone'],['email','email'],['notes','help'],['invest','invest']].forEach(([k, w]) => {
+    if (map[k] === undefined){ const i = head.findIndex((h, j) => !used.has(j) && h.includes(w)); if (i >= 0){ map[k] = i; used.add(i); } }
+  });
+  if (map.name === undefined && map.phone === undefined) return {error:'Could not find a name or WhatsApp column. Make sure you copied the header row too.'};
+  const have = bookingsList(), codes = new Set(have.map(b => b.code)), keys = new Set(have.map(dupKey)), out = [];
+  rows.slice(1).forEach((r, n) => {
+    const g = k => map[k] === undefined ? '' : (r[map[k]] || '');
+    const kindTxt = g('kind').toLowerCase(), kind = /fellow|team|dietitian|free/.test(kindTxt) && !/tehreem/.test(kindTxt) ? 'team' : 'doctor';
+    const amount = map.amount !== undefined ? impNum(g('amount')) : KINDS[kind].price;
+    const date = impDate(g('date')), time = impTime(g('time')), created = impDate(g('createdAt'));
+    const code0 = String(g('code')).toUpperCase().replace(/[^A-Z0-9]/g, '');
+    const b = {code: /^[A-Z0-9]{4,12}$/.test(code0) ? code0 : '', kind, date: date || '', time: time || '', duration: settings.duration,
+      name: g('name').slice(0, 80), phone: impPhone(g('phone')).slice(0, 20), city: g('city').slice(0, 60), age: impNum(g('age')) || '',
+      email: g('email').slice(0, 120), invest: impNum(g('invest')) || '', notes: g('notes').slice(0, 500), heard: g('heard').slice(0, 60),
+      amount, payStatus: impPay(g('payStatus'), amount), status: impStatus(g('status')), payRef: g('payRef').slice(0, 60),
+      source: g('source').slice(0, 40) || 'Google Sheet', adminNote: g('adminNote').slice(0, 200),
+      createdAt: created ? created + 'T00:00:00.000Z' : new Date(Date.now() + n).toISOString()};
+    const warn = [];
+    if (!b.name && !b.phone) return;                                   // blank / separator rows
+    if (date === null) warn.push('date not understood: ' + g('date'));
+    if (time === null) warn.push('time not understood: ' + g('time'));
+    if (!b.date || !b.time) warn.push('no date/time — added without holding a slot');
+    const skip = (b.code && codes.has(b.code)) ? 'already in admin' : keys.has(dupKey(b)) ? 'already in admin' : '';
+    if (!skip){ if (b.code) codes.add(b.code); keys.add(dupKey(b)); }
+    out.push({b, warn, skip});
+  });
+  const cols = Object.keys(map).map(k => rows[0][map[k]]), ignored = rows[0].filter((h, i) => h && !used.has(i));
+  return {list: out, cols, ignored};
+}
+function importHtml(){
+  if (!impOpen) return '';
+  const p = impPrev, todo = p && p.list ? p.list.filter(x => !x.skip) : [];
+  let prev = '';
+  if (p && p.error) prev = '<div class="banner err">' + esc(p.error) + '</div>';
+  else if (p) prev = '<p class="muted" style="margin:14px 0 6px">Found <b>' + p.list.length + '</b> rows · <b>' + todo.length + '</b> new · ' + (p.list.length - todo.length) + ' already in admin.<br>Columns used: ' + esc(p.cols.join(', ')) + (p.ignored.length ? '<br>Ignored: ' + esc(p.ignored.join(', ')) : '') + '</p>' +
+    '<div class="overflow" style="max-height:340px"><table><thead><tr><th>Client</th><th>WhatsApp</th><th>Call</th><th>Date</th><th>Time</th><th class="num">Fee</th><th></th></tr></thead><tbody>' +
+    p.list.map(x => '<tr' + (x.skip ? ' class="rowcancel"' : '') + '><td>' + esc(x.b.name || '—') + '</td><td>' + esc(x.b.phone || '—') + '</td><td>' + esc(KINDS[x.b.kind].short) + '</td><td>' + (x.b.date ? esc(fmtDayShort(x.b.date)) : '—') + '</td><td>' + (x.b.time ? fmt12(x.b.time) : '—') + '</td><td class="num">' + esc(fmtMoney(x.b.amount)) + '</td>' +
+      '<td class="muted" style="font-size:12px">' + esc(x.skip || x.warn.join('; ')) + '</td></tr>').join('') + '</tbody></table></div>' +
+    '<div class="actions" style="margin-top:12px"><button type="button" class="btn lime" data-act="impRun"' + (todo.length && !impBusy ? '' : ' disabled') + '>' + (impBusy ? 'Importing…' : 'Import ' + plural(todo.length, 'booking')) + '</button></div>';
+  return '<div class="card"><div class="actions" style="justify-content:space-between"><h2 style="margin:0">Import from Google Sheets</h2><button type="button" class="btn ghost sm" data-act="impClose">Close</button></div>' +
+    '<ol class="muted" style="line-height:1.7;padding-left:18px;margin:10px 0">' +
+    '<li>In Google Sheets, open the tab with your bookings, click any cell and press <b>Ctrl+A</b> (Mac: <b>Cmd+A</b>), then <b>Ctrl+C</b> to copy — include the header row.</li>' +
+    '<li>Paste below (or upload a CSV: File → Download → CSV), click <b>Preview</b>, check the rows, then <b>Import</b>.</li></ol>' +
+    '<div class="field"><textarea id="imp-text" data-keep="imp" placeholder="Paste your rows here" style="min-height:110px">' + esc(kv('imp', '')) + '</textarea></div>' +
+    '<div class="toolbar"><div><label for="imp-file">Or upload CSV</label><input id="imp-file" type="file" accept=".csv,.tsv,text/csv,text/plain"></div>' +
+    '<div><label for="imp-dmy">Dates in your sheet are</label><select id="imp-dmy"><option value="1"' + (impDmy ? ' selected' : '') + '>Day/Month (9/10 = 9 Oct)</option><option value="0"' + (impDmy ? '' : ' selected') + '>Month/Day (10/9 = 9 Oct)</option></select></div>' +
+    '<button type="button" class="btn" data-act="impPreview">Preview</button></div>' + prev + '</div>';
+}
+async function importOne(b){
+  const id = b.code || genCode(), rec = Object.assign({}, b, {code:id});
+  const k = occKey(rec), bref = db.collection('bk_bookings').doc(id);
+  let held = false;
+  await db.runTransaction(async tx => {
+    const snap = await tx.get(bref); if (snap.exists) throw new Error('EXISTS');
+    if (k){
+      const t = await tx.get(T(k));
+      if (!t.exists){ const st = toMin(rec.time); tx.set(T(k), {date:rec.date, start:st, end:st + (Number(rec.duration) || settings.duration), code:id, kind:kindOf(rec)}); held = true; }
+    }
+    if (k && !held) rec.adminNote = (rec.adminNote ? rec.adminNote + ' · ' : '') + 'Imported: this time was already taken';
+    tx.set(bref, rec);
+  });
+  bookingsById[id] = rec;
+  return rec;
+}
+async function runImport(){
+  const todo = impPrev && impPrev.list ? impPrev.list.filter(x => !x.skip) : [];
+  if (!todo.length || impBusy) return;
+  impBusy = true; render();
+  let ok = 0, fail = 0; const done = [];
+  for (const x of todo){ try { done.push(await importOne(x.b)); ok++; } catch(e){ fail++; } }
+  impBusy = false;
+  for (let i = 0; i < done.length; i += 200) pushToSheet(done.slice(i, i + 200));
+  impPrev = buildImport(kv('imp', ''));
+  toast('Imported ' + plural(ok, 'booking') + (fail ? ' · ' + fail + ' could not be added' : ''));
+  render();
+}
 function sheetHtml(){
-  return bkBanner() +
+  return bkBanner() + importHtml() +
     '<div class="card"><h3>Sheet — all consultations</h3>' +
     '<p class="muted" style="margin:-4px 0 14px">Click any cell to edit it — changes save automatically. Website bookings land here too. A row with a date and time holds that slot, so clients can\'t book over it.</p>' +
     '<div class="toolbar">' +
@@ -1040,7 +1194,8 @@ function sheetHtml(){
     '<div><label for="s-pay">Payment</label><select id="s-pay" data-sheet="pay"><option value="all">All</option>' + PAY_OPTS.map(o => '<option value="' + o[0] + '"' + (sheetPay===o[0]?' selected':'') + '>' + o[1] + '</option>').join('') + '</select></div>' +
     '<div><label for="s-sort">Sort</label><select id="s-sort" data-sheet="sort"><option value="new"' + (sheetSort==='new'?' selected':'') + '>Newest added</option><option value="date"' + (sheetSort==='date'?' selected':'') + '>By date</option></select></div>' +
     '<button type="button" class="btn lime" data-act="addRow">+ Add entry</button>' +
-    '<button type="button" class="btn ghost" data-act="exportCsv">Export CSV</button></div>' +
+    '<button type="button" class="btn ghost" data-act="exportCsv">Export CSV</button>' +
+    '<button type="button" class="btn ghost" data-act="impOpen">Import from Google Sheets</button></div>' +
     '<div class="sheet-wrap"><table class="sheet"><thead><tr><th class="rn">#</th>' + COLS.map(c => '<th style="min-width:' + c.w + 'px">' + c.l + '</th>').join('') + '<th></th></tr></thead><tbody id="sheetBody"></tbody></table></div>' +
     '<p class="muted" id="sheetCount" style="margin:10px 0 0"></p></div>';
 }
@@ -1569,6 +1724,13 @@ const ACT = {
   },
   addRow, exportCsv, saveAvail, saveGeneral, addBlock,
   rmBlock(el){ rmBlock(el.dataset.date); },
+  impOpen(){ impOpen = true; impPrev = null; render(); window.scrollTo(0,0); },
+  impClose(){ impOpen = false; impPrev = null; clearKeep('imp'); render(); },
+  impPreview(){
+    keep.imp = val('imp-text'); impDmy = val('imp-dmy') !== '0';
+    impPrev = keep.imp.trim() ? buildImport(keep.imp) : {error:'Paste your rows first.'}; render();
+  },
+  impRun(){ runImport(); },
   async saveSheet(){
     const u = val('st-sheet').trim();
     if (u && !SHEET_URL_RE.test(u)){ toast('That doesn\'t look like a Web app URL. It should end in /exec.'); return; }
@@ -1614,6 +1776,12 @@ document.addEventListener('input', e => {
 ['pointerup','keyup'].forEach(ev => document.addEventListener(ev, e => { if (e.target && e.target.id === 'f-invest') setInvest(e.target); }));
 document.addEventListener('change', e => {
   const t = e.target;
+  if (t.id === 'imp-file' && t.files && t.files[0]){
+    const f = t.files[0];
+    if (f.size > 5e6){ toast('That file is too big.'); return; }
+    f.text().then(txt => { keep.imp = txt; impDmy = val('imp-dmy') !== '0'; impPrev = buildImport(txt); render(); });
+    return;
+  }
   if (t.classList && t.classList.contains('cell')) onCellChange(t);
   else if (t.dataset && t.dataset.form){ formVals[t.dataset.form] = t.value; }
   else if (t.dataset && t.dataset.keep){ keep[t.dataset.keep] = t.value; }
