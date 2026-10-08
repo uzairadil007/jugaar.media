@@ -477,7 +477,6 @@ const STATUS_OPTS = [['pending','Pending'],['booked','Booked'],['completed','Com
 const SOURCES = ['Website','Instagram','Facebook','TikTok','WhatsApp','Other'];
 const COLS = [
   {k:'date',l:'Date',t:'date',w:140},
-  {k:'time',l:'Time',t:'time',w:110},
   {k:'kind',l:'Call with',t:'select',opts:[['doctor','Dr. Tehreem'],['team','Fellow dietitian'],['visit','Office visit']],w:150},
   {k:'name',l:'Client',t:'text',w:170},
   {k:'phone',l:'WhatsApp',t:'text',w:150},
@@ -495,7 +494,6 @@ const COLS = [
   {k:'adminNote',l:'My notes',t:'text',w:200},
   {k:'platform',l:'Platform',t:'text',w:200},
   {k:'va',l:'VA',t:'text',w:110},
-  {k:'loggedAt',l:'Logged on',t:'date',w:140},
   {k:'apptNote',l:'Appointment (as written)',t:'text',w:260},
   {k:'bookedAs',l:'Booked as (original)',t:'text',w:220},
   {k:'extra',l:'Other info',t:'text',w:240},
@@ -678,10 +676,10 @@ async function saveBooking(id, patch){
 const SHEET_URL_RE = /^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec$/;
 const DEFAULT_SHEET_URL = 'https://script.google.com/macros/s/AKfycbzDEH_ookUBvK-r2d8uodLnPmA9698TtD4_ADoFYsVO0SL8CpYgYXl6VFCJ3Gc5IDmlgw/exec';
 const sheetUrl = () => settings.sheetUrl || DEFAULT_SHEET_URL;   // a URL saved in Settings wins
-const SHEET_COLS = [['code','Code'],['createdAt','Booked at'],['kindLabel','Call with'],['date','Date'],['time','Time'],['name','Client'],['phone','WhatsApp'],
+const SHEET_COLS = [['code','Code'],['createdAt','Booked at'],['kindLabel','Call with'],['date','Date'],['name','Client'],['phone','WhatsApp'],
   ['city','City'],['age','Age'],['email','Email'],['invest','Can invest (PKR)'],['notes','Needs help with'],['heard','Heard via'],['amount','Fee'],
   ['payStatus','Payment'],['status','Status'],['payRef','Payment ref'],['source','Source'],['adminNote','My notes'],
-  ['platform','Platform'],['va','VA'],['loggedAt','Logged on'],['apptNote','Appointment (as written)'],['bookedAs','Booked as (original)'],['extra','Other info']];
+  ['platform','Platform'],['va','VA'],['apptNote','Appointment (as written)'],['bookedAs','Booked as (original)'],['extra','Other info']];
 function pushToSheet(list){
   const url = sheetUrl();
   if (!url || !SHEET_URL_RE.test(url) || !list.length) return Promise.resolve(false);
@@ -1135,16 +1133,12 @@ function impStatus(v, hasSlot){
   return 'booked';
 }
 const dupKey = b => norm(b.name) + '|' + String(b.phone || '').replace(/\D/g,'').slice(-10) + '|' + (b.date || '') + '|' + (b.time || '');
-// pull a date / time out of free text such as "Mon; 9pm (5th-10-26)" or "29-09-26 (2pm-Coach atufa)"
+// pull a date out of free text such as "Mon; 9pm (5th-10-26)" or "29-09-26 (2pm-Coach atufa)"
 function impDateIn(v){
   const t = String(v || '').trim(); if (!t) return '';
   const d = impDate(t); if (d) return d;
   const m = /(\d{1,2})(?:st|nd|rd|th)?[-\/.](\d{1,2})[-\/.](\d{2,4})/.exec(t);
   return m ? impDate(m[1] + '-' + m[2] + '-' + m[3]) : (d === null && /^\s*[\d\/.\-]+\s*$/.test(t) ? null : '');
-}
-function impTimeIn(v){
-  const m = /(\d{1,2})(?:[.:](\d{2}))?\s*([ap])\.?m\b/i.exec(String(v || ''));
-  return m ? impTime(m[1] + ':' + (m[2] || '00') + ' ' + m[3] + 'm') : '';
 }
 function buildImport(text){
   const rows = parseTable(text); if (rows.length < 2) return {error:'Paste the header row and at least one booking.'};
@@ -1163,8 +1157,10 @@ function buildImport(text){
     const kind = /visit|hospital|office/.test(kt) ? 'visit' : /tehreem/.test(kt) ? 'doctor' : /fellow|team|dietitian|dietician|free|coach/.test(kt) ? 'team' : 'doctor';
     const payTxt = g('payStatus').toLowerCase(), amtTxt = g('amount');
     const amount = map.amount !== undefined && /\d/.test(amtTxt) ? impNum(amtTxt) : (/free/.test(payTxt) ? 0 : KINDS[kind].price);
-    const rawDate = g('date'), date = impDateIn(rawDate), time = map.time !== undefined ? impTime(g('time')) : impTimeIn(rawDate);
     const logged = impDateIn(g('loggedAt')); if (logged) lastLogged = logged;              // a blank "date logged" means the same day as the row above
+    const isLog = map.loggedAt !== undefined, rawDate = g('date');
+    // a VA log: Date = the day it was logged, no time; the appointment stays exactly as written
+    const date = isLog ? lastLogged : impDateIn(rawDate), time = isLog ? '' : map.time !== undefined ? impTime(g('time')) : '';
     const created = impDate(g('createdAt')) || lastLogged;
     const plat = g('platform'), src = (SOURCES.find(x => plat.toLowerCase().includes(x.toLowerCase())) || '');
     const extra = extraCols.map(i => (r[i] || '').trim() ? rows[0][i] + ': ' + r[i].trim() : '').filter(Boolean).join(' · ');
@@ -1174,17 +1170,16 @@ function buildImport(text){
       email: g('email').slice(0, 120), invest: impNum(g('invest')) || '', notes: g('notes').slice(0, 500), heard: g('heard').slice(0, 60),
       amount, payStatus: impPay(g('payStatus'), amount), status: impStatus(g('status')), payRef: g('payRef').slice(0, 60),
       source: (g('source') || src || 'Google Sheet').slice(0, 40), adminNote: g('adminNote').slice(0, 200),
-      platform: plat.slice(0, 120), va: g('va').slice(0, 60), loggedAt: lastLogged, bookedAs: g('kind').trim().slice(0, 120),
-      apptNote: rawDate && !/^\s*[\d\/.\-]+\s*$/.test(rawDate) ? rawDate.slice(0, 300) : '', extra: extra.slice(0, 1000),
+      platform: plat.slice(0, 120), va: g('va').slice(0, 60), bookedAs: g('kind').trim().slice(0, 120),
+      apptNote: rawDate && (isLog || !/^\s*[\d\/.\-]+\s*$/.test(rawDate)) ? rawDate.slice(0, 300) : '', extra: extra.slice(0, 1000),
       createdAt: created ? created + 'T00:00:' + pad(Math.min(n, 59)) + '.000Z' : new Date(Date.now() + n).toISOString()};
     b.status = impStatus(g('status'), !!(b.date && b.time));
     const warn = [];
     if (!b.name && !b.phone) return;                                   // blank / separator rows
     if (g('phone') && !/\d/.test(g('phone'))){ out.push({b, warn, skip:'example row — not imported'}); return; }
     if (date === null) warn.push('date not understood: ' + rawDate);
-    if (b.date && b.loggedAt && b.date < b.loggedAt) warn.push('appointment is before the date it was logged — check the date');
     if (time === null) warn.push('time not understood: ' + g('time'));
-    if (!b.date || !b.time) warn.push(b.apptNote ? 'no exact date/time — kept as written' : 'no date/time — added without holding a slot');
+    if (!isLog && (!b.date || !b.time)) warn.push('no date/time — added without holding a slot');
     const skip = (b.code && codes.has(b.code)) ? 'already in admin' : keys.has(dupKey(b)) ? 'already in admin' : '';
     if (!skip){ if (b.code) codes.add(b.code); keys.add(dupKey(b)); }
     out.push({b, warn, skip});
@@ -1239,8 +1234,21 @@ async function runImport(){
   toast('Imported ' + plural(ok, 'booking') + (fail ? ' · ' + fail + ' could not be added' : ''));
   render();
 }
+const oldLayout = () => bookingsList().filter(b => b.loggedAt);
+async function migrateLogged(){
+  const list = oldLayout(); let ok = 0;
+  for (const b of list){
+    let appt = b.apptNote || '';
+    if (!appt && b.date){ const [y, m, d] = b.date.split('-'); appt = (+d) + '-' + (+m) + '-' + y.slice(2) + (b.time ? ' (' + fmt12(b.time) + ')' : ''); }
+    try { await saveBooking(b.code, {date:b.loggedAt, time:'', apptNote:appt, loggedAt:''}); ok++; } catch(e){}
+  }
+  toast('Updated ' + plural(ok, 'row') + (ok < list.length ? ' · ' + (list.length - ok) + ' could not be updated' : ''));
+  render();
+}
 function sheetHtml(){
+  const old = oldLayout().length;
   return bkBanner() + importHtml() +
+    (old ? '<div class="banner">' + plural(old, 'imported row') + ' still ' + (old === 1 ? 'has' : 'have') + ' the old separate "Logged on" date. <button type="button" class="btn sm" data-act="migrateLogged">Merge into Date</button></div>' : '') +
     '<div class="card"><h3>Sheet — all consultations</h3>' +
     '<p class="muted" style="margin:-4px 0 14px">Click any cell to edit it — changes save automatically. Website bookings land here too. A row with a date and time holds that slot, so clients can\'t book over it.</p>' +
     '<div class="toolbar">' +
@@ -1786,6 +1794,7 @@ const ACT = {
     impPrev = keep.imp.trim() ? buildImport(keep.imp) : {error:'Paste your rows first.'}; render();
   },
   impRun(){ runImport(); },
+  migrateLogged(){ migrateLogged(); },
   async saveSheet(){
     const u = val('st-sheet').trim();
     if (u && !SHEET_URL_RE.test(u)){ toast('That doesn\'t look like a Web app URL. It should end in /exec.'); return; }
