@@ -351,6 +351,58 @@ table.sheet td.del{width:44px;text-align:center;}
 </footer>
 <div id="printRoot" aria-hidden="true"></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script type="text/plain" id="gsScript">// book. -> Google Sheet. Adds each booking as a row (and updates it when you edit it in the admin).
+const COLS = [
+  ['code','Code'], ['createdAt','Booked at'], ['kind','Call with'], ['date','Date'], ['time','Time'],
+  ['name','Client'], ['phone','WhatsApp'], ['city','City'], ['age','Age'], ['email','Email'],
+  ['invest','Can invest (PKR)'], ['notes','Needs help with'], ['heard','Heard via'],
+  ['amount','Fee'], ['payStatus','Payment'], ['status','Status'], ['payRef','Payment ref'],
+  ['source','Source'], ['adminNote','My notes'],
+];
+const TAB = 'Bookings';
+
+function doGet() { return ContentService.createTextOutput('book. sheet link is working'); }
+
+function doPost(e) {
+  const lock = LockService.getScriptLock();
+  lock.waitLock(20000);
+  try {
+    const data = JSON.parse(e.postData.contents);
+    const list = Array.isArray(data.bookings) ? data.bookings.slice(0, 500) : [];
+    const sh = sheet_();
+    const last = sh.getLastRow();
+    const codes = last > 1 ? sh.getRange(2, 1, last - 1, 1).getValues().map(r => String(r[0])) : [];
+    list.forEach(b => {
+      const code = String(b.code || '');
+      if (!/^[A-Z0-9]{4,12}$/.test(code)) return;
+      const row = COLS.map(([k]) => k === 'kind' ? (b.kind === 'team' ? 'Fellow dietitian' : 'Dr. Tehreem') : cell_(b[k]));
+      const i = codes.indexOf(code);
+      if (i >= 0) sh.getRange(i + 2, 1, 1, row.length).setValues([row]);
+      else { sh.appendRow(row); codes.push(code); }
+    });
+    return ContentService.createTextOutput('ok');
+  } finally { lock.releaseLock(); }
+}
+
+function sheet_() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sh = ss.getSheetByName(TAB) || ss.insertSheet(TAB);
+  if (sh.getLastRow() === 0) {
+    sh.appendRow(COLS.map(c => c[1]));
+    sh.getRange(1, 1, 1, COLS.length).setFontWeight('bold');
+    sh.setFrozenRows(1);
+  }
+  return sh;
+}
+
+// numbers stay numbers; text that could be read as a formula is kept as plain text
+function cell_(v) {
+  if (v == null) return '';
+  if (typeof v === 'number') return v;
+  const t = String(v).slice(0, 1000);
+  return /^[=+\-@]/.test(t) ? "'" + t : t;
+}
+</script>
 
 <script>
 (function(){
@@ -596,6 +648,15 @@ async function saveBooking(id, patch){
     tx.set(bref, next);
   });
   bookingsById[id] = next;
+  pushToSheet([next]);
+}
+// Google Sheet sync (Settings → Google Sheet). Fire-and-forget: a failure never blocks a booking.
+const SHEET_URL_RE = /^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec$/;
+function pushToSheet(list){
+  const url = settings.sheetUrl;
+  if (!url || !SHEET_URL_RE.test(url) || !list.length) return Promise.resolve(false);
+  return fetch(url, {method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify({bookings:list})})
+    .then(() => true, () => false);
 }
 async function deleteBooking(id){
   const prev = bookingsById[id]; if (!prev) return;
@@ -859,6 +920,7 @@ async function submitBooking(){
       tx.set(db.collection('bk_bookings').doc(code), booking);
     });
     lastBooking = booking;
+    pushToSheet([booking]);
     try { localStorage.setItem('book_last', JSON.stringify(booking)); } catch(e) {}
     formVals = {name:'',phone:'',city:'',age:'',email:'',notes:'',invest:'',heard:'',ref:'',hp:''};
     step = 'done'; dir = 'fwd'; anim = true;
@@ -1368,7 +1430,19 @@ function settingsHtml(){
     '<li>Firestore Database → <b>Rules</b> → paste the rules below → Publish.</li></ol>' +
     (user ? '' : '<p class="muted">Sign in first and your email is filled in automatically.</p>') +
     '<pre class="rules" id="rulesBox">' + esc(rulesText()) + '</pre>' +
-    '<button type="button" class="btn ghost" data-act="copyRules">Copy rules</button></div>';
+    '<button type="button" class="btn ghost" data-act="copyRules">Copy rules</button></div>' +
+    '<div class="card"><h2>Google Sheet</h2><p class="muted" style="margin:0 0 6px">Every new booking is added to your Google Sheet as a row, and the row is updated when you edit the booking here. One-time setup:</p>' +
+    '<ol class="muted" style="line-height:1.7;padding-left:18px;margin:8px 0">' +
+    '<li>Open your Google Sheet → <b>Extensions</b> → <b>Apps Script</b>.</li>' +
+    '<li>Delete what is there, paste the script below, and click <b>Save</b>.</li>' +
+    '<li>Click <b>Deploy</b> → <b>New deployment</b> → type <b>Web app</b>. Execute as: <b>Me</b>. Who has access: <b>Anyone</b>. Click <b>Deploy</b> and allow access.</li>' +
+    '<li>Copy the <b>Web app URL</b> (ends in <code>/exec</code>), paste it below and save.</li>' +
+    '<li>Click <b>Send all bookings now</b> to copy your existing bookings into the sheet.</li></ol>' +
+    '<pre class="rules" id="gsBox">' + esc(document.getElementById('gsScript').textContent.trim()) + '</pre>' +
+    '<button type="button" class="btn ghost" data-act="copyGs">Copy script</button>' +
+    '<div class="field" style="margin-top:16px"><label for="st-sheet">Web app URL</label><input id="st-sheet" type="text" placeholder="https://script.google.com/macros/s/…/exec" value="' + esc(s.sheetUrl || '') + '"></div>' +
+    '<div class="actions"><button type="button" class="btn lime" data-act="saveSheet">Save</button>' +
+    '<button type="button" class="btn ghost" data-act="syncSheet"' + (s.sheetUrl ? '' : ' disabled') + '>Send all bookings now</button></div></div>';
 }
 const val = id => { const e = document.getElementById(id); return e ? e.value : ''; };
 async function saveAvail(){
@@ -1492,6 +1566,24 @@ const ACT = {
   },
   addRow, exportCsv, saveAvail, saveGeneral, addBlock,
   rmBlock(el){ rmBlock(el.dataset.date); },
+  async saveSheet(){
+    const u = val('st-sheet').trim();
+    if (u && !SHEET_URL_RE.test(u)){ toast('That doesn\'t look like a Web app URL. It should end in /exec.'); return; }
+    try { await saveSettings({sheetUrl:u}); toast(u ? 'Google Sheet linked' : 'Google Sheet unlinked'); }
+    catch(e){ toast('Could not save. Check your connection.'); }
+  },
+  async syncSheet(){
+    const all = bookingsList().sort((a,b) => String(a.createdAt||'').localeCompare(String(b.createdAt||'')));
+    if (!all.length){ toast('No bookings to send yet.'); return; }
+    let ok = true;
+    for (let i = 0; i < all.length; i += 200) ok = (await pushToSheet(all.slice(i, i + 200))) && ok;
+    toast(ok ? 'Sent ' + plural(all.length,'booking') + ' — check your sheet in a few seconds' : 'Could not reach the sheet. Check the Web app URL.');
+  },
+  async copyGs(){
+    const t = document.getElementById('gsScript').textContent.trim();
+    try { await navigator.clipboard.writeText(t); toast('Script copied'); }
+    catch(e){ const r = document.createRange(); r.selectNodeContents($('#gsBox')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); toast('Press Ctrl/Cmd + C to copy'); }
+  },
   async copyRules(){
     const t = rulesText();
     try { await navigator.clipboard.writeText(t); toast('Rules copied'); }
