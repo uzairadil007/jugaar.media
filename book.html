@@ -653,7 +653,7 @@ async function saveBooking(id, patch){
 }
 // Google Sheet sync (Settings → Google Sheet). Fire-and-forget: a failure never blocks a booking.
 const SHEET_URL_RE = /^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec$/;
-const DEFAULT_SHEET_URL = 'https://script.google.com/macros/s/AKfycbwpFxQfbmDGL6Nnzb2cjVFTap5VSlJ136Fidoi7JMuu1XtgdPO_ENFfmaXAoiyBItwGFA/exec';
+const DEFAULT_SHEET_URL = 'https://script.google.com/macros/s/AKfycbzDEH_ookUBvK-r2d8uodLnPmA9698TtD4_ADoFYsVO0SL8CpYgYXl6VFCJ3Gc5IDmlgw/exec';
 const sheetUrl = () => settings.sheetUrl || DEFAULT_SHEET_URL;   // a URL saved in Settings wins
 function pushToSheet(list){
   const url = sheetUrl();
