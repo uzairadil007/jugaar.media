@@ -653,8 +653,10 @@ async function saveBooking(id, patch){
 }
 // Google Sheet sync (Settings → Google Sheet). Fire-and-forget: a failure never blocks a booking.
 const SHEET_URL_RE = /^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec$/;
+const DEFAULT_SHEET_URL = 'https://script.google.com/macros/s/AKfycbwpFxQfbmDGL6Nnzb2cjVFTap5VSlJ136Fidoi7JMuu1XtgdPO_ENFfmaXAoiyBItwGFA/exec';
+const sheetUrl = () => settings.sheetUrl || DEFAULT_SHEET_URL;   // a URL saved in Settings wins
 function pushToSheet(list){
-  const url = settings.sheetUrl;
+  const url = sheetUrl();
   if (!url || !SHEET_URL_RE.test(url) || !list.length) return Promise.resolve(false);
   return fetch(url, {method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify({bookings:list})})
     .then(() => true, () => false);
@@ -1441,9 +1443,9 @@ function settingsHtml(){
     '<li>Click <b>Send all bookings now</b> to copy your existing bookings into the sheet.</li></ol>' +
     '<pre class="rules" id="gsBox">' + esc(document.getElementById('gsScript').textContent.trim()) + '</pre>' +
     '<button type="button" class="btn ghost" data-act="copyGs">Copy script</button>' +
-    '<div class="field" style="margin-top:16px"><label for="st-sheet">Web app URL</label><input id="st-sheet" type="text" placeholder="https://script.google.com/macros/s/…/exec" value="' + esc(s.sheetUrl || '') + '"></div>' +
+    '<div class="field" style="margin-top:16px"><label for="st-sheet">Web app URL</label><input id="st-sheet" type="text" placeholder="https://script.google.com/macros/s/…/exec" value="' + esc(sheetUrl()) + '"></div>' +
     '<div class="actions"><button type="button" class="btn lime" data-act="saveSheet">Save</button>' +
-    '<button type="button" class="btn ghost" data-act="syncSheet"' + (s.sheetUrl ? '' : ' disabled') + '>Send all bookings now</button></div></div>';
+    '<button type="button" class="btn ghost" data-act="syncSheet">Send all bookings now</button></div></div>';
 }
 const val = id => { const e = document.getElementById(id); return e ? e.value : ''; };
 async function saveAvail(){
