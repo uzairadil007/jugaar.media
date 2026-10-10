@@ -515,6 +515,7 @@ const ACCOUNTS_BY_PLATFORM = {
 };
 const accountsFor = platform => ACCOUNTS_BY_PLATFORM[platform] || ['Account 1'];
 const ADMIN_PIN = '1997';
+const LOG_BACK_DAYS = 3;    // how many past days a VA can still log and submit
 const PASSCODES = { rimsha:'@rimsha3#', amna:'@amna9(', noor:'@noor4$' };
 
 let db = null, dbAvailable = false;
@@ -1148,12 +1149,16 @@ function renderVaPage(app, vaId){
   app.appendChild(clockBar());
   if(va.role === 'supervisor'){ renderSupervisionPage(app, va); return; }
 
-  const d = todayKey();
+  // the log follows the day picked on the card, so a missed day (e.g. after midnight) can still be finished
+  const today = todayKey(), back = new Date(); back.setDate(back.getDate()-LOG_BACK_DAYS);
+  const d = getViewDate(vaId), isToday = d === today;
+  const tooOld = !adminMode && d < localKey(back);
   const e = getEntry(vaId, d);
   const t = totals(e);
-  const locked = e.submitted && !adminMode;
+  const locked = (e.submitted && !adminMode) || tooOld;
+  const dayName = isToday ? 'today' : (([y,m,dd]) => dd+' '+MONTH_NAMES[m-1].slice(0,3))(d.split('-').map(Number));
   const status = !e.signIn ? 'not-in' : (!e.signOut ? 'working' : 'done');
-  const liveHrs = hoursBetween(e.signIn, e.signOut || (status==='working'?new Date().toISOString():null));
+  const liveHrs = hoursBetween(e.signIn, e.signOut || (status==='working'&&isToday?new Date().toISOString():null));
 
   const minutesOfDay = dt => dt.getHours()*60 + dt.getMinutes();
   const lateIn = e.signIn && minutesOfDay(new Date(e.signIn)) > va.shiftStart*60 + 5; // 5 min grace
@@ -1165,8 +1170,8 @@ function renderVaPage(app, vaId){
   const form = document.createElement('div');
   form.className='card';
   form.innerHTML = `
-    <h2>Log today's work</h2>
-    <p class="muted" style="margin-bottom:14px;">Add one row per account you worked on today.</p>
+    <h2>Log ${isToday?"today's":dayName+"'s"} work</h2>
+    <p class="muted" style="margin-bottom:14px;">Add one row per account you worked on ${dayName}.${isToday?' Missed a day? Pick it in the date box above.':''}</p>
     <div class="form-row">
       <div><label>Platform</label><select id="fPlatform" ${locked?'disabled':''}>${PLATFORMS.map(p=>`<option>${p}</option>`).join('')}</select></div>
       <div><label>Account</label><select id="fAccount" ${locked?'disabled':''}>${accountsFor(PLATFORMS[0]).map(a=>`<option>${a}</option>`).join('')}</select></div>
@@ -1183,13 +1188,14 @@ function renderVaPage(app, vaId){
     </tbody></table>
     </div>
     <div class="grid3" style="margin-top:16px;">
-      <div class="stat"><b>${t.appts}</b><span>Appointments today</span></div>
-      <div class="stat"><b>${t.dms}</b><span>DMs answered today</span></div>
-      <div class="stat"><b>${liveHrs.toFixed(1)}</b><span>Hours worked today</span></div>
+      <div class="stat"><b>${t.appts}</b><span>Appointments ${dayName}</span></div>
+      <div class="stat"><b>${t.dms}</b><span>DMs answered ${dayName}</span></div>
+      <div class="stat"><b>${liveHrs.toFixed(1)}</b><span>Hours worked ${dayName}</span></div>
     </div>
     <footer class="actions">
       <button class="btn lime" id="submitDay" ${locked||e.logs.length===0?'disabled':''}>${e.submitted?'Re-submit day':'Submit day'}</button>
       ${e.submitted&&adminMode?`<button class="btn ghost" data-unsub="${vaId}|${d}">↺ Unsubmit day</button>`:''}
+      ${tooOld && !e.submitted ? `<span class="lock-note">Older than ${LOG_BACK_DAYS} days — ask an admin to log this day.</span>` : ''}
       ${e.submitted ? `<span class="lock-note">${locked ? 'Submitted — locked. Only an admin can edit this now.' : 'Admin mode: editing an already-submitted day.'}</span>` : ''}
     </footer>`;
   app.appendChild(form);
