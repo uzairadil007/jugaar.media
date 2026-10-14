@@ -630,6 +630,7 @@ let step = 'type', selKind = null, selDate = null, selTime = null, showAllDays =
 let formVals = {name:'',phone:'',city:'',age:'',email:'',notes:'',invest:'',heard:'',ref:'',hp:''}, formErr = '', busy = false, lastBooking = null;
 let ovFilter = 'all', sheetQ = '', sheetStatus = 'all', sheetPay = 'all', sheetSort = 'new';
 let invMode = 'list', invDraft = null, invFilter = 'all', unsubI = null;
+let feedback = [], fbErr = null, fbFilter = 'all', unsubF = null;
 let payFilter = 'check', payOpen = null, payMatches = null, invs = {};
 const keep = {};            // unsaved text in admin panels survives background refreshes
 let pendingRender = false, pendingFocus = null, unsubB = null, loginBusy = false;
@@ -709,6 +710,7 @@ function initFirebase(){
 }
 function subBookings(){
   if (unsubB) return;
+  subFeedback();
   subInvoices();
   unsubB = db.collection('bk_bookings').onSnapshot(snap => {
     bookingsById = {};
@@ -717,7 +719,7 @@ function subBookings(){
     if (!bookingsLoaded){ bookingsLoaded = true; syncFromSheet(); }
   }, err => { bkErr = err.code || 'error'; render(); });
 }
-function unsubBookings(){ unsubInvoices(); if (unsubB){ unsubB(); unsubB = null; } bookingsById = {}; bkErr = null; bookingsLoaded = false; sync = {busy:false, at:null, err:'', msg:''}; }
+function unsubBookings(){ unsubInvoices(); if (unsubF){ unsubF(); unsubF = null; } feedback = []; fbErr = null; if (unsubB){ unsubB(); unsubB = null; } bookingsById = {}; bkErr = null; bookingsLoaded = false; sync = {busy:false, at:null, err:'', msg:''}; }
 
 async function saveBooking(id, patch, opts){
   const prev = bookingsById[id]; if (!prev) return;
@@ -942,6 +944,7 @@ function render(){
   else if (view === 'sheet'){ main.innerHTML = sheetHtml(); renderSheetBody(); }
   else if (view === 'pay') main.innerHTML = payHtml();
   else if (view === 'inv') main.innerHTML = invHtml();
+  else if (view === 'fb') main.innerHTML = fbHtml();
   else if (view === 'avail') main.innerHTML = availHtml();
   else if (view === 'settings') main.innerHTML = settingsHtml();
   else main.innerHTML = bookHtml(animate);
@@ -954,7 +957,7 @@ function render(){
 function renderHeader(){
   const tabs = $('#tabs'), right = $('#hdrRight');
   if (isAdmin()){
-    const TABS = [['book','Booking page'],['ov','Overview'],['sheet','Sheet'],['pay','Payments'],['inv','Invoices'],['avail','Availability'],['settings','Settings']];
+    const TABS = [['book','Booking page'],['ov','Overview'],['sheet','Sheet'],['pay','Payments'],['inv','Invoices'],['fb','Feedback'],['avail','Availability'],['settings','Settings']];
     tabs.innerHTML = TABS.map(t => '<button type="button" data-act="go" data-v="' + t[0] + '" class="' + (view===t[0]?'active':'') + '">' + t[1] + '</button>').join('');
     tabs.style.display = '';
     right.innerHTML = '<span class="admin-pill">ADMIN</span><button type="button" class="hdr-btn" data-act="signOut">Sign out</button>';
@@ -1813,6 +1816,77 @@ function unsubInvoices(){ if (unsubI){ unsubI(); unsubI = null; } invs = {}; inv
 /* =====================================================================
    ADMIN: availability + settings
    ===================================================================== */
+/* =====================================================================
+   ADMIN: feedback (answers from jugaar.media/feedback)
+   ===================================================================== */
+const FB_REASONS = {price:'The fee is more than they can spend', results:'Want to be sure it works first', routine:'Not sure they can follow a plan',
+  family:'Need to discuss with family', paymethod:'Paying is difficult', other_option:'Trying something else', time:'Need more time', other:'Something else'};
+const FB_HELPS = {instalments:'Instalments', smaller:'Smaller starter plan', discount:'A discount', followup:'Another short call', info:'More plan details', results:"Other clients' results"};
+const FB_BUDGET = {under5k:'Under Rs 5k', '5-10k':'Rs 5–10k', '10-20k':'Rs 10–20k', '20-40k':'Rs 20–40k', '40k+':'Rs 40k+'};
+const FB_CALL = {doctor:'Dr. Tehreem', team:'Fellow dietitian', none:'No call yet'};
+const FB_PAID = {yes:'Paid plan', notyet:'Not yet', no:'Not planning to'};
+const FB_YN = {yes:'Yes', partly:'Partly', no:'No'};
+const FACES = ['', '😞', '😕', '😐', '🙂', '😍'];
+function subFeedback(){
+  if (unsubF) return;
+  unsubF = db.collection('bk_feedback').onSnapshot(snap => {
+    feedback = snap.docs.map(d => Object.assign({id:d.id}, d.data())).sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
+    fbErr = null; softRender(['fb']);
+  }, err => { fbErr = err.code || 'error'; softRender(['fb']); });
+}
+function fbBars(title, counts, labels, total){
+  const rows = Object.keys(labels).map(k => [labels[k], counts[k] || 0]).filter(r => r[1]).sort((a, b) => b[1] - a[1]);
+  return '<div class="card"><h3>' + esc(title) + '</h3>' + (rows.length ? rows.map(([l, n]) =>
+    '<div style="margin:0 0 10px"><div style="display:flex;justify-content:space-between;font-size:13.5px;margin-bottom:4px"><span>' + esc(l) + '</span><b>' + n + ' <span class="muted">(' + Math.round(n / total * 100) + '%)</span></b></div>' +
+    '<div style="height:10px;background:var(--soft);border-radius:6px;overflow:hidden"><div style="height:100%;width:' + (n / total * 100).toFixed(1) + '%;background:var(--ink)"></div></div></div>').join('')
+    : '<p class="muted">No answers yet.</p>') + '</div>';
+}
+function fbHtml(){
+  const link = location.origin + '/feedback';
+  const share = '<div class="card"><h2>Feedback form</h2><p class="muted" style="margin:0 0 12px">Send clients this link after their call. Answers show up here straight away.</p>' +
+    '<div class="actions"><code style="background:var(--soft);padding:10px 12px;border-radius:8px;font-size:14px">' + esc(link) + '</code><button type="button" class="btn lime sm" data-act="copyFbLink">Copy link</button></div>' +
+    '<p class="muted" style="margin:12px 0 0;font-size:12.5px">Tip: add the client\'s details to fill them in for them — ' + esc(link) + '?name=Sara&amp;phone=03001234567</p></div>';
+  if (fbErr) return share + '<div class="banner err"><b>Can\'t read feedback yet.</b> ' + (fbErr === 'permission-denied'
+    ? 'Publish the updated rules: <b>Settings → Firebase setup → Copy rules</b>, then paste them in Firebase console → Firestore Database → Rules → Publish.'
+    : 'Error code: ' + esc(fbErr) + '. Check your connection and reload.') + '</div>';
+  const all = feedback, n = all.length;
+  if (!n) return share + '<div class="empty">No feedback yet. Share the link above with your clients.</div>';
+  const rated = all.filter(f => f.rating > 0), avg = rated.length ? rated.reduce((s, f) => s + f.rating, 0) / rated.length : 0;
+  const stuck = all.filter(f => f.paid && f.paid !== 'yes'), paid = all.filter(f => f.paid === 'yes').length;
+  const count = (list, key) => { const c = {}; list.forEach(f => (Array.isArray(f[key]) ? f[key] : [f[key]]).forEach(v => { if (v) c[v] = (c[v] || 0) + 1; })); return c; };
+  const reasons = count(stuck, 'reasons'), top = Object.keys(reasons).sort((a, b) => reasons[b] - reasons[a])[0];
+  const stats = '<div class="grid3" style="margin-bottom:18px">' +
+    '<div class="stat"><b>' + n + '</b><span>Responses</span></div>' +
+    '<div class="stat"><b>' + (rated.length ? avg.toFixed(1) + ' / 5' : '—') + '</b><span>Average call rating</span></div>' +
+    '<div class="stat"><b>' + Math.round(paid / n * 100) + '%</b><span>Started a paid plan</span></div>' +
+    '<div class="stat hot"><b>' + stuck.length + '</b><span>Haven\'t paid yet</span></div>' +
+    (top ? '<div class="stat" style="grid-column:span 2"><b style="font-size:17px">' + esc(FB_REASONS[top] || top) + '</b><span>Most common reason for not paying</span></div>' : '') + '</div>';
+  const charts = stuck.length ? '<div class="two">' + fbBars('What is stopping them', reasons, FB_REASONS, stuck.length) + fbBars('What would make it easier', count(stuck, 'helps'), FB_HELPS, stuck.length) + '</div>' +
+    fbBars('What they can spend per month', count(stuck, 'budget'), FB_BUDGET, stuck.length) : '';
+  const F = [['all','All'],['stuck','Haven\'t paid'],['low','Rated 3 or less'],['contact','Happy to be contacted']];
+  const rows = all.filter(f => fbFilter === 'all' || (fbFilter === 'stuck' && f.paid !== 'yes') || (fbFilter === 'low' && f.rating > 0 && f.rating <= 3) || (fbFilter === 'contact' && f.contactOk === 'yes'));
+  const list = '<div class="card"><h3>All responses</h3><div class="chips">' +
+    F.map(f => '<button type="button" class="chipbtn' + (fbFilter === f[0] ? ' active' : '') + '" data-act="fbF" data-f="' + f[0] + '">' + f[1] + '</button>').join('') + '</div>' +
+    (rows.length ? '<div class="overflow"><table><thead><tr><th>Client</th><th>Call</th><th>Paid?</th><th>What they said</th><th></th></tr></thead><tbody>' +
+      rows.map(f => {
+        const wa = waNumber(f.phone), d = Date.parse(f.createdAt);
+        const said = [
+          f.understood ? 'Understood: ' + (FB_YN[f.understood] || f.understood) : '', f.clear ? 'Solution clear: ' + (FB_YN[f.clear] || f.clear) : '',
+          f.liked ? 'Liked: ' + f.liked : '', f.improve ? 'Do better: ' + f.improve : '',
+          (f.reasons || []).length ? 'Stopping them: ' + f.reasons.map(r => FB_REASONS[r] || r).join(', ') : '', f.reasonText ? '“' + f.reasonText + '”' : '',
+          (f.helps || []).length ? 'Would help: ' + f.helps.map(h => FB_HELPS[h] || h).join(', ') : '', f.budget ? 'Can spend: ' + (FB_BUDGET[f.budget] || f.budget) + '/month' : '',
+        ].filter(Boolean);
+        return '<tr><td><b>' + esc(f.name || '—') + '</b><br><span class="muted">' + (isNaN(d) ? '' : esc(new Date(d).toLocaleDateString('en-GB', {day:'numeric', month:'short'}))) +
+          (wa ? ' · <a class="wa" href="https://wa.me/' + wa + '" target="_blank" rel="noopener">' + esc(f.phone) + '</a>' : '') + '</span>' +
+          (f.contactOk === 'yes' ? '<br><span class="tag ok">OK to contact</span>' : '') + '</td>' +
+          '<td>' + esc(FB_CALL[f.callWith] || '—') + (f.rating ? '<br><span style="font-size:20px" title="' + f.rating + ' / 5">' + FACES[f.rating] + '</span> <span class="muted">' + f.rating + '/5</span>' : '') + '</td>' +
+          '<td>' + (f.paid === 'yes' ? '<span class="tag ok">Paid plan</span>' : '<span class="tag warn">' + esc(FB_PAID[f.paid] || '—') + '</span>') + '</td>' +
+          '<td style="max-width:380px;font-size:12.5px;line-height:1.5">' + said.map(esc).join('<br>') + '</td>' +
+          '<td><button type="button" class="rm" data-act="delFb" data-id="' + esc(f.id) + '" aria-label="Delete response">✕</button></td></tr>';
+      }).join('') + '</tbody></table></div>' : '<div class="empty">Nothing matches this filter.</div>') + '</div>';
+  return share + stats + charts + list;
+}
+
 function availHtml(){
   const s = settings, DAYS = [[1,'Monday'],[2,'Tuesday'],[3,'Wednesday'],[4,'Thursday'],[5,'Friday'],[6,'Saturday'],[0,'Sunday']];
   const sel = (id, opts, cur) => '<select id="' + id + '">' + opts.map(o => '<option value="' + o[0] + '"' + (Number(o[0])===Number(cur)?' selected':'') + '>' + o[1] + '</option>').join('') + '</select>';
@@ -1842,7 +1916,10 @@ function rulesText(){
     "    function validBooking() {\n      let d = request.resource.data;\n" +
     "      return d.status == 'booked' && ((d.kind == 'doctor' && d.amount == 6000) || (d.kind == 'team' && d.amount == 0));\n    }\n" +
     "    match /bk_bookings/{id} { allow create: if isAdmin() || validBooking(); allow read, update, delete: if isAdmin(); }\n" +
-    "    match /bk_invoices/{id} { allow read, write: if isAdmin(); }\n  }\n}\n";
+    "    match /bk_invoices/{id} { allow read, write: if isAdmin(); }\n\n" +
+    "    // feedback form (jugaar.media/feedback): anyone can send, only you can read\n" +
+    "    match /bk_feedback/{id} {\n      allow create: if request.resource.data.keys().size() < 30 && request.resource.data.name is string && request.resource.data.name.size() < 100;\n" +
+    "      allow read, delete: if isAdmin();\n    }\n  }\n}\n";
 }
 function settingsHtml(){
   const s = settings;
@@ -1962,6 +2039,12 @@ const ACT = {
     catch(e){ toast('Could not save. Check your connection.'); }
   },
   invF(el){ invFilter = el.dataset.f; render(); },
+  fbF(el){ fbFilter = el.dataset.f; render(); },
+  async copyFbLink(){ try { await navigator.clipboard.writeText(location.origin + '/feedback'); toast('Link copied'); } catch(e){ toast(location.origin + '/feedback'); } },
+  async delFb(el){
+    if (!confirm('Delete this feedback? This cannot be undone.')) return;
+    try { await db.collection('bk_feedback').doc(el.dataset.id).delete(); toast('Deleted'); } catch(e){ toast('Could not delete. Check your connection.'); }
+  },
   newInv(){ invDraft = newDraft(null); invMode = 'edit'; anim = true; render(); window.scrollTo(0,0); },
   invFromBooking(el){ const b = bookingsById[el.dataset.id]; if (!b) return; invDraft = newDraft(b); invMode = 'edit'; view = 'inv'; anim = true; render(); window.scrollTo(0,0); },
   editInv(el){ const i = invs[el.dataset.id]; if (!i) return; invDraft = Object.assign({}, i, {items:(i.items || []).map(x => Object.assign({}, x))}); invMode = 'edit'; view = 'inv'; anim = true; render(); window.scrollTo(0,0); },

@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Your feedback · Dr. Tehreem</title>
+<meta name="description" content="Tell us how your call went. It takes about 2 minutes.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230a0a0a'/%3E%3Ccircle cx='23' cy='22' r='4' fill='%23d8ff29'/%3E%3C/svg%3E">
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<style>
+:root{--lime:#d8ff29;--ink:#0a0a0a;--paper:#fff;--line:#e8e8e8;--sub:#6b6b6b;--soft:#f6f6f6;}
+*{box-sizing:border-box;}
+html,body{margin:0;}
+body{background:var(--paper);color:var(--ink);font-family:Helvetica,Arial,sans-serif;font-size:17px;line-height:1.45;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);min-height:100vh;display:flex;flex-direction:column;}
+button,input,textarea{font-family:inherit;font-size:inherit;color:inherit;}
+:focus-visible{outline:2px solid var(--ink);outline-offset:2px;}
+header{background:var(--ink);color:#fff;padding:14px 20px;padding-top:calc(14px + env(safe-area-inset-top,0px));text-align:center;}
+.logo{font-style:italic;font-weight:800;font-size:19px;}
+.logo i{color:var(--lime);font-style:inherit;}
+main{max-width:640px;width:100%;margin:0 auto;padding:28px 16px 48px;flex:1 0 auto;}
+footer{text-align:center;padding:20px 16px calc(20px + env(safe-area-inset-bottom,0px));font-size:12.5px;color:var(--sub);border-top:1px solid var(--line);}
+footer a{color:var(--ink);font-weight:700;text-decoration:none;}
+
+.hero{margin:0 0 26px;}
+.eyebrow{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--sub);margin:0 0 8px;}
+h1{font-size:clamp(30px,8.5vw,42px);line-height:1.08;margin:0 0 12px;font-weight:800;font-style:italic;letter-spacing:-.01em;}
+h1 span{background:linear-gradient(transparent 62%,var(--lime) 62%);padding:0 2px;}
+.hero p{color:var(--sub);margin:0;font-size:16px;}
+
+.q{border:0;margin:0 0 26px;padding:0;min-width:0;}
+.q legend,.q > label{display:block;font-weight:800;font-size:18px;margin:0 0 4px;padding:0;}
+.q .help{color:var(--sub);font-size:14.5px;margin:0 0 12px;}
+.opt{font-weight:400;color:var(--sub);font-size:15px;}
+.sec{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--sub);margin:34px 0 18px;}
+.sec::after{content:'';flex:1;height:1px;background:var(--line);}
+
+input[type=text],input[type=tel],textarea{width:100%;padding:15px 14px;border:1.5px solid #d9d9d9;border-radius:14px;background:#fff;transition:border-color .15s,box-shadow .15s;}
+textarea{min-height:96px;resize:vertical;line-height:1.45;}
+input:focus,textarea:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 4px rgba(216,255,41,.6);}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media (max-width:480px){.two{grid-template-columns:1fr;}}
+.two label{display:block;font-weight:800;font-size:15px;margin:0 0 8px;}
+
+.chips{display:flex;flex-wrap:wrap;gap:10px;}
+.chip{border:1.5px solid var(--ink);background:#fff;border-radius:30px;padding:11px 16px;font-weight:700;font-size:15.5px;cursor:pointer;text-align:left;line-height:1.25;transition:background .15s,transform .1s;}
+.chip:hover{background:#fbffe6;}
+.chip:active{transform:scale(.97);}
+.chip[aria-pressed=true],.chip[aria-checked=true]{background:var(--lime);}
+.chips.stack{flex-direction:column;}
+.chips.stack .chip{border-radius:14px;padding:14px 16px;display:flex;gap:10px;align-items:center;}
+.chips.stack .chip::before{content:'';flex:none;width:20px;height:20px;border-radius:6px;border:2px solid var(--ink);background:#fff;}
+.chips.stack .chip[aria-pressed=true]::before{background:var(--ink);box-shadow:inset 0 0 0 3px var(--lime);}
+
+.rate{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;}
+.face{border:1.5px solid var(--line);background:#fff;border-radius:16px;padding:12px 2px 10px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;transition:transform .15s,border-color .15s;}
+.face:hover{border-color:var(--ink);transform:translateY(-2px);}
+.face b{font-size:28px;line-height:1;}
+.face span{font-size:11.5px;font-weight:700;color:var(--sub);text-align:center;}
+.face[aria-checked=true]{background:var(--lime);border-color:var(--ink);}
+.face[aria-checked=true] span{color:var(--ink);}
+
+.why{background:var(--soft);border-radius:20px;padding:20px 16px 4px;margin:0 0 26px;}
+.why .q:last-child{margin-bottom:16px;}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0;}
+.err{color:#c00;font-weight:700;margin:0 0 14px;}
+.err:empty{display:none;}
+.send{width:100%;background:var(--lime);color:var(--ink);border:2px solid var(--ink);border-radius:16px;padding:18px;font-size:18px;font-weight:800;cursor:pointer;display:flex;justify-content:center;align-items:center;gap:10px;transition:transform .15s,box-shadow .15s;}
+.send:hover{box-shadow:0 6px 0 var(--ink);transform:translateY(-2px);}
+.send:disabled{opacity:.65;cursor:wait;transform:none;box-shadow:none;}
+.spin{width:18px;height:18px;border:3px solid rgba(0,0,0,.2);border-top-color:var(--ink);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.fine{color:var(--sub);font-size:13.5px;text-align:center;margin:12px 0 0;}
+
+.thanks{text-align:center;padding:30px 0;}
+.thanks .tick{width:84px;height:84px;border-radius:50%;background:var(--lime);border:3px solid var(--ink);display:flex;align-items:center;justify-content:center;font-size:40px;font-weight:800;margin:0 auto 18px;}
+.thanks h2{font-size:28px;margin:0 0 8px;}
+.thanks p{color:var(--sub);margin:0 auto;max-width:420px;}
+@media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important;}}
+</style>
+</head>
+<body>
+<header><div class="logo">book<i>.</i></div></header>
+<main id="app">
+  <div class="hero">
+    <p class="eyebrow">Dr. Tehreem's team</p>
+    <h1><span>How did your call go?</span></h1>
+    <p>Your honest answers help us look after you better. It takes about 2 minutes, and only our team sees them.</p>
+  </div>
+
+  <form id="fb" novalidate>
+    <div class="two q">
+      <div><label for="f-name">Your name</label><input id="f-name" type="text" maxlength="80" autocomplete="name"></div>
+      <div><label for="f-phone">WhatsApp number <span class="opt">(optional)</span></label><input id="f-phone" type="tel" inputmode="tel" maxlength="20" autocomplete="tel" placeholder="03XX XXXXXXX"></div>
+    </div>
+
+    <fieldset class="q"><legend>Who was your call with?</legend>
+      <div class="chips" role="radiogroup" data-one="callWith">
+        <button type="button" class="chip" role="radio" aria-checked="false" data-v="doctor">Dr. Tehreem</button>
+        <button type="button" class="chip" role="radio" aria-checked="false" data-v="team">One of her fellow dietitians</button>
+        <button type="button" class="chip" role="radio" aria-checked="false" data-v="none">I haven't had my call yet</button>
+      </div>
+    </fieldset>
+
+    <div id="callPart">
+      <div class="sec">Your call</div>
+      <fieldset class="q"><legend>How was your call overall?</legend>
+        <div class="rate" role="radiogroup" data-one="rating">
+          <button type="button" class="face" role="radio" aria-checked="false" data-v="1"><b>😞</b><span>Very poor</span></button>
+          <button type="button" class="face" role="radio" aria-checked="false" data-v="2"><b>😕</b><span>Poor</span></button>
+          <button type="button" class="face" role="radio" aria-checked="false" data-v="3"><b>😐</b><span>Okay</span></button>
+          <button type="button" class="face" role="radio" aria-checked="false" data-v="4"><b>🙂</b><span>Good</span></button>
+          <button type="button" class="face" role="radio" aria-checked="false" data-v="5"><b>😍</b><span>Excellent</span></button>
+        </div>
+      </fieldset>
+      <fieldset class="q"><legend>Did you feel we understood your concern?</legend>
+        <div class="chips" role="radiogroup" data-one="understood">
+          <button type="button" class="chip" role="radio" aria-checked="false" data-v="yes">Yes, completely</button>
+          <button type="button" class="chip" role="radio" aria-checked="false" data-v="partly">Partly</button>
+          <button type="button" class="chip" role="radio" aria-checked="false" data-v="no">No</button>
+        </div>
+      </fieldset>
+      <fieldset class="q"><legend>Was the solution you were given clear?</legend>
+        <div class="chips" role="radiogroup" data-one="clear">
+          <button type="button" class="chip" role="radio" aria-checked="false" data-v="yes">Yes, I know what to do</button>
+          <button type="button" class="chip" role="radio" aria-checked="false" data-v="partly">Somewhat</button>
+          <button type="button" class="chip" role="radio" aria-checked="false" data-v="no">No, I'm still confused</button>
+        </div>
+      </fieldset>
+      <div class="q"><label for="f-liked">What did you like most? <span class="opt">(optional)</span></label><textarea id="f-liked" maxlength="800"></textarea></div>
+      <div class="q"><label for="f-improve">What could we have done better? <span class="opt">(optional)</span></label><textarea id="f-improve" maxlength="800"></textarea></div>
+    </div>
+
+    <div class="sec">Moving forward</div>
+    <fieldset class="q"><legend>Have you started a paid plan with us?</legend>
+      <div class="chips" role="radiogroup" data-one="paid">
+        <button type="button" class="chip" role="radio" aria-checked="false" data-v="yes">Yes</button>
+        <button type="button" class="chip" role="radio" aria-checked="false" data-v="notyet">Not yet</button>
+        <button type="button" class="chip" role="radio" aria-checked="false" data-v="no">No, I don't plan to</button>
+      </div>
+    </fieldset>
+
+    <div class="why" id="whyPart" hidden>
+      <fieldset class="q"><legend>What is stopping you right now?</legend>
+        <p class="help">Choose all that apply. There are no wrong answers.</p>
+        <div class="chips stack" data-many="reasons">
+          <button type="button" class="chip" aria-pressed="false" data-v="price">The fee is more than I can spend right now</button>
+          <button type="button" class="chip" aria-pressed="false" data-v="results">I want to be sure it will work for me first</button>
+          <button type="button" class="chip" aria-pressed="false" data-v="routine">I'm not sure I can follow a plan with my routine</button>
+          <button type="button" class="chip" aria-pressed="false" data-v="family">I need to discuss it with my family first</button>
+          <button type="button" class="chip" aria-pressed="false" data-v="paymethod">Paying is difficult for me (JazzCash, bank, abroad)</button>
+          <button type="button" class="chip" aria-pressed="false" data-v="other_option">I'm trying something else for now</button>
+          <button type="button" class="chip" aria-pressed="false" data-v="time">I just need a little more time</button>
+          <button type="button" class="chip" aria-pressed="false" data-v="other">Something else</button>
+        </div>
+      </fieldset>
+      <div class="q"><label for="f-reason">Tell us a little more <span class="opt">(optional)</span></label><textarea id="f-reason" maxlength="800" placeholder="Anything that would help us understand"></textarea></div>
+      <fieldset class="q"><legend>What would make it easier for you?</legend>
+        <p class="help">Choose all that apply.</p>
+        <div class="chips" data-many="helps">
+          <button type="button" class="chip" aria-pressed="false" data-v="instalments">Paying in instalments</button>
+          <button type="button" class="chip" aria-pressed="false" data-v="smaller">A smaller starter plan</button>
+          <button type="button" class="chip" aria-pressed="false" data-v="discount">A discount</button>
+          <button type="button" class="chip" aria-pressed="false" data-v="followup">Another short call</button>
+          <button type="button" class="chip" aria-pressed="false" data-v="info">More details about the plan</button>
+          <button type="button" class="chip" aria-pressed="false" data-v="results">Seeing other clients' results</button>
+        </div>
+      </fieldset>
+      <fieldset class="q"><legend>How much could you comfortably spend per month on your health?</legend>
+        <div class="chips" role="radiogroup" data-one="budget">
+          <button type="button" class="chip" role="radio" aria-checked="false" data-v="under5k">Under Rs 5,000</button>
+          <button type="button" class="chip" role="radio" aria-checked="false" data-v="5-10k">Rs 5,000 – 10,000</button>
+          <button type="button" class="chip" role="radio" aria-checked="false" data-v="10-20k">Rs 10,000 – 20,000</button>
+          <button type="button" class="chip" role="radio" aria-checked="false" data-v="20-40k">Rs 20,000 – 40,000</button>
+          <button type="button" class="chip" role="radio" aria-checked="false" data-v="40k+">Rs 40,000+</button>
+        </div>
+      </fieldset>
+    </div>
+
+    <fieldset class="q"><legend>Can we message you on WhatsApp about this?</legend>
+      <div class="chips" role="radiogroup" data-one="contactOk">
+        <button type="button" class="chip" role="radio" aria-checked="false" data-v="yes">Yes, please</button>
+        <button type="button" class="chip" role="radio" aria-checked="false" data-v="no">No, thank you</button>
+      </div>
+    </fieldset>
+
+    <div class="hp" aria-hidden="true"><label>Leave empty<input id="f-hp" type="text" tabindex="-1" autocomplete="off"></label></div>
+    <p class="err" id="err" role="alert"></p>
+    <button class="send" type="submit" id="send">Send my feedback</button>
+    <p class="fine">Only Dr. Tehreem's team can read your answers.</p>
+  </form>
+</main>
+<footer>book. by <a href="https://www.jugaar.media" target="_blank" rel="noopener">@jugaar.media</a></footer>
+
+<script>
+(function(){
+'use strict';
+// same Firebase project as the booking page
+const firebaseConfig = {
+  apiKey: "AIzaSyAZn-MWlArpHYcb7Z88u-wzKdrBxtIsYiE",
+  authDomain: "tracker-9a8cb.firebaseapp.com",
+  projectId: "tracker-9a8cb",
+  storageBucket: "tracker-9a8cb.firebasestorage.app",
+  messagingSenderId: "765187139896",
+  appId: "1:765187139896:web:61ddd4fad7ee85364239cd"
+};
+let db = null;
+try { firebase.initializeApp(firebaseConfig); db = firebase.firestore(); } catch(e) {}
+
+const $ = s => document.querySelector(s);
+const vals = {callWith:'', rating:'', understood:'', clear:'', paid:'', budget:'', contactOk:'', reasons:[], helps:[]};
+let busy = false;
+
+// a personal link can fill in the client: tsk_feedback.html?name=Sara&phone=0300...&code=ABC123
+const qs = new URLSearchParams(location.search);
+$('#f-name').value = (qs.get('name') || '').slice(0, 80);
+$('#f-phone').value = (qs.get('phone') || '').slice(0, 20);
+const code = (qs.get('code') || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 12);
+
+function sync(){
+  $('#callPart').hidden = vals.callWith === 'none';
+  $('#whyPart').hidden = !(vals.paid === 'notyet' || vals.paid === 'no');
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('button[data-v]'); if (!b) return;
+  const one = b.parentElement.dataset.one, many = b.parentElement.dataset.many, v = b.dataset.v;
+  if (one){
+    vals[one] = v;
+    b.parentElement.querySelectorAll('[data-v]').forEach(x => x.setAttribute('aria-checked', String(x === b)));
+  } else if (many){
+    const on = b.getAttribute('aria-pressed') !== 'true';
+    b.setAttribute('aria-pressed', String(on));
+    vals[many] = on ? vals[many].concat(v) : vals[many].filter(x => x !== v);
+  }
+  sync();
+});
+// arrow keys move between options in a single-choice group
+document.addEventListener('keydown', e => {
+  const b = e.target.closest && e.target.closest('[role=radio]'); if (!b || !/^Arrow(Left|Right|Up|Down)$/.test(e.key)) return;
+  const all = [...b.parentElement.querySelectorAll('[role=radio]')], i = all.indexOf(b);
+  const n = all[(i + (/Right|Down/.test(e.key) ? 1 : all.length - 1)) % all.length];
+  e.preventDefault(); n.focus(); n.click();
+});
+
+function fail(msg, el){ $('#err').textContent = msg; if (el) el.scrollIntoView({behavior:'smooth', block:'center'}); }
+$('#fb').addEventListener('submit', async e => {
+  e.preventDefault(); if (busy) return;
+  if ($('#f-hp').value) return fail('Something went wrong. Please reload the page and try again.');
+  const name = $('#f-name').value.trim(), phone = $('#f-phone').value.replace(/[^\d+]/g, '');
+  if (name.length < 2) return fail('Please type your name.', $('#f-name'));
+  if (phone && !/^\+?\d{7,15}$/.test(phone)) return fail('Please check your WhatsApp number, or leave it empty.', $('#f-phone'));
+  if (!vals.callWith) return fail('Please tell us who your call was with.', $('[data-one=callWith]'));
+  if (vals.callWith !== 'none' && !vals.rating) return fail('Please rate your call.', $('[data-one=rating]'));
+  if (!vals.paid) return fail('Please tell us if you have started a paid plan.', $('[data-one=paid]'));
+  const stuck = vals.paid !== 'yes';
+  if (stuck && !vals.reasons.length) return fail('Please choose what is stopping you.', $('[data-many=reasons]'));
+  if (!db) return fail('We could not connect. Please check your internet and try again.');
+  const call = vals.callWith !== 'none';
+  const doc = {
+    name, phone, code,
+    callWith: vals.callWith,
+    rating: call ? Number(vals.rating) : 0,
+    understood: call ? vals.understood : '', clear: call ? vals.clear : '',
+    liked: call ? $('#f-liked').value.trim().slice(0, 800) : '', improve: call ? $('#f-improve').value.trim().slice(0, 800) : '',
+    paid: vals.paid,
+    reasons: stuck ? vals.reasons : [], reasonText: stuck ? $('#f-reason').value.trim().slice(0, 800) : '',
+    helps: stuck ? vals.helps : [], budget: stuck ? vals.budget : '',
+    contactOk: vals.contactOk,
+    createdAt: new Date().toISOString(),
+  };
+  busy = true; $('#err').textContent = '';
+  $('#send').disabled = true; $('#send').innerHTML = '<span class="spin"></span>Sending…';
+  try {
+    await db.collection('bk_feedback').add(doc);
+    $('#app').innerHTML = '<div class="thanks"><div class="tick" aria-hidden="true">✓</div><h2>Thank you, ' + name.split(' ')[0].replace(/[&<>"']/g, '') + '!</h2>' +
+      '<p>We have your feedback. ' + (vals.contactOk === 'yes' ? 'Someone from our team will message you on WhatsApp soon.' : 'It really helps us improve.') + '</p></div>';
+    window.scrollTo(0, 0);
+  } catch(err){
+    busy = false; $('#send').disabled = false; $('#send').textContent = 'Send my feedback';
+    fail('Sorry, your feedback was not sent. Please try once more.');
+  }
+});
+sync();
+})();
+</script>
+</body>
+</html>
