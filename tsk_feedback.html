@@ -63,6 +63,16 @@ input:focus,textarea:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0
 
 .why{background:var(--soft);border-radius:20px;padding:20px 16px 4px;margin:0 0 26px;}
 .why .q:last-child{margin-bottom:16px;}
+.offer{background:var(--ink);color:#fff;border-radius:22px;padding:22px 18px;margin:0 0 18px;position:relative;overflow:hidden;}
+.offer::before{content:'';position:absolute;right:-50px;top:-60px;width:190px;height:190px;border-radius:50%;background:radial-gradient(circle,rgba(216,255,41,.3),transparent 70%);pointer-events:none;}
+.offer .tag{display:inline-block;background:var(--lime);color:var(--ink);font-weight:800;font-size:12px;letter-spacing:.08em;text-transform:uppercase;border-radius:20px;padding:5px 11px;margin:0 0 12px;position:relative;}
+.offer h2{font-size:26px;line-height:1.15;margin:0 0 6px;font-style:italic;position:relative;}
+.offer h2 span{color:var(--lime);}
+.offer p{color:#bdbdbd;margin:0 0 14px;font-size:15.5px;position:relative;}
+.perks{list-style:none;padding:0;margin:0;position:relative;}
+.perks li{display:flex;gap:12px;align-items:flex-start;padding:7px 0;font-size:16px;font-weight:700;}
+.perks li::before{content:'✓';flex:none;width:24px;height:24px;border-radius:50%;background:var(--lime);color:var(--ink);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;}
+.join .chip[data-v=yes]{border-width:2px;}
 .hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0;}
 .err{color:#c00;font-weight:700;margin:0 0 14px;}
 .err:empty{display:none;}
@@ -178,7 +188,51 @@ input:focus,textarea:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0
       </fieldset>
     </div>
 
-    <fieldset class="q"><legend>Can we message you on WhatsApp about this?</legend>
+    <div id="commPart" hidden>
+      <div class="sec">An option for you</div>
+      <div class="offer">
+        <span class="tag">Only $5</span>
+        <h2>Not ready for a premium program? <span>Join our community.</span></h2>
+        <p>Get started with Dr. Tehreem's team for just $5.</p>
+        <ul class="perks">
+          <li>Your own diet plan</li>
+          <li>A free consultation every month</li>
+        </ul>
+      </div>
+      <fieldset class="q join"><legend>Would you like to join the $5 community?</legend>
+        <div class="chips" role="radiogroup" data-one="community">
+          <button type="button" class="chip" role="radio" aria-checked="false" data-v="yes">Yes, I want to join</button>
+          <button type="button" class="chip" role="radio" aria-checked="false" data-v="more">Tell me more first</button>
+          <button type="button" class="chip" role="radio" aria-checked="false" data-v="no">No, thank you</button>
+        </div>
+      </fieldset>
+      <div id="joinPart" hidden>
+        <fieldset class="q"><legend>What is your main goal?</legend>
+          <p class="help">So your diet plan is made for you. Choose all that apply.</p>
+          <div class="chips" data-many="goals">
+            <button type="button" class="chip" aria-pressed="false" data-v="weightloss">Lose weight</button>
+            <button type="button" class="chip" aria-pressed="false" data-v="pcos">PCOS / hormones</button>
+            <button type="button" class="chip" aria-pressed="false" data-v="diabetes">Diabetes / prediabetes</button>
+            <button type="button" class="chip" aria-pressed="false" data-v="thyroid">Thyroid</button>
+            <button type="button" class="chip" aria-pressed="false" data-v="postpartum">After pregnancy</button>
+            <button type="button" class="chip" aria-pressed="false" data-v="gain">Gain healthy weight</button>
+            <button type="button" class="chip" aria-pressed="false" data-v="healthy">Eat healthier</button>
+            <button type="button" class="chip" aria-pressed="false" data-v="other">Something else</button>
+          </div>
+        </fieldset>
+        <fieldset class="q"><legend>How would you like to pay the $5?</legend>
+          <div class="chips" role="radiogroup" data-one="payPref">
+            <button type="button" class="chip" role="radio" aria-checked="false" data-v="jazzcash">JazzCash / Easypaisa</button>
+            <button type="button" class="chip" role="radio" aria-checked="false" data-v="bank">Bank transfer</button>
+            <button type="button" class="chip" role="radio" aria-checked="false" data-v="card">Debit / credit card</button>
+            <button type="button" class="chip" role="radio" aria-checked="false" data-v="abroad">I live abroad</button>
+          </div>
+        </fieldset>
+        <div class="q"><label for="f-phone2">Your WhatsApp number</label><p class="help">We'll send you the joining details here.</p><input id="f-phone2" type="tel" inputmode="tel" maxlength="20" autocomplete="tel" placeholder="03XX XXXXXXX"></div>
+      </div>
+    </div>
+
+    <fieldset class="q" id="contactPart"><legend>Can we message you on WhatsApp about this?</legend>
       <div class="chips" role="radiogroup" data-one="contactOk">
         <button type="button" class="chip" role="radio" aria-checked="false" data-v="yes">Yes, please</button>
         <button type="button" class="chip" role="radio" aria-checked="false" data-v="no">No, thank you</button>
@@ -209,7 +263,7 @@ let db = null;
 try { firebase.initializeApp(firebaseConfig); db = firebase.firestore(); } catch(e) {}
 
 const $ = s => document.querySelector(s);
-const vals = {callWith:'', rating:'', understood:'', clear:'', paid:'', budget:'', contactOk:'', reasons:[], helps:[]};
+const vals = {callWith:'', rating:'', understood:'', clear:'', paid:'', budget:'', contactOk:'', community:'', payPref:'', reasons:[], helps:[], goals:[]};
 let busy = false;
 
 // a personal link can fill in the client: tsk_feedback.html?name=Sara&phone=0300...&code=ABC123
@@ -219,9 +273,17 @@ $('#f-phone').value = (qs.get('phone') || '').slice(0, 20);
 const code = (qs.get('code') || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 12);
 
 function sync(){
+  const stuck = vals.paid === 'notyet' || vals.paid === 'no', joining = stuck && (vals.community === 'yes' || vals.community === 'more');
   $('#callPart').hidden = vals.callWith === 'none';
-  $('#whyPart').hidden = !(vals.paid === 'notyet' || vals.paid === 'no');
+  $('#whyPart').hidden = !stuck;
+  $('#commPart').hidden = !stuck;                       // the $5 community, for anyone not on a premium program
+  $('#joinPart').hidden = !joining;
+  $('#contactPart').hidden = joining;                   // joining already means "yes, message me"
 }
+// the number typed at the top and the one in the joining section are the same field for the client
+$('#f-phone').addEventListener('input', () => { if (!$('#f-phone2').value || $('#f-phone2').dataset.copied) { $('#f-phone2').value = $('#f-phone').value; $('#f-phone2').dataset.copied = '1'; } });
+$('#f-phone2').addEventListener('input', () => { delete $('#f-phone2').dataset.copied; });
+$('#f-phone2').value = $('#f-phone').value; if ($('#f-phone').value) $('#f-phone2').dataset.copied = '1';
 document.addEventListener('click', e => {
   const b = e.target.closest('button[data-v]'); if (!b) return;
   const one = b.parentElement.dataset.one, many = b.parentElement.dataset.many, v = b.dataset.v;
@@ -247,14 +309,19 @@ function fail(msg, el){ $('#err').textContent = msg; if (el) el.scrollIntoView({
 $('#fb').addEventListener('submit', async e => {
   e.preventDefault(); if (busy) return;
   if ($('#f-hp').value) return fail('Something went wrong. Please reload the page and try again.');
-  const name = $('#f-name').value.trim(), phone = $('#f-phone').value.replace(/[^\d+]/g, '');
+  const name = $('#f-name').value.trim();
   if (name.length < 2) return fail('Please type your name.', $('#f-name'));
-  if (phone && !/^\+?\d{7,15}$/.test(phone)) return fail('Please check your WhatsApp number, or leave it empty.', $('#f-phone'));
+  const phoneTop = $('#f-phone').value.replace(/[^\d+]/g, '');
+  if (phoneTop && !/^\+?\d{7,15}$/.test(phoneTop)) return fail('Please check your WhatsApp number, or leave it empty.', $('#f-phone'));
   if (!vals.callWith) return fail('Please tell us who your call was with.', $('[data-one=callWith]'));
   if (vals.callWith !== 'none' && !vals.rating) return fail('Please rate your call.', $('[data-one=rating]'));
   if (!vals.paid) return fail('Please tell us if you have started a paid plan.', $('[data-one=paid]'));
   const stuck = vals.paid !== 'yes';
   if (stuck && !vals.reasons.length) return fail('Please choose what is stopping you.', $('[data-many=reasons]'));
+  if (stuck && !vals.community) return fail('Please tell us if you would like to join the $5 community.', $('[data-one=community]'));
+  const joining = stuck && (vals.community === 'yes' || vals.community === 'more');
+  const phone = joining ? $('#f-phone2').value.replace(/[^\d+]/g, '') : phoneTop;
+  if (joining && !/^\+?\d{7,15}$/.test(phone)) return fail('Please add your WhatsApp number so we can send you the joining details.', $('#f-phone2'));
   if (!db) return fail('We could not connect. Please check your internet and try again.');
   const call = vals.callWith !== 'none';
   const doc = {
@@ -266,7 +333,8 @@ $('#fb').addEventListener('submit', async e => {
     paid: vals.paid,
     reasons: stuck ? vals.reasons : [], reasonText: stuck ? $('#f-reason').value.trim().slice(0, 800) : '',
     helps: stuck ? vals.helps : [], budget: stuck ? vals.budget : '',
-    contactOk: vals.contactOk,
+    contactOk: joining ? 'yes' : vals.contactOk,
+    community: stuck ? vals.community : '', goals: joining ? vals.goals : [], payPref: joining ? vals.payPref : '',
     createdAt: new Date().toISOString(),
   };
   busy = true; $('#err').textContent = '';
@@ -274,7 +342,8 @@ $('#fb').addEventListener('submit', async e => {
   try {
     await db.collection('bk_feedback').add(doc);
     $('#app').innerHTML = '<div class="thanks"><div class="tick" aria-hidden="true">✓</div><h2>Thank you, ' + name.split(' ')[0].replace(/[&<>"']/g, '') + '!</h2>' +
-      '<p>We have your feedback. ' + (vals.contactOk === 'yes' ? 'Someone from our team will message you on WhatsApp soon.' : 'It really helps us improve.') + '</p></div>';
+      '<p>' + (joining ? 'We will message you on WhatsApp soon with how to join the $5 community and get your diet plan.'
+        : 'We have your feedback. ' + (vals.contactOk === 'yes' ? 'Someone from our team will message you on WhatsApp soon.' : 'It really helps us improve.')) + '</p></div>';
     window.scrollTo(0, 0);
   } catch(err){
     busy = false; $('#send').disabled = false; $('#send').textContent = 'Send my feedback';

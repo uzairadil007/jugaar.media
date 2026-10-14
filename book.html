@@ -1826,6 +1826,9 @@ const FB_BUDGET = {under5k:'Under Rs 5k', '5-10k':'Rs 5–10k', '10-20k':'Rs 10�
 const FB_CALL = {doctor:'Dr. Tehreem', team:'Fellow dietitian', none:'No call yet'};
 const FB_PAID = {yes:'Paid plan', notyet:'Not yet', no:'Not planning to'};
 const FB_YN = {yes:'Yes', partly:'Partly', no:'No'};
+const FB_COMM = {yes:'Wants to join', more:'Wants to know more', no:'Not interested'};
+const FB_GOALS = {weightloss:'Lose weight', pcos:'PCOS / hormones', diabetes:'Diabetes', thyroid:'Thyroid', postpartum:'After pregnancy', gain:'Gain weight', healthy:'Eat healthier', other:'Other'};
+const FB_PAYPREF = {jazzcash:'JazzCash / Easypaisa', bank:'Bank transfer', card:'Card', abroad:'Lives abroad'};
 const FACES = ['', '😞', '😕', '😐', '🙂', '😍'];
 function subFeedback(){
   if (unsubF) return;
@@ -1860,11 +1863,14 @@ function fbHtml(){
     '<div class="stat"><b>' + (rated.length ? avg.toFixed(1) + ' / 5' : '—') + '</b><span>Average call rating</span></div>' +
     '<div class="stat"><b>' + Math.round(paid / n * 100) + '%</b><span>Started a paid plan</span></div>' +
     '<div class="stat hot"><b>' + stuck.length + '</b><span>Haven\'t paid yet</span></div>' +
+    '<div class="stat' + (all.some(f => f.community === 'yes' || f.community === 'more') ? ' hot' : '') + '"><b>' + all.filter(f => f.community === 'yes' || f.community === 'more').length + '</b><span>Interested in the $5 community</span></div>' +
     (top ? '<div class="stat" style="grid-column:span 2"><b style="font-size:17px">' + esc(FB_REASONS[top] || top) + '</b><span>Most common reason for not paying</span></div>' : '') + '</div>';
   const charts = stuck.length ? '<div class="two">' + fbBars('What is stopping them', reasons, FB_REASONS, stuck.length) + fbBars('What would make it easier', count(stuck, 'helps'), FB_HELPS, stuck.length) + '</div>' +
-    fbBars('What they can spend per month', count(stuck, 'budget'), FB_BUDGET, stuck.length) : '';
-  const F = [['all','All'],['stuck','Haven\'t paid'],['low','Rated 3 or less'],['contact','Happy to be contacted']];
-  const rows = all.filter(f => fbFilter === 'all' || (fbFilter === 'stuck' && f.paid !== 'yes') || (fbFilter === 'low' && f.rating > 0 && f.rating <= 3) || (fbFilter === 'contact' && f.contactOk === 'yes'));
+    fbBars('What they can spend per month', count(stuck, 'budget'), FB_BUDGET, stuck.length) +
+    '<div class="two">' + fbBars('$5 community', count(stuck, 'community'), FB_COMM, stuck.length) +
+    fbBars('Goals of those joining', count(all.filter(f => (f.goals || []).length), 'goals'), FB_GOALS, Math.max(1, all.filter(f => (f.goals || []).length).length)) + '</div>' : '';
+  const F = [['all','All'],['join','Wants the $5 community'],['stuck','Haven\'t paid'],['low','Rated 3 or less'],['contact','Happy to be contacted']];
+  const rows = all.filter(f => fbFilter === 'all' || (fbFilter === 'stuck' && f.paid !== 'yes') || (fbFilter === 'low' && f.rating > 0 && f.rating <= 3) || (fbFilter === 'contact' && f.contactOk === 'yes') || (fbFilter === 'join' && (f.community === 'yes' || f.community === 'more')));
   const list = '<div class="card"><h3>All responses</h3><div class="chips">' +
     F.map(f => '<button type="button" class="chipbtn' + (fbFilter === f[0] ? ' active' : '') + '" data-act="fbF" data-f="' + f[0] + '">' + f[1] + '</button>').join('') + '</div>' +
     (rows.length ? '<div class="overflow"><table><thead><tr><th>Client</th><th>Call</th><th>Paid?</th><th>What they said</th><th></th></tr></thead><tbody>' +
@@ -1875,10 +1881,12 @@ function fbHtml(){
           f.liked ? 'Liked: ' + f.liked : '', f.improve ? 'Do better: ' + f.improve : '',
           (f.reasons || []).length ? 'Stopping them: ' + f.reasons.map(r => FB_REASONS[r] || r).join(', ') : '', f.reasonText ? '“' + f.reasonText + '”' : '',
           (f.helps || []).length ? 'Would help: ' + f.helps.map(h => FB_HELPS[h] || h).join(', ') : '', f.budget ? 'Can spend: ' + (FB_BUDGET[f.budget] || f.budget) + '/month' : '',
+          f.community ? '$5 community: ' + (FB_COMM[f.community] || f.community) : '', (f.goals || []).length ? 'Goals: ' + f.goals.map(g => FB_GOALS[g] || g).join(', ') : '',
+          f.payPref ? 'Would pay by: ' + (FB_PAYPREF[f.payPref] || f.payPref) : '',
         ].filter(Boolean);
         return '<tr><td><b>' + esc(f.name || '—') + '</b><br><span class="muted">' + (isNaN(d) ? '' : esc(new Date(d).toLocaleDateString('en-GB', {day:'numeric', month:'short'}))) +
           (wa ? ' · <a class="wa" href="https://wa.me/' + wa + '" target="_blank" rel="noopener">' + esc(f.phone) + '</a>' : '') + '</span>' +
-          (f.contactOk === 'yes' ? '<br><span class="tag ok">OK to contact</span>' : '') + '</td>' +
+          (f.community === 'yes' || f.community === 'more' ? '<br><span class="tag verified">$5 community</span>' : f.contactOk === 'yes' ? '<br><span class="tag ok">OK to contact</span>' : '') + '</td>' +
           '<td>' + esc(FB_CALL[f.callWith] || '—') + (f.rating ? '<br><span style="font-size:20px" title="' + f.rating + ' / 5">' + FACES[f.rating] + '</span> <span class="muted">' + f.rating + '/5</span>' : '') + '</td>' +
           '<td>' + (f.paid === 'yes' ? '<span class="tag ok">Paid plan</span>' : '<span class="tag warn">' + esc(FB_PAID[f.paid] || '—') + '</span>') + '</td>' +
           '<td style="max-width:380px;font-size:12.5px;line-height:1.5">' + said.map(esc).join('<br>') + '</td>' +
