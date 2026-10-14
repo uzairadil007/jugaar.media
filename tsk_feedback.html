@@ -191,15 +191,15 @@ input:focus,textarea:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0
     <div id="commPart" hidden>
       <div class="sec">An option for you</div>
       <div class="offer">
-        <span class="tag">Only $5</span>
+        <span class="tag">Only Rs 999 a month</span>
         <h2>Not ready for a premium program? <span>Join our community.</span></h2>
-        <p>Get started with Dr. Tehreem's team for just $5.</p>
+        <p>Get started with Dr. Tehreem's team for just Rs 999 a month.</p>
         <ul class="perks">
           <li>Your own diet plan</li>
           <li>A free consultation every month</li>
         </ul>
       </div>
-      <fieldset class="q join"><legend>Would you like to join the $5 community?</legend>
+      <fieldset class="q join"><legend>Would you like to join the community for Rs 999 a month?</legend>
         <div class="chips" role="radiogroup" data-one="community">
           <button type="button" class="chip" role="radio" aria-checked="false" data-v="yes">Yes, I want to join</button>
           <button type="button" class="chip" role="radio" aria-checked="false" data-v="more">Tell me more first</button>
@@ -220,7 +220,7 @@ input:focus,textarea:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0
             <button type="button" class="chip" aria-pressed="false" data-v="other">Something else</button>
           </div>
         </fieldset>
-        <fieldset class="q"><legend>How would you like to pay the $5?</legend>
+        <fieldset class="q"><legend>How would you like to pay the Rs 999 each month?</legend>
           <div class="chips" role="radiogroup" data-one="payPref">
             <button type="button" class="chip" role="radio" aria-checked="false" data-v="jazzcash">JazzCash / Easypaisa</button>
             <button type="button" class="chip" role="radio" aria-checked="false" data-v="bank">Bank transfer</button>
@@ -276,7 +276,7 @@ function sync(){
   const stuck = vals.paid === 'notyet' || vals.paid === 'no', joining = stuck && (vals.community === 'yes' || vals.community === 'more');
   $('#callPart').hidden = vals.callWith === 'none';
   $('#whyPart').hidden = !stuck;
-  $('#commPart').hidden = !stuck;                       // the $5 community, for anyone not on a premium program
+  $('#commPart').hidden = !stuck;                       // the Rs 999/month community, for anyone not on a premium program
   $('#joinPart').hidden = !joining;
   $('#contactPart').hidden = joining;                   // joining already means "yes, message me"
 }
@@ -318,7 +318,7 @@ $('#fb').addEventListener('submit', async e => {
   if (!vals.paid) return fail('Please tell us if you have started a paid plan.', $('[data-one=paid]'));
   const stuck = vals.paid !== 'yes';
   if (stuck && !vals.reasons.length) return fail('Please choose what is stopping you.', $('[data-many=reasons]'));
-  if (stuck && !vals.community) return fail('Please tell us if you would like to join the $5 community.', $('[data-one=community]'));
+  if (stuck && !vals.community) return fail('Please tell us if you would like to join the community.', $('[data-one=community]'));
   const joining = stuck && (vals.community === 'yes' || vals.community === 'more');
   const phone = joining ? $('#f-phone2').value.replace(/[^\d+]/g, '') : phoneTop;
   if (joining && !/^\+?\d{7,15}$/.test(phone)) return fail('Please add your WhatsApp number so we can send you the joining details.', $('#f-phone2'));
@@ -342,7 +342,7 @@ $('#fb').addEventListener('submit', async e => {
   try {
     await db.collection('bk_feedback').add(doc);
     $('#app').innerHTML = '<div class="thanks"><div class="tick" aria-hidden="true">✓</div><h2>Thank you, ' + name.split(' ')[0].replace(/[&<>"']/g, '') + '!</h2>' +
-      '<p>' + (joining ? 'We will message you on WhatsApp soon with how to join the $5 community and get your diet plan.'
+      '<p>' + (joining ? 'We will message you on WhatsApp soon with how to join the community and get your diet plan.'
         : 'We have your feedback. ' + (vals.contactOk === 'yes' ? 'Someone from our team will message you on WhatsApp soon.' : 'It really helps us improve.')) + '</p></div>';
     window.scrollTo(0, 0);
   } catch(err){
