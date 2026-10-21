@@ -1,6 +1,6 @@
 // Sends vibe. check-in reminders to the VAs' phones/computers through Firebase Cloud Messaging.
-// Run every few minutes by .github/workflows/vibe-checkin-push.yml. Shift times, check-in times and
-// the open/grace windows are read straight from vibe.html, so that file stays the one place to change them.
+// Run every few minutes by .github/workflows/vibe-checkin-push.yml. Check-in times and the open/grace window
+// come from vibe.html's defaults, overridden by whatever the Supreme Leader saved in Firestore (vibe_settings/main).
 //
 // env: FIREBASE_SERVICE_ACCOUNT  service-account JSON (GitHub secret)
 //      TZ                        the team's time zone, e.g. Asia/Karachi
@@ -15,12 +15,17 @@ if (!process.env.FIREBASE_SERVICE_ACCOUNT) {
 
 const html = readFileSync(new URL('../vibe.html', import.meta.url), 'utf8');
 const VAS = Function('return ' + html.match(/const VAS = (\[[\s\S]*?\n\]);/)[1])();
-const num = name => Number(html.match(new RegExp(`const ${name} = (\\d+)`))[1]);
-const EARLY = num('CHECKIN_EARLY'), GRACE = num('CHECKIN_GRACE');
+const num = name => Number(html.match(new RegExp(`(?:const|let) ${name} = (\\d+)`))[1]);
+let EARLY = num('CHECKIN_EARLY'), GRACE = num('CHECKIN_GRACE');
 const SITE = 'https://' + readFileSync(new URL('../CNAME', import.meta.url), 'utf8').trim();
 
 admin.initializeApp({ credential: admin.credential.cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)) });
 const db = admin.firestore();
+
+const settings = (await db.collection('vibe_settings').doc('main').get()).data() || {};
+VAS.forEach(v => { const p = (settings.people || {})[v.id]; if (v.checkins && p && Array.isArray(p.checkins) && p.checkins.length) v.checkins = [...p.checkins].sort(); });
+if (Number.isFinite(settings.early)) EARLY = settings.early;
+if (Number.isFinite(settings.grace)) GRACE = settings.grace;
 
 const pad = n => String(n).padStart(2, '0');
 const now = new Date();

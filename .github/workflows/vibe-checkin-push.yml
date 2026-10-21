@@ -2,9 +2,8 @@ name: vibe check-in push
 
 on:
   schedule:
-    # every 5 min, 10:00 AM – 9:55 PM Pakistan time (UTC+5): covers every check-in window in vibe.html.
-    # Widen this if the shifts or check-in times in vibe.html move earlier/later.
-    - cron: '*/5 5-16 * * *'
+    # every 5 min, all day, so check-in times changed in Supreme Leader → Settings are always covered
+    - cron: '*/5 * * * *'
   workflow_dispatch:
     inputs:
       test_va:
