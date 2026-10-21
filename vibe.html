@@ -487,6 +487,43 @@ button.btn.danger{background:#e2452a;color:#fff;}
   .pin-box{width:46px;height:54px;}
 }
 .brand{cursor:pointer;-webkit-user-select:none;user-select:none;padding:4px 0;}
+
+/* ---- v9: reply check-ins ---- */
+.ck-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:6px;}
+.ck-head h2{margin:0;}
+button.ed.on{background:var(--lime);border-color:var(--lime);}
+.ck-slots{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px;}
+.ck-slot{display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-width:0;text-align:left;border:1.5px solid #e6e4d4;background:#fffefb;border-radius:14px;padding:10px 12px;font:inherit;color:var(--ink);cursor:pointer;transition:background .2s,border-color .2s,transform .15s;}
+.ck-slot:disabled{cursor:default;}
+.ck-slot:not(:disabled):active{transform:scale(.98);}
+.ck-slot b{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--sub);}
+.ck-slot span{font-size:18px;font-weight:800;font-variant-numeric:tabular-nums;}
+.ck-slot em{font-style:normal;font-size:11.5px;font-weight:700;color:var(--sub);}
+.ck-slot.s-upcoming{opacity:.6;}
+.ck-slot.s-open{background:var(--lime);border-color:var(--lime);} .ck-slot.s-open b,.ck-slot.s-open em{color:var(--ink);}
+.ck-slot.s-overdue,.ck-slot.s-missed{background:#fff4f1;border-color:#f6cfc6;} .ck-slot.s-overdue em,.ck-slot.s-missed em{color:#b3261e;}
+.ck-slot.s-done{background:var(--ink);border-color:var(--ink);color:#fff;} .ck-slot.s-done b{color:#aaa;} .ck-slot.s-done em{color:var(--lime);}
+.ck-slot.s-late,.ck-slot.s-partial{background:#fff7e0;border-color:#f0dca0;} .ck-slot.s-late em,.ck-slot.s-partial em{color:#6b5400;}
+.ck-slots.mini{gap:6px;margin-top:0;} .ck-slots.mini .ck-slot{padding:7px 9px;border-radius:11px;} .ck-slots.mini .ck-slot span{font-size:13px;} .ck-slots.mini .ck-slot em{font-size:10.5px;}
+.ck-x{font-size:11px;color:#b3261e;font-weight:600;}
+.ck-bad{color:#b3261e!important;}
+.mdl.ck-mdl{max-width:460px;text-align:left;}
+.ck-mdl h2{margin-top:0;} .ck-mdl h2 .muted{font-size:14px;font-weight:600;}
+.ck-list{margin:12px 0;border:1px solid #e6e4d4;border-radius:14px;overflow:hidden;}
+.ck-plat{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--sub);background:#f3f1e6;padding:6px 12px;}
+.ck-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:6px;align-items:center;padding:6px 8px 6px 12px;border-top:1px solid #f0eee3;font-size:13px;font-weight:700;}
+.ck-plat + .ck-row{border-top:0;}
+.ck-row > span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+label.ck-box{display:inline-flex;align-items:center;gap:6px;margin:0;min-height:34px;padding:5px 10px;border:1.5px solid #e6e4d4;border-radius:999px;background:#fff;color:var(--ink);font-size:11.5px;font-weight:700;letter-spacing:0;text-transform:none;cursor:pointer;-webkit-user-select:none;user-select:none;}
+label.ck-box input{width:16px;height:16px;margin:0;accent-color:var(--ink);}
+label.ck-box:has(input:checked){background:var(--lime);border-color:var(--lime);}
+label.ck-box:has(input:disabled){cursor:default;}
+.ck-hint{font-size:12px;color:var(--sub);min-height:16px;margin:8px 0 0;}
+.ck-noteview{font-size:12.5px;background:#f3f1e6;border-radius:10px;padding:8px 10px;margin:0;}
+@media (max-width:480px){
+  .ck-slots{gap:6px;} .ck-slot{padding:8px 9px;} .ck-slot span{font-size:15px;} .ck-slot em{font-size:10.5px;}
+  label.ck-box{padding:5px 8px;}
+}
 </style>
 </head>
 <body>
@@ -502,8 +539,8 @@ button.btn.danger{background:#e2452a;color:#fff;}
 
 <script>
 const VAS = [
-  { id:'rimsha', name:'Rimsha', role:'va', shiftStart:9,  shiftEnd:15, shiftLabel:'9:00 AM – 3:00 PM' },
-  { id:'amna',   name:'Amna',   role:'va', shiftStart:15, shiftEnd:21, shiftLabel:'3:00 PM – 9:00 PM' },
+  { id:'rimsha', name:'Rimsha', role:'va', shiftStart:9,  shiftEnd:15, shiftLabel:'9:00 AM – 3:00 PM', checkins:['11:00','13:00','15:00'] },
+  { id:'amna',   name:'Amna',   role:'va', shiftStart:15, shiftEnd:21, shiftLabel:'3:00 PM – 9:00 PM', checkins:['17:00','19:00','21:00'] },
   { id:'noor',   name:'Noor',   role:'supervisor', shiftLabel:'Supervisor — verifies Rimsha & Amna' },
 ];
 const PLATFORMS = ['Instagram','Facebook','TikTok','YouTube'];
@@ -517,6 +554,11 @@ const accountsFor = platform => ACCOUNTS_BY_PLATFORM[platform] || ['Account 1'];
 const ADMIN_PIN = '1997';
 const LOG_BACK_DAYS = 3;    // how many past days a VA can still log and submit
 const PASSCODES = { rimsha:'@rimsha3#', amna:'@amna9(', noor:'@noor4$' };
+// reply check-ins: each time in VAS[].checkins opens CHECKIN_EARLY min before and counts as on time until CHECKIN_GRACE min after
+const CHECKIN_EARLY = 45;
+const CHECKIN_GRACE = 15;
+const CHECK_TASKS = [{id:'dms',label:'DMs'},{id:'cmts',label:'Comments'}];  // per account: all DMs replied, comments on latest post replied
+const CHECK_TOTAL = PLATFORMS.reduce((n,p)=>n+accountsFor(p).length,0) * CHECK_TASKS.length;
 
 let db = null, dbAvailable = false;
 let entries = {};          // key: vaId_date -> {signIn,signOut,logs[],submitted,verifiedByNoor,verifiedAt}
@@ -613,6 +655,142 @@ const getViewDate=id=>viewDates[id]||todayKey();
 const pad2=n=>String(n).padStart(2,'0');
 const fmtHMS=ms=>{const s=Math.floor(ms/1000);return `${pad2(Math.floor(s/3600))}:${pad2(Math.floor(s%3600/60))}:${pad2(s%60)}`;};
 const fmt24=iso=>{ if(!iso) return '—'; const d=new Date(iso); const h=d.getHours(); return (h%12||12)+':'+pad2(d.getMinutes())+' '+(h<12?'AM':'PM'); };
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+// ---------- reply check-ins ----------
+const minOf=d=>d.getHours()*60+d.getMinutes();
+const hmMin=t=>{ const [h,m]=t.split(':').map(Number); return h*60+m; };
+const fmtMin=m=>{ const h=Math.floor(m/60)%24; return (h%12||12)+':'+pad2(m%60)+' '+(h<12?'AM':'PM'); };
+// state per check-in: done | late | partial (submitted) · open | overdue | upcoming | missed (not submitted)
+function checkinSlots(va, dk){
+  const e=getEntry(va.id,dk), today=todayKey(), nowMin=minOf(new Date());
+  return (va.checkins||[]).map((t,i)=>{
+    const n=i+1, rec=(e.checkins||{})[n]||null, due=hmMin(t), opens=due-CHECKIN_EARLY;
+    let state;
+    if(rec) state=rec.done.length<(rec.total||CHECK_TOTAL)?'partial':(minOf(new Date(rec.at))>due+CHECKIN_GRACE?'late':'done');
+    else if(dk<today) state='missed';
+    else if(dk>today||nowMin<opens) state='upcoming';
+    else state=nowMin<=due+CHECKIN_GRACE?'open':'overdue';
+    return {n,t,due,opens,rec,state};
+  });
+}
+function slotTiles(va, dk, actionable){
+  const today=todayKey();
+  return checkinSlots(va,dk).map(s=>{
+    const canDo=actionable&&dk===today&&(s.state==='open'||s.state==='overdue');
+    const em={
+      done:`✓ ${fmt24(s.rec&&s.rec.at)}`, late:`Late · ${fmt24(s.rec&&s.rec.at)}`,
+      partial:`${s.rec?s.rec.done.length:0}/${s.rec&&s.rec.total||CHECK_TOTAL} · ${fmt24(s.rec&&s.rec.at)}`,
+      open:canDo?'Due now — tap to check in':'Due now', overdue:canDo?'Overdue — tap to check in':'Overdue',
+      upcoming:`Opens ${fmtMin(s.opens)}`, missed:'Missed'
+    }[s.state];
+    return `<button class="ck-slot s-${s.state}" data-ck-open="${va.id}|${dk}|${s.n}" ${s.rec||canDo?'':'disabled'}><b>Check-in ${s.n}</b><span>${fmtMin(s.due)}</span><em>${em}</em></button>`;
+  }).join('');
+}
+// summary for a day: {got,total,extra:['1 late',…]}, or null for a day with no sign-in and no check-ins
+function checkinSummary(va, dk){
+  const s=checkinSlots(va,dk), got=s.filter(x=>x.rec).length;
+  if(!s.length||(!got&&!getEntry(va.id,dk).signIn)) return null;
+  const n=st=>s.filter(x=>x.state===st).length, extra=[];
+  if(n('late')) extra.push(n('late')+' late'); if(n('partial')) extra.push(n('partial')+' partial');
+  if(n('overdue')) extra.push(n('overdue')+' overdue'); if(n('missed')) extra.push(n('missed')+' missed');
+  return {got,total:s.length,extra};
+}
+function checkinCell(va, dk){
+  const c=checkinSummary(va,dk); if(!c) return '—';
+  return `<span class="tag ${c.got===c.total&&!c.extra.length?'ok':'off'}">${c.got}/${c.total}</span>${c.extra.length?` <small class="ck-x">${c.extra.join(' · ')}</small>`:''}`;
+}
+function checkinChip(va, dk){
+  const c=checkinSummary(va,dk); if(!c) return '';
+  return `<span class="chip">Check-ins <b>${c.got}/${c.total}</b>${c.extra.length?` · <b class="ck-bad">${c.extra.join(' · ')}</b>`:''}</span>`;
+}
+function openCheckin(vaId, dk, n){
+  const va=VAS.find(v=>v.id===vaId); if(!va) return;
+  const slot=checkinSlots(va,dk)[n-1]; if(!slot) return;
+  const rec=slot.rec, ro=!!rec;
+  if(!ro && (dk!==todayKey() || !(slot.state==='open'||slot.state==='overdue') || !isUnlocked(vaId))) return;
+  const done=new Set(rec?rec.done:[]);
+  const list=PLATFORMS.map(p=>`<div class="ck-plat">${p}</div>${accountsFor(p).map(a=>`<div class="ck-row"><span title="${esc(a)}">${esc(a)}</span>${CHECK_TASKS.map(t=>{
+    const k=[p,a,t.id].join('|');
+    return `<label class="ck-box"><input type="checkbox" data-k="${esc(k)}" ${done.has(k)?'checked':''} ${ro?'disabled':''}>${t.label}</label>`;
+  }).join('')}</div>`).join('')}`).join('');
+  const {close,box}=openOverlay(`
+    <h2>${esc(va.name)} · Check-in ${n} <span class="muted">· ${fmtMin(slot.due)}</span></h2>
+    <p class="muted">${ro
+      ? `Submitted ${fmt24(rec.at)}${slot.state==='late'?' (late)':''} · ${rec.done.length} of ${rec.total||CHECK_TOTAL} ticked.`
+      : 'Go through every account: reply to all DMs and to the comments on the latest post, then tick each one off.'}</p>
+    <div class="ck-list">${list}</div>
+    ${ro ? (rec.note?`<p class="ck-noteview"><b>Note:</b> ${esc(rec.note)}</p>`:'')
+         : `<label for="ckNote">Note</label><input type="text" id="ckNote" maxlength="200" placeholder="Required if anything is left unticked">`}
+    <p class="ck-hint" id="ckHint"></p>
+    <div class="mdl-actions">${ro
+      ? `${adminMode?'<button class="btn danger" id="ckClear">Clear check-in</button>':''}<button class="btn ghost" id="ckClose">Close</button>`
+      : '<button class="btn ghost" id="ckClose">Cancel</button><button class="btn lime" id="ckSave">Submit check-in</button>'}</div>`);
+  box.classList.add('ck-mdl');
+  box.querySelector('#ckClose').onclick=close;
+  const clr=box.querySelector('#ckClear');
+  if(clr) clr.onclick=()=>{ const c={...(getEntry(vaId,dk).checkins||{})}; delete c[n]; writeEntry(vaId,dk,{checkins:c}); close(); };
+  if(ro) return;
+  const boxes=[...box.querySelectorAll('input[data-k]')], note=box.querySelector('#ckNote'), save=box.querySelector('#ckSave'), hint=box.querySelector('#ckHint');
+  const upd=()=>{
+    const c=boxes.filter(b=>b.checked).length, all=c===boxes.length, hasNote=!!note.value.trim();
+    save.disabled=!all&&!hasNote;
+    save.textContent=all?'Submit check-in':`Submit partial (${c}/${boxes.length})`;
+    hint.textContent=all?'Everything ticked.':`${boxes.length-c} left${hasNote?'':' — tick them, or add a note saying why'}.`;
+  };
+  boxes.forEach(b=>b.addEventListener('change',upd)); note.addEventListener('input',upd);
+  save.onclick=()=>{
+    const rec={at:new Date().toISOString(), done:boxes.filter(b=>b.checked).map(b=>b.dataset.k), total:boxes.length, note:note.value.trim()};
+    writeEntry(vaId,dk,{checkins:{...(getEntry(vaId,dk).checkins||{}),[n]:rec}});
+    close();
+  };
+  upd();
+}
+
+// ---------- check-in reminders: tab title + browser notification, for VAs who turned them on on this device ----------
+const remindOn=id=>{ try{ return localStorage.getItem('vibe_remind_'+id)==='1'; }catch(e){ return false; } };
+async function toggleReminders(id){
+  const on=!remindOn(id);
+  try{ on?localStorage.setItem('vibe_remind_'+id,'1'):localStorage.removeItem('vibe_remind_'+id); }catch(e){}
+  if(on && 'Notification' in window && Notification.permission==='default'){ try{ await Notification.requestPermission(); }catch(e){} }
+  render(); checkinReminders();
+}
+function notifyCheckin(va, s){
+  try{
+    if(!('Notification' in window) || Notification.permission!=='granted') return;
+    const nt=new Notification(`${va.name}: check-in ${s.n} ${s.state==='open'?'is due':'is overdue'}`, {
+      body:`Reply to every DM and to the comments on each account's latest post, then tick them off in vibe. (Due ${fmtMin(s.due)})`,
+      tag:`vibe-ck-${va.id}-${s.n}`, requireInteraction:true });
+    nt.onclick=()=>{ window.focus(); activeTab=va.id; delete viewDates[va.id]; render(); openCheckin(va.id,todayKey(),s.n); nt.close(); };
+  }catch(e){}   // e.g. Android Chrome only allows notifications from a service worker
+}
+const ckNotified=new Set();
+let ckSig='';
+function checkinReminders(){
+  const dk=todayKey(); let due=0, sig='';
+  VAS.forEach(va=>{
+    const slots=checkinSlots(va,dk); sig+=slots.map(s=>s.state).join(',')+';';
+    if(!remindOn(va.id)) return;
+    const e=getEntry(va.id,dk);
+    slots.forEach(s=>{
+      if(s.state!=='open'&&s.state!=='overdue') return;
+      due++;
+      if(!e.signIn||e.signOut) return;   // only ping while on shift
+      const k=`vibe_nt_${va.id}_${dk}_${s.n}_${s.state}`;
+      let seen=ckNotified.has(k); try{ seen=seen||localStorage.getItem(k)==='1'; localStorage.setItem(k,'1'); }catch(err){}
+      ckNotified.add(k);
+      if(!seen) notifyCheckin(va,s);
+    });
+  });
+  document.title=due?`(${due}) Check-in due · vibe.`:'vibe.';
+  // a check-in just opened or went overdue: refresh the view, unless someone is typing in it
+  if(ckSig && sig!==ckSig){
+    const a=document.activeElement;
+    if(a && a.closest && a.closest('#app') && /^(INPUT|SELECT|TEXTAREA)$/.test(a.tagName)) return;
+    render();
+  }
+  ckSig=sig;
+}
 
 function monthStats(va, dk){
   const [y,m]=dk.split('-').map(Number);
@@ -817,7 +995,11 @@ document.addEventListener('click',ev=>{
   const b=ev.target.closest('[data-edit-time]');
   if(b){ const [id,dt]=b.dataset.editTime.split('|'); openTimeEditor(id,dt); return; }
   const u=ev.target.closest('[data-unsub]');
-  if(u){ const [id,dt]=u.dataset.unsub.split('|'); unsubmitDay(id,dt); }
+  if(u){ const [id,dt]=u.dataset.unsub.split('|'); unsubmitDay(id,dt); return; }
+  const c=ev.target.closest('[data-ck-open]');
+  if(c && !c.disabled){ const [id,dt,n]=c.dataset.ckOpen.split('|'); openCheckin(id,dt,Number(n)); return; }
+  const r=ev.target.closest('[data-remind]');
+  if(r) toggleReminders(r.dataset.remind);
 });
 
 // ---------- sync everything to the present ----------
@@ -866,6 +1048,7 @@ function tickLiveElements(){
     if(tickLiveElements._lastDay !== undefined){ dashDate=null; Object.keys(viewDates).forEach(k=>delete viewDates[k]); render(); }
     tickLiveElements._lastDay = k;
   }
+  checkinReminders();
 }
 
 // ---------- UI: header ----------
@@ -942,8 +1125,9 @@ function renderDashboard(app){
   const edited=e=>e.editedByAdmin?' <span class="edt" title="Edited by admin">✎</span>':'';
   const detail=r=>{
     if(r.sup) return `${r.va.name} supervises ${staff.map(v=>v.name).join(' & ')} · verified ${verified} of ${submitted} submitted.`;
-    if(!r.e.logs.length) return 'No work logged for this day.';
-    return `<div class="chips">${r.e.logs.map(l=>`<span class="chip">${l.platform} · ${l.account} — <b>${l.appts}</b> appt · <b>${l.dms}</b> DMs</span>`).join('')}</div>${r.e.editedAt?`<p class="muted" style="margin:8px 0 0;">Times edited by admin at ${fmtTime(r.e.editedAt)}</p>`:''}`;
+    const ck=`<div class="ck-slots mini">${slotTiles(r.va,dk,false)}</div>`;
+    if(!r.e.logs.length) return 'No work logged for this day.'+ck;
+    return ck+`<div class="chips" style="margin-top:10px;">${r.e.logs.map(l=>`<span class="chip">${l.platform} · ${l.account} — <b>${l.appts}</b> appt · <b>${l.dms}</b> DMs</span>`).join('')}</div>${r.e.editedAt?`<p class="muted" style="margin:8px 0 0;">Times edited by admin at ${fmtTime(r.e.editedAt)}</p>`:''}`;
   };
 
   const wrap=document.createElement('div'); wrap.className='dboard';
@@ -972,6 +1156,7 @@ function renderDashboard(app){
     x.innerHTML=`
       ${r.sup?'':(r.e.submitted?'<span class="tag ok">Submitted</span>':'')}
       ${r.sup?'':(r.e.verifiedByNoor?'<span class="tag verified">Verified</span>':'')}
+      ${r.sup?'':checkinChip(r.va,dk)}
       ${adminMode&&!r.sup&&r.e.submitted&&!r.e.verifiedByNoor?`<button class="ed" data-vfy="${r.va.id}">✓ Verify</button>`:''}
       ${adminMode&&!r.sup&&r.e.submitted?`<button class="ed danger" data-unsub="${r.va.id}|${dk}">↺ Unsubmit</button>`:''}
       <button class="xp-link" data-xp="${r.va.id}">${open?'Hide':'Details'} ${open?'▴':'▾'}</button>
@@ -1080,6 +1265,7 @@ function renderSupervisionPage(app, noor){
         <div class="stat"><b><span class="live-hours" data-signin="${e.signIn||''}" data-signout="${e.signOut||''}">${hrs.toFixed(2)}</span></b><span>Hours today</span></div>
         <div class="stat"><b>${t.appts} / ${t.dms}</b><span>Appts / DMs</span></div>
       </div>
+      <div class="ck-slots">${slotTiles(va,d,false)}</div>
       <footer class="actions">
         ${!e.submitted ? '<span class="tag off">Not submitted yet</span>' :
           (e.verifiedByNoor ? '<span class="tag verified">Verified ✓</span>' : `<button class="btn lime" data-verify="${va.id}">Verify today's entry</button>`)}
@@ -1092,13 +1278,14 @@ function renderSupervisionPage(app, noor){
     const hist = document.createElement('div');
     hist.className='card overflow';
     hist.innerHTML = `<h3>${va.name} — last 7 days</h3>
-      <table class="rtable c3"><thead><tr><th>Date</th><th class="num">Hours</th><th class="num">Appts</th><th class="num">DMs</th><th>Submitted</th><th>Verified</th><th></th></tr></thead>
+      <table class="rtable c3"><thead><tr><th>Date</th><th class="num">Hours</th><th class="num">Appts</th><th class="num">DMs</th><th>Check-ins</th><th>Submitted</th><th>Verified</th><th></th></tr></thead>
       <tbody>${days.map(dt=>{
         const he = getEntry(va.id, dt); const ht = totals(he); const hh = hoursBetween(he.signIn, he.signOut);
         const acts = (he.submitted && !he.verifiedByNoor ? `<button class="btn ghost" data-verify-day="${va.id}_${dt}">Verify</button>` : '')
           + (adminMode ? `<button class="ed" data-edit-time="${va.id}|${dt}">✎ ${fmtTime(he.signIn)}–${fmtTime(he.signOut)}</button>` : '')
           + (adminMode && he.submitted ? `<button class="ed danger" data-unsub="${va.id}|${dt}">↺ Unsubmit</button>` : '');
         return `<tr><td data-label="Date">${dt}</td><td class="num" data-label="Hours">${hh.toFixed(1)}</td><td class="num" data-label="Appts">${ht.appts}</td><td class="num" data-label="DMs">${ht.dms}</td>
+          <td data-label="Check-ins">${checkinCell(va,dt)}</td>
           <td data-label="Submitted">${he.submitted ? '<span class="tag ok">Submitted</span>' : '<span class="tag off">Open</span>'}</td>
           <td data-label="Verified">${he.verifiedByNoor ? '<span class="tag verified">Verified</span>' : '<span class="tag off">—</span>'}</td>
           <td class="acts">${acts}</td>
@@ -1137,9 +1324,13 @@ function mountMemberAlerts(parent, va){
   if(e.signIn && !e.signOut && nowMin>va.shiftEnd*60) list.push({m:`You're still clocked in past your shift end.`});
   if(e.signIn && !e.submitted && nowMin>va.shiftEnd*60) list.push({m:`You haven't submitted today's log.`});
   if(e.submitted && !e.verifiedByNoor) list.push({m:`Your day is submitted and awaiting verification.`,info:1});
+  checkinSlots(va,d).forEach(s=>{
+    if(s.state==='open') list.push({m:`Check-in ${s.n} is due by ${fmtMin(s.due)} — reply to all DMs and latest-post comments, then tick them off.`,ck:s.n});
+    if(s.state==='overdue') list.push({m:`Check-in ${s.n} (${fmtMin(s.due)}) is overdue.`,ck:s.n});
+  });
   if(!list.length) return;
   const al=document.createElement('div'); al.className='alerts'; al.style.marginBottom='14px';
-  al.innerHTML=list.map(a=>`<div class="alert ${a.info?'info':''}">${a.m}${adminMode&&!a.info?`<button class="ed" data-edit-time="${va.id}|${d}">✎ Fix time</button>`:''}</div>`).join('');
+  al.innerHTML=list.map(a=>`<div class="alert ${a.info?'info':''}">${a.m}${a.ck?`<button class="ed" data-ck-open="${va.id}|${d}|${a.ck}">Check in</button>`:(adminMode&&!a.info?`<button class="ed" data-edit-time="${va.id}|${d}">✎ Fix time</button>`:'')}</div>`).join('');
   parent.appendChild(al);
 }
 
@@ -1166,6 +1357,18 @@ function renderVaPage(app, vaId){
 
   mountStatusCard(app, va, {actions:true});
   mountMemberAlerts(app, va);
+
+  const ckOn = remindOn(vaId);
+  const ckBlocked = ckOn && 'Notification' in window && Notification.permission==='denied';
+  const ck = document.createElement('div');
+  ck.className='card';
+  ck.innerHTML = `
+    <div class="ck-head"><h2>Reply check-ins${isToday?'':' · '+dayName}</h2>
+      <button class="ed ${ckOn?'on':''}" data-remind="${vaId}">${ckOn?'🔔 Reminders on':'🔕 Turn on reminders'}</button></div>
+    <p class="muted">Three times a shift, go through every account: reply to all DMs and to the comments on the latest post, then tick each one off. Each check-in opens ${CHECKIN_EARLY} min before its time.</p>
+    ${ckBlocked?'<p class="ck-hint">Notifications are blocked in this browser\'s settings, so reminders only show in the tab title and on this page.</p>':''}
+    <div class="ck-slots">${slotTiles(va,d,true)}</div>`;
+  app.appendChild(ck);
 
   const form = document.createElement('div');
   form.className='card';
@@ -1229,12 +1432,12 @@ function renderVaPage(app, vaId){
     return localKey(dt);
   });
   hist.innerHTML = `<h3>Last 7 days</h3>
-    <table class="rtable c3"><thead><tr><th>Date</th><th>Sign in</th><th>Sign out</th><th class="num">Hours</th><th class="num">Appts</th><th class="num">DMs</th><th>Status</th>${adminMode?'<th></th>':''}</tr></thead>
+    <table class="rtable c3"><thead><tr><th>Date</th><th>Sign in</th><th>Sign out</th><th class="num">Hours</th><th class="num">Appts</th><th class="num">DMs</th><th>Check-ins</th><th>Status</th>${adminMode?'<th></th>':''}</tr></thead>
     <tbody>${days.map(dt=>{
       const he = getEntry(vaId, dt);
       const ht = totals(he);
       const hh = hoursBetween(he.signIn, he.signOut);
-      return `<tr><td data-label="Date">${dt}</td><td data-label="Sign in">${fmtTime(he.signIn)}</td><td data-label="Sign out">${fmtTime(he.signOut)}</td><td class="num" data-label="Hours">${hh.toFixed(1)}</td><td class="num" data-label="Appts">${ht.appts}</td><td class="num" data-label="DMs">${ht.dms}</td><td data-label="Status" class="full">${he.submitted?'<span class="tag ok">Submitted</span>':(he.signIn?'<span class="tag off">Open</span>':'—')}</td>${adminMode?`<td class="acts"><button class="ed" data-edit-time="${vaId}|${dt}">✎ Edit</button>${he.submitted?`<button class="ed danger" data-unsub="${vaId}|${dt}">↺ Unsubmit</button>`:''}</td>`:''}</tr>`;
+      return `<tr><td data-label="Date">${dt}</td><td data-label="Sign in">${fmtTime(he.signIn)}</td><td data-label="Sign out">${fmtTime(he.signOut)}</td><td class="num" data-label="Hours">${hh.toFixed(1)}</td><td class="num" data-label="Appts">${ht.appts}</td><td class="num" data-label="DMs">${ht.dms}</td><td data-label="Check-ins">${checkinCell(va,dt)}</td><td data-label="Status" class="full">${he.submitted?'<span class="tag ok">Submitted</span>':(he.signIn?'<span class="tag off">Open</span>':'—')}</td>${adminMode?`<td class="acts"><button class="ed" data-edit-time="${vaId}|${dt}">✎ Edit</button>${he.submitted?`<button class="ed danger" data-unsub="${vaId}|${dt}">↺ Unsubmit</button>`:''}</td>`:''}</tr>`;
     }).join('')}</tbody></table>`;
   app.appendChild(hist);
 }
