@@ -567,7 +567,7 @@ const CHECKIN_GRACE = 15;
 const CHECK_TASKS = [{id:'dms',label:'DMs'},{id:'cmts',label:'Comments'}];  // per account: all DMs replied, comments on latest post replied
 const CHECK_TOTAL = PLATFORMS.reduce((n,p)=>n+accountsFor(p).length,0) * CHECK_TASKS.length;
 // phone/computer push: Firebase console → Project settings → Cloud Messaging → Web Push certificates → public key
-const VAPID_KEY = '';
+const VAPID_KEY = 'BOSH0TeNEs0gr6rQoCNDNXCKo3p8nnTxCKI6NYgQ6YIUV6pD0igwhuE0XE_cl4NMo-OsZwt0kmJPCaHp6E83Rvw';
 
 let db = null, dbAvailable = false;
 let entries = {};          // key: vaId_date -> {signIn,signOut,logs[],submitted,verifiedByNoor,verifiedAt}
