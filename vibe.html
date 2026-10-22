@@ -811,19 +811,12 @@ function dmsByPlatform(day){
 }
 
 // ---------- per-VA passcode lock ----------
-function isUnlocked(vaId){
-  if(adminMode) return true;
-  if(unlocked[vaId]) return true;
-  try{ return sessionStorage.getItem('vibe_unlock_'+vaId) === '1'; }catch(e){ return false; }
-}
-function unlockVa(vaId){
-  unlocked[vaId] = true;
-  try{ sessionStorage.setItem('vibe_unlock_'+vaId, '1'); }catch(e){}
-}
-function lockVa(vaId){
-  delete unlocked[vaId];
-  try{ sessionStorage.removeItem('vibe_unlock_'+vaId); }catch(e){}
-}
+// unlocks live in memory only: a reload or reopening vibe asks for the passcode again
+function isUnlocked(vaId){ return adminMode || !!unlocked[vaId]; }
+function unlockVa(vaId){ unlocked[vaId] = true; }
+function lockVa(vaId){ delete unlocked[vaId]; }
+// forget unlocks older versions kept for the whole browser session
+try{ Object.keys(sessionStorage).filter(k=>k.startsWith('vibe_unlock_')).forEach(k=>sessionStorage.removeItem(k)); }catch(e){}
 
 // ---------- persistence ----------
 function localSave(){ try{ localStorage.setItem('kpi_fallback', JSON.stringify(entries)); }catch(e){} }
@@ -871,7 +864,6 @@ async function init(){
       auth = firebase.auth();
       auth.onAuthStateChanged(u => {
         leaderUser = u;
-        if(u){ adminMode = true; try{ sessionStorage.setItem('kpi_admin','1'); }catch(e){} }
         render();
       });
     }catch(e){ auth = null; }
@@ -1303,7 +1295,7 @@ function renderNav(){
   const box = document.getElementById('adminBox');
   if(adminMode){
     box.innerHTML = `<div class="adm-on"><span class="adm-dot"></span>God mode<button id="exitAdmin" aria-label="Exit god mode" title="Exit god mode">Exit</button></div>`;
-    document.getElementById('exitAdmin').onclick = ()=>{ adminMode=false; try{sessionStorage.removeItem('kpi_admin')}catch(e){} if(auth&&leaderUser) auth.signOut(); if(activeTab==='leader') activeTab='dashboard'; render(); };
+    document.getElementById('exitAdmin').onclick = ()=>{ adminMode=false; try{sessionStorage.removeItem('kpi_admin')}catch(e){} if(activeTab==='leader') activeTab='dashboard'; render(); };
   } else {
     box.innerHTML = '';
   }
@@ -1359,18 +1351,6 @@ function renderDashboard(app){
       ${isToday?'':'<button id="dToday" class="db-today">Today</button>'}
     </div>`;
   wrap.appendChild(head);
-
-  // what needs doing right now (today only): open / overdue check-ins
-  if(isToday){
-    const urgent=[];
-    VAS.forEach(va=>{ if(getEntry(va.id,dk).signIn) checkinSlots(va,dk).forEach(s=>{ if(s.state==='open'||s.state==='overdue') urgent.push({va,s}); }); });
-    urgent.forEach(({va,s})=>{
-      const b=document.createElement('button'); b.className='db-due'+(s.state==='overdue'?' late':'');
-      b.innerHTML=`<span class="db-badge">${s.state==='overdue'?'OVERDUE':'DUE'}</span><span class="db-due-t"><b>${esc(va.name)}</b> · check-in ${s.n} by ${fmtMin(s.due)}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>`;
-      b.onclick=()=>{ activeTab=va.id; delete viewDates[va.id]; render(); };
-      wrap.appendChild(b);
-    });
-  }
 
   // team
   const working=VAS.filter(v=>{ const e=getEntry(v.id,dk); return isToday&&e.signIn&&!e.signOut; }).length;
