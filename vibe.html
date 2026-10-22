@@ -819,6 +819,10 @@ button,input,select,textarea{font-family:inherit;}
 .gt-eye svg,.gt-go svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
 .gt form.ok .gt-go{background:var(--lime);color:var(--ink);}
 .gt-err{margin:-8px 0 0;min-height:18px;text-align:center;font-size:13.5px;color:#B3261E;}
+.gt-bio{height:52px;border:1px solid #E2E2DC;border-radius:16px;background:#fff;color:var(--ink);font-family:inherit;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer;margin-top:-8px;}
+.gt-bio:hover{border-color:var(--ink);}
+.gt-bio svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.gt-forget{border:0;background:none;padding:0;font:inherit;color:inherit;text-decoration:underline;cursor:pointer;}
 /* iPhone: plain buttons are blue by default, and date/time boxes ignore their column width and centre their text */
 button{color:inherit;}
 .te-mini{color:var(--ink);}
@@ -1510,6 +1514,62 @@ function renderDashboard(app){
 }
 
 // ---------- passcode gate ----------
+// ---------- Face ID / fingerprint unlock (WebAuthn passkey kept on this device) ----------
+// A convenience in front of the passcode: the phone confirms it's the owner, nothing is checked by a server.
+const B64=b=>btoa(String.fromCharCode(...new Uint8Array(b))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+const UNB64=s=>Uint8Array.from(atob(s.replace(/-/g,'+').replace(/_/g,'/')+'==='.slice((s.length+3)%4)),c=>c.charCodeAt(0));
+const bioKey=id=>'vibe_bio_'+id;
+const bioId=id=>{ try{ return localStorage.getItem(bioKey(id)); }catch(e){ return null; } };
+let bioAvail=null;   // null = still checking
+(async()=>{ try{ bioAvail = !!(window.PublicKeyCredential && window.isSecureContext && await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()); }catch(e){ bioAvail=false; }
+  if(bioAvail && document.querySelector('.gt')) render(); })();
+const bioName=()=>{ const ua=navigator.userAgent;
+  if(/iPhone|iPad|iPod/.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1)) return 'Face ID';
+  if(/Macintosh/.test(ua)) return 'Touch ID';
+  if(/Android/.test(ua)) return 'fingerprint';
+  if(/Windows/.test(ua)) return 'Windows Hello';
+  return 'fingerprint or face'; };
+const bioCap=()=>{ const n=bioName(); return n[0].toUpperCase()+n.slice(1); };
+async function bioRegister(va){
+  const cred = await navigator.credentials.create({publicKey:{
+    challenge: crypto.getRandomValues(new Uint8Array(32)),
+    rp: {name:'vibe.'},
+    user: {id:new TextEncoder().encode('vibe-'+va.id), name:`${va.name} · vibe`, displayName:va.name},
+    pubKeyCredParams: [{type:'public-key',alg:-7},{type:'public-key',alg:-257}],
+    authenticatorSelection: {authenticatorAttachment:'platform', userVerification:'required', residentKey:'preferred'},
+    timeout: 60000, attestation: 'none'
+  }});
+  try{ localStorage.setItem(bioKey(va.id), B64(cred.rawId)); localStorage.removeItem(bioKey(va.id)+'_no'); }catch(e){}
+}
+async function bioUnlock(va){
+  const id=bioId(va.id);
+  const a = await navigator.credentials.get({publicKey:{
+    challenge: crypto.getRandomValues(new Uint8Array(32)),
+    allowCredentials: [{type:'public-key', id:UNB64(id), transports:['internal','hybrid']}],
+    userVerification: 'required', timeout: 60000
+  }});
+  // same passkey, and the phone says the owner was verified (UV flag)
+  const flags = new Uint8Array(a.response.authenticatorData)[32];
+  return B64(a.rawId)===id && !!(flags & 4);
+}
+// after a passcode unlock: offer Face ID once (again two weeks after "Not now")
+function bioOffer(va){
+  if(!bioAvail || bioId(va.id)) return;
+  let no=0; try{ no=Number(localStorage.getItem(bioKey(va.id)+'_no')||0); }catch(e){}
+  if(Date.now()-no < 14*864e5) return;
+  const name=bioName();
+  const {close,box}=openOverlay(`
+    <div class="mdl-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V6a2 2 0 012-2h2M16 4h2a2 2 0 012 2v2M20 16v2a2 2 0 01-2 2h-2M8 20H6a2 2 0 01-2-2v-2"/><path d="M9 10v1M15 10v1M12 10v3h-1M9.5 15.5a3.5 3.5 0 005 0"/></svg></div>
+    <h2>Use ${name} next time?</h2><p class="muted">Unlock your page with ${name} instead of typing your passcode. Only on this device — your passcode still works.</p>
+    <p class="pin-err" id="bioErr"></p>
+    <div class="mdl-actions"><button class="btn ghost" id="bioNo">Not now</button><button class="btn lime" id="bioYes">Turn on</button></div>`);
+  box.querySelector('#bioNo').onclick=()=>{ try{ localStorage.setItem(bioKey(va.id)+'_no', String(Date.now())); }catch(e){} close(); };
+  box.querySelector('#bioYes').onclick=async()=>{
+    try{ await bioRegister(va); close(); toast(`${bioCap()} is on for this device`); }
+    catch(e){ box.querySelector('#bioErr').textContent = e && e.name==='NotAllowedError' ? 'Cancelled — you can try again or tap Not now.' : `Couldn't turn on ${name} on this device.`; }
+  };
+}
+
 function renderGate(app, va){
   const EYE='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
   const EYEOFF='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.9 17.9A10.5 10.5 0 0 1 12 19C5.5 19 2 12 2 12a18 18 0 0 1 4.1-5.1M9.9 5.2A9.7 9.7 0 0 1 12 5c6.5 0 10 7 10 7a18 18 0 0 1-2.2 3.2M1 1l22 22"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>';
@@ -1524,6 +1584,7 @@ function renderGate(app, va){
         <button type="submit" class="gt-go" id="gateBtn" aria-label="Unlock">${ARROW}</button>
       </div>
       <p class="gt-err" id="gateErr" role="alert"></p>
+      ${bioAvail && bioId(va.id) ? `<button type="button" class="gt-bio" id="gateBio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8V6a2 2 0 012-2h2M16 4h2a2 2 0 012 2v2M20 16v2a2 2 0 01-2 2h-2M8 20H6a2 2 0 01-2-2v-2"/><path d="M9 10v1M15 10v1M12 10v3h-1M9.5 15.5a3.5 3.5 0 005 0"/></svg>Unlock with ${bioName()}</button>` : ''}
     </form>`;
   app.appendChild(wrap);
   const form = wrap.querySelector('#gateCard'), input = wrap.querySelector('#gatePass'), err = wrap.querySelector('#gateErr'), go = wrap.querySelector('#gateBtn');
@@ -1534,7 +1595,7 @@ function renderGate(app, va){
     if(input.value === PASSCODES[va.id]){
       busy = true; input.disabled = true; err.textContent = '';
       form.classList.add('ok'); go.innerHTML = CHECK;
-      setTimeout(()=>{ unlockVa(va.id); render(); }, 450);
+      setTimeout(()=>{ unlockVa(va.id); render(); bioOffer(va); }, 450);
     } else {
       err.textContent = 'Wrong passcode';
       form.classList.remove('shake'); void form.offsetWidth; form.classList.add('shake');
@@ -1542,6 +1603,19 @@ function renderGate(app, va){
     }
   };
   input.oninput = ()=>{ err.textContent = ''; };
+  const bio = wrap.querySelector('#gateBio');
+  if(bio) bio.onclick = async()=>{
+    if(busy) return;
+    err.textContent = '';
+    try{
+      if(await bioUnlock(va)){ busy = true; form.classList.add('ok'); go.innerHTML = CHECK; setTimeout(()=>{ unlockVa(va.id); render(); }, 300); }
+      else err.textContent = `${bioCap()} didn't match — use your passcode`;
+    }catch(e){
+      err.innerHTML = `${e && e.name==='NotAllowedError' ? `${bioCap()} cancelled` : `${bioCap()} isn't available`} — use your passcode · <button type="button" class="gt-forget" id="gateForget">turn off on this device</button>`;
+      const f = wrap.querySelector('#gateForget');
+      if(f) f.onclick = ()=>{ try{ localStorage.removeItem(bioKey(va.id)); }catch(e){} render(); };
+    }
+  };
   const tog = wrap.querySelector('#gateToggle');
   tog.onclick = ()=>{ const show = input.type==='password'; input.type = show?'text':'password'; tog.innerHTML = show?EYEOFF:EYE; tog.setAttribute('aria-label', show?'Hide passcode':'Show passcode'); input.focus(); };
   input.focus({preventScroll:true});
