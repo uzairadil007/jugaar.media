@@ -734,6 +734,18 @@ button,input,select,textarea{font-family:inherit;}
   .va-clock{font-size:44px;}
   .va-row{padding:12px 14px;} .va-add{padding:12px 14px 14px;} .va-hist{padding:0 14px 6px;}
 }
+
+/* ---- v14: Noor's page ---- */
+.nq{display:flex;align-items:center;gap:8px;padding-right:14px;}
+.nq-main{flex:1;min-width:0;display:flex;align-items:center;gap:14px;min-height:70px;padding:14px 4px 14px 18px;border:0;background:none;font:inherit;color:var(--ink);text-align:left;cursor:pointer;}
+.nq-main .db-who > span{white-space:normal;}
+.nq-ok{height:44px;padding:0 16px;border:0;border-radius:12px;background:var(--ink);color:#fff;font-family:inherit;font-weight:700;font-size:14px;cursor:pointer;flex-shrink:0;}
+.nq-ok:hover{background:#2A2A27;}
+.open .nq-main .db-chev{transform:rotate(180deg);}
+.nq-more{padding-left:72px;}
+.nt{cursor:default;} .nt:hover{background:none;}
+.nh{display:inline-flex;align-items:center;gap:6px;} .nh .tag{margin:0;}
+@media (max-width:700px){ .n-head{flex-direction:row!important;align-items:flex-end;} .n-head .va-tools{width:auto;} .nq{padding-right:12px;} .nq-main{padding-left:14px;gap:12px;} .nq-more{padding-left:14px;} }
 </style>
 </head>
 <body>
@@ -1087,73 +1099,6 @@ function checkinReminders(){
   ckSig=sig;
 }
 
-function monthStats(va, dk){
-  const [y,m]=dk.split('-').map(Number);
-  const last=new Date(y,m,0).getDate(), today=todayKey();
-  let booked=0, verified=0, missed=0;
-  for(let day=1; day<=last; day++){
-    const k=`${y}-${pad2(m)}-${pad2(day)}`;
-    const e=getEntry(va.id,k);
-    if(va.role==='va') booked+=totals(e).appts;
-    else VAS.filter(v=>v.role==='va').forEach(v=>{ if(getEntry(v.id,k).verifiedByNoor) verified++; });
-    if(k<today && !e.signIn) missed++;   // past day with no sign-in
-  }
-  return {booked, verified, missed, month:MONTH_NAMES[m-1]};
-}
-
-function mountStatusCard(parent, va, opts={}){
-  const dk=opts.dk||getViewDate(va.id), today=todayKey(), isToday=dk===today;
-  const e=getEntry(va.id,dk), sup=va.role==='supervisor';
-  let big,small,label;
-  if(sup){
-    const st=VAS.filter(v=>v.role==='va').map(v=>getEntry(v.id,dk));
-    big=st.filter(x=>x.verifiedByNoor).length; small=st.filter(x=>x.submitted).length; label='Entries verified';
-  } else { const t=totals(e); big=t.appts; small=t.dms; label='Appointments booked'; }
-  const pct=small>0?Math.min(100,big/small*100):0;
-  const working=isToday && e.signIn && !e.signOut;
-  const statusTxt=working?'Working':(e.signIn&&e.signOut?'Signed out':(e.signIn?'No sign-out':'Offline'));
-  const ms=e.signIn?Math.max(0,(e.signOut?new Date(e.signOut):new Date())-new Date(e.signIn)):0;
-  const mins=d=>d.getHours()*60+d.getMinutes();
-  const lateIn=va.shiftStart!=null && e.signIn && mins(new Date(e.signIn))>va.shiftStart*60+5;
-  const earlyOut=va.shiftEnd!=null && e.signOut && mins(new Date(e.signOut))<va.shiftEnd*60;
-  const mo=monthStats(va,dk);
-  const [yy,mm,dd]=dk.split('-').map(Number);
-  const title=`${va.name} · ${isToday?'Today':dd+' '+MONTH_NAMES[mm-1].slice(0,3)}`;
-  const te=getEntry(va.id,today);
-  const el=document.createElement('div');
-  el.className='vcard'+(opts.compact?' compact':'');
-  el.innerHTML=`
-    <div class="vc-top">
-      <div class="vc-title">${title}</div>
-      ${opts.dk?(adminMode?`<button class="ed" data-edit-time="${va.id}|${dk}">✎ Times</button>`:''):`<input type="date" class="vc-date" value="${dk}" max="${today}">`}
-    </div>
-    <div class="vc-big"><b>${big}</b></div>
-    <div class="vc-label">${label}</div>
-    <div class="vc-meta">
-      <span><i class="vc-dot ${working?'on':''}"></i>${statusTxt}</span>
-      <span>Time worked <span class="vc-mono live-hms" data-signin="${e.signIn||''}" data-live="${working?1:0}">${fmtHMS(ms)}</span></span>
-      <span>Started ${fmt24(e.signIn)}${e.signOut?` · Ended ${fmt24(e.signOut)}`:''}</span>
-      ${lateIn?'<span class="vc-flag">Late sign-in</span>':''}${earlyOut?'<span class="vc-flag">Early sign-out</span>':''}
-    </div>
-    <div class="vc-foot">${sup
-      ? `<b>${mo.verified}</b> verified in ${mo.month}`
-      : `<b>${mo.booked}</b> booked in ${mo.month}`}</div>
-    ${opts.actions?`<div class="vc-actions">
-      <button class="btn lime" data-a="in" ${te.signIn?'disabled':''}>Sign In</button>
-      <button class="btn" data-a="out" ${(!te.signIn||te.signOut)?'disabled':''}>Sign Out</button>
-      ${adminMode?`<button class="btn ghost" data-edit-time="${va.id}|${dk}">✎ Edit times</button>`:''}
-      <button class="btn ghost" data-a="lock" style="margin-left:auto;">Lock this tab</button>
-    </div>`:''}`;
-  parent.appendChild(el);
-  const dEl=el.querySelector('.vc-date'); if(dEl) dEl.onchange=ev=>{ viewDates[va.id]=ev.target.value||todayKey(); render(); };
-  if(opts.actions){
-    el.querySelector('[data-a=in]').onclick=()=>writeEntry(va.id,today,{signIn:new Date().toISOString()});
-    el.querySelector('[data-a=out]').onclick=()=>writeEntry(va.id,today,{signOut:new Date().toISOString()});
-    el.querySelector('[data-a=lock]').onclick=()=>{ lockVa(va.id); render(); };
-  }
-  return el;
-}
-
 
 // ---------- overlay / modals ----------
 function openOverlay(inner){
@@ -1304,12 +1249,6 @@ function syncToPresent(){
   Object.keys(viewDates).forEach(k=>delete viewDates[k]);
   render();
   tickLiveElements();
-}
-function clockBar(){
-  const el = document.createElement('div');
-  el.className = 'mn-bar';
-  el.innerHTML = `<div><h2>Today</h2><span class="muted live-clock-time">${fmtNow(new Date())}</span></div>`;
-  return el;
 }
 // catch up immediately when the phone/tab wakes up (timers are paused in the background)
 document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) tickLiveElements(); });
@@ -1555,77 +1494,91 @@ function renderGate(app, va){
   input.focus({preventScroll:true});
 }
 
-// ---------- Noor's supervision dashboard ----------
+const dayLabel=dk=>{ if(dk===todayKey()) return 'Today'; if(dk===shiftDay(todayKey(),-1)) return 'Yesterday'; const [y,m,d]=dk.split('-').map(Number); return new Date(y,m-1,d).toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'}).replace(',',''); };
+// ---------- Noor's page (supervisor): her shift, the verify queue, the team today ----------
+const qOpen={};
 function renderSupervisionPage(app, noor){
-  const d = todayKey();
-  const staff = VAS.filter(v=>v.role==='va');
-  const ne = getEntry(noor.id, d);
-  const nStatus = !ne.signIn ? 'not-in' : (!ne.signOut ? 'working' : 'done');
-  const nLiveHrs = hoursBetween(ne.signIn, ne.signOut || (nStatus==='working' ? new Date().toISOString() : null));
+  const today=todayKey(), now=new Date(), staff=VAS.filter(v=>v.role==='va');
+  const ne=getEntry(noor.id,today), live=!!ne.signIn&&!ne.signOut;
+  const ms=ne.signIn?((ne.signOut?new Date(ne.signOut):now)-new Date(ne.signIn)):0;
+  const dLabel=now.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'}).replace(',','').toUpperCase();
+  const wrap=document.createElement('div'); wrap.className='db va';
+  app.appendChild(wrap);
 
-  mountStatusCard(app, noor, {actions:true});
+  const head=document.createElement('div'); head.className='db-head n-head';
+  head.innerHTML=`
+    <div class="db-title"><span class="db-eye">TODAY · ${dLabel} · SUPERVISOR</span><h1>Hi, ${esc(noor.name)}</h1></div>
+    <div class="va-tools"><button class="va-lock" id="nLock" aria-label="Lock this tab" title="Lock this tab"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="3"/><path d="M8 11V8a4 4 0 018 0v3"/></svg></button></div>`;
+  wrap.appendChild(head);
+  head.querySelector('#nLock').onclick=()=>{ lockVa(noor.id); render(); };
 
-  staff.forEach(va=>{
-    const e = getEntry(va.id, d);
-    const t = totals(e);
-    const status = !e.signIn ? 'Not signed in' : (!e.signOut ? 'Working' : 'Signed out');
-    const hrs = hoursBetween(e.signIn, e.signOut || (status==='Working' ? new Date().toISOString() : null));
-    const card = document.createElement('div');
-    card.className='card overflow';
-    card.innerHTML = `
-      <h3>${va.name} <span class="muted" style="text-transform:none;letter-spacing:0;">&middot; ${va.shiftLabel}</span></h3>
-      <div class="grid3">
-        <div class="stat"><b>${status}</b><span>Status today</span></div>
-        <div class="stat"><b><span class="live-hours" data-signin="${e.signIn||''}" data-signout="${e.signOut||''}">${hrs.toFixed(2)}</span></b><span>Hours today</span></div>
-        <div class="stat"><b>${t.appts} / ${t.dms}</b><span>Appts / DMs</span></div>
-      </div>
-      <div class="ck-slots">${slotTiles(va,d,false)}</div>
-      <footer class="actions">
-        ${!e.submitted ? '<span class="tag off">Not submitted yet</span>' :
-          (e.verifiedByNoor ? '<span class="tag verified">Verified ✓</span>' : `<button class="btn lime" data-verify="${va.id}">Verify today's entry</button>`)}
-      </footer>`;
-    app.appendChild(card);
-    const btn = card.querySelector('[data-verify]');
-    if(btn) btn.onclick = ()=> writeEntry(va.id, d, { verifiedByNoor:true, verifiedAt:new Date().toISOString() });
+  // her own shift
+  const shift=document.createElement('section'); shift.className='va-shift'; shift.setAttribute('aria-label','Your shift');
+  shift.innerHTML=`
+    <div class="va-sh-top"><span><i class="db-dot ${live?'on':ne.signIn?'done':''}"></i>${live?'On shift':ne.signIn?'Shift done':'Not signed in'}</span><span>${ne.signIn?`${fmt24(ne.signIn)} → ${ne.signOut?fmt24(ne.signOut):'now'}`:''}</span></div>
+    <span class="va-clock live-hms" data-live="${live?1:0}" data-signin="${ne.signIn||''}">${fmtHMS(ms)}</span>
+    <div class="va-btns">
+      ${!ne.signIn?'<button class="va-btn in" data-a="in">Sign in</button>':''}
+      ${live?'<button class="va-btn out" data-a="out">Sign out</button>':''}
+      ${adminMode?`<button class="va-btn ghost" data-edit-time="${noor.id}|${today}">✎ Times</button>`:''}
+    </div>`;
+  wrap.appendChild(shift);
+  const bIn=shift.querySelector('[data-a=in]'); if(bIn) bIn.onclick=()=>writeEntry(noor.id,today,{signIn:new Date().toISOString()});
+  const bOut=shift.querySelector('[data-a=out]'); if(bOut) bOut.onclick=()=>writeEntry(noor.id,today,{signOut:new Date().toISOString()});
 
-    const days = [...Array(7)].map((_,i)=>{ const dt=new Date(); dt.setDate(dt.getDate()-i); return localKey(dt); });
-    const hist = document.createElement('div');
-    hist.className='card overflow';
-    hist.innerHTML = `<h3>${va.name} — last 7 days</h3>
-      <table class="rtable c3"><thead><tr><th>Date</th><th class="num">Hours</th><th class="num">Appts</th><th class="num">DMs</th><th>Check-ins</th><th>Submitted</th><th>Verified</th><th></th></tr></thead>
-      <tbody>${days.map(dt=>{
-        const he = getEntry(va.id, dt); const ht = totals(he); const hh = hoursBetween(he.signIn, he.signOut);
-        const acts = (he.submitted && !he.verifiedByNoor ? `<button class="btn ghost" data-verify-day="${va.id}_${dt}">Verify</button>` : '')
-          + (adminMode ? `<button class="ed" data-edit-time="${va.id}|${dt}">✎ ${fmtTime(he.signIn)}–${fmtTime(he.signOut)}</button>` : '')
-          + (adminMode && he.submitted ? `<button class="ed danger" data-unsub="${va.id}|${dt}">↺ Unsubmit</button>` : '');
-        return `<tr><td data-label="Date">${dt}</td><td class="num" data-label="Hours">${hh.toFixed(1)}</td><td class="num" data-label="Appts">${ht.appts}</td><td class="num" data-label="DMs">${ht.dms}</td>
-          <td data-label="Check-ins">${checkinCell(va,dt)}</td>
-          <td data-label="Submitted">${he.submitted ? '<span class="tag ok">Submitted</span>' : '<span class="tag off">Open</span>'}</td>
-          <td data-label="Verified">${he.verifiedByNoor ? '<span class="tag verified">Verified</span>' : '<span class="tag off">—</span>'}</td>
-          <td class="acts">${acts}</td>
-        </tr>`;
-      }).join('')}</tbody></table>`;
-    app.appendChild(hist);
-    hist.querySelectorAll('[data-verify-day]').forEach(b=>{
-      b.onclick = ()=>{
-        const raw = b.dataset.verifyDay; const idx = raw.indexOf('_');
-        const vid = raw.slice(0, idx), dt = raw.slice(idx+1);
-        writeEntry(vid, dt, { verifiedByNoor:true, verifiedAt:new Date().toISOString() });
-      };
-    });
-  });
+  // verify queue: every submitted VA day not yet verified, newest first
+  const queue=Object.values(entries).filter(e=>e&&e.submitted&&!e.verifiedByNoor&&staff.some(v=>v.id===e.vaId)).sort((a,b)=>a.date<b.date?1:a.date>b.date?-1:0);
+  const q=document.createElement('section'); q.className='db-sec';
+  q.innerHTML=`<div class="db-sh"><h2>To verify</h2><span class="db-eye">${queue.length?queue.length+' WAITING':'ALL CLEAR'}</span></div>
+    <div class="db-list">${queue.length?queue.map(e=>{
+      const va=staff.find(v=>v.id===e.vaId), t=totals({logs:[],...e}), key=entryKey(e.vaId,e.date), open=!!qOpen[key];
+      const hh=hoursBetween(e.signIn,e.signOut), slots=checkinSlots(va,e.date,{logs:[],...e});
+      return `<div class="db-row${open?' open':''}">
+        <div class="nq">
+          <button class="nq-main" data-q="${key}" aria-expanded="${open}">
+            <span class="db-av" aria-hidden="true">${esc(va.name[0])}</span>
+            <span class="db-who"><b>${esc(va.name)} · ${dayLabel(e.date)}</b><span>${e.signIn?hh.toFixed(1)+' h':'no times'} · ${t.appts} appt · ${t.dms} DMs · check-ins ${slots.filter(s=>s.rec).length}/${slots.length}</span></span>
+            <svg class="db-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <button class="nq-ok" data-vfy="${e.vaId}|${e.date}">✓ Verify</button>
+        </div>
+        ${open?`<div class="db-more nq-more">
+          <p>${e.signIn?`${fmt24(e.signIn)} → ${e.signOut?fmt24(e.signOut):'no sign-out'}`:'No sign-in recorded'}</p>
+          ${(e.logs||[]).length?`<p>${e.logs.map(l=>`${esc(l.account)} <span class="db-mut">${l.platform}</span> — ${l.appts} appt, ${l.dms} DMs`).join('<br>')}</p>`:'<p>No work logged.</p>'}
+          ${slots.length?`<div class="ck-slots mini">${slotTiles(va,e.date,false)}</div>`:''}
+          ${adminMode?`<div class="db-acts"><button class="ed" data-edit-time="${e.vaId}|${e.date}">✎ Times</button><button class="ed danger" data-unsub="${e.vaId}|${e.date}">↺ Unsubmit</button></div>`:''}
+        </div>`:''}
+      </div>`; }).join(''):'<p class="va-empty">Nothing waiting — every submitted day is verified.</p>'}</div>`;
+  wrap.appendChild(q);
+  q.querySelectorAll('[data-q]').forEach(b=>b.onclick=()=>{ qOpen[b.dataset.q]=!qOpen[b.dataset.q]; render(); });
+  q.querySelectorAll('[data-vfy]').forEach(b=>b.onclick=()=>{ const [id,dk]=b.dataset.vfy.split('|'); writeEntry(id,dk,{verifiedByNoor:true,verifiedAt:new Date().toISOString()}); toast(`Verified ${VAS.find(v=>v.id===id).name} · ${dayLabel(dk)}`); });
 
-  // Noor's own attendance history
-  const nDays = [...Array(7)].map((_,i)=>{ const dt=new Date(); dt.setDate(dt.getDate()-i); return localKey(dt); });
-  const nHist = document.createElement('div');
-  nHist.className='card overflow';
-  nHist.innerHTML = `<h3>Noor — attendance, last 7 days</h3>
-    <table class="rtable"><thead><tr><th>Date</th><th>Sign in</th><th>Sign out</th><th class="num">Hours</th>${adminMode?'<th></th>':''}</tr></thead>
-    <tbody>${nDays.map(dt=>{
-      const he = getEntry(noor.id, dt); const hh = hoursBetween(he.signIn, he.signOut);
-      return `<tr><td data-label="Date">${dt}</td><td data-label="Sign in">${fmtTime(he.signIn)}</td><td data-label="Sign out">${fmtTime(he.signOut)}</td><td class="num" data-label="Hours">${hh.toFixed(1)}</td>${adminMode?`<td><button class="ed" data-edit-time="${noor.id}|${dt}">✎ Edit</button></td>`:''}</tr>`;
-    }).join('')}</tbody></table>`;
-  app.appendChild(nHist);
+  // team today
+  const nowMin=minOf(now);
+  const team=document.createElement('section'); team.className='db-sec';
+  team.innerHTML=`<div class="db-sh"><h2>Team today</h2></div><div class="db-list">${staff.map(va=>{
+    const e=getEntry(va.id,today), t=totals(e), on=!!e.signIn&&!e.signOut, slots=checkinSlots(va,today);
+    const m=e.signIn?((e.signOut?new Date(e.signOut):now)-new Date(e.signIn)):0;
+    const status=on?`Working · <span class="live-hm" data-signin="${e.signIn}">${fmtHM(m)} h</span>`:e.signIn?`Signed out · ${fmtHM(m)} h`:nowMin<va.shiftStart*60?`Starts ${fmtMin(va.shiftStart*60)}`:'Not signed in';
+    return `<div class="db-row"><div class="db-rb nt">
+      <span class="db-av" aria-hidden="true">${esc(va.name[0])}</span>
+      <span class="db-who"><b>${esc(va.name)}</b><span><i class="db-dot ${on?'on':e.signIn?'done':''}"></i>${status}</span></span>
+      <span class="db-inl"><span><b>${t.appts}</b><small>APPTS</small></span><span><b>${t.dms}</b><small>DMS</small></span></span>
+      <span class="db-pips" role="img" aria-label="Check-ins: ${slots.filter(s=>s.rec).length} of ${slots.length} done">${slots.map(s=>`<i class="s-${e.signIn||s.rec?s.state:'upcoming'}"></i>`).join('')}</span>
+    </div></div>`; }).join('')}</div>`;
+  wrap.appendChild(team);
+
+  // last 7 days (folded): her hours + each VA's status
+  const days=[...Array(7)].map((_,i)=>shiftDay(today,-i)), open=!!histOpen[noor.id];
+  const tagFor=e=>e.verifiedByNoor?'<span class="tag verified">Verified</span>':e.submitted?'<span class="tag ok">To verify</span>':e.signIn?'<span class="tag off">Open</span>':'<span class="db-mut">—</span>';
+  const hist=document.createElement('section'); hist.className='db-plat'+(open?' open':'');
+  hist.innerHTML=`<button class="db-pb" aria-expanded="${open}"><b>Last 7 days</b><svg class="db-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+    ${open?`<div class="va-hist">${days.map(dt=>{ const he=getEntry(noor.id,dt);
+      return `<div class="va-h"><b class="va-hd">${dayLabel(dt)}</b><span>${he.signIn?hoursBetween(he.signIn,he.signOut).toFixed(1)+' h':'—'}</span>
+        ${staff.map(v=>`<span class="nh">${esc(v.name)} ${tagFor(getEntry(v.id,dt))}</span>`).join('')}
+        ${adminMode?`<span class="acts"><button class="ed" data-edit-time="${noor.id}|${dt}">✎</button></span>`:''}</div>`; }).join('')}</div>`:''}`;
+  wrap.appendChild(hist);
+  hist.querySelector('.db-pb').onclick=()=>{ histOpen[noor.id]=!open; render(); };
 }
 
 // ---------- VA page ("My shift") ----------
@@ -1634,7 +1587,7 @@ const SVG_CHEV_L='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6
 function renderVaPage(app, vaId){
   const va = VAS.find(v=>v.id===vaId);
   if(!isUnlocked(vaId)){ renderGate(app, va); return; }
-  if(va.role === 'supervisor'){ app.appendChild(clockBar()); renderSupervisionPage(app, va); return; }
+  if(va.role === 'supervisor'){ renderSupervisionPage(app, va); return; }
 
   // the page follows the picked day, so a missed day (e.g. after midnight) can still be finished
   const today = todayKey(), back = new Date(); back.setDate(back.getDate()-LOG_BACK_DAYS);
@@ -1764,7 +1717,7 @@ function renderVaPage(app, vaId){
   const hist = document.createElement('section'); hist.className = 'db-plat'+(open?' open':'');
   hist.innerHTML = `<button class="db-pb" aria-expanded="${open}"><b>Last 7 days</b><svg class="db-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
     ${open?`<div class="va-hist">${days.map(dt=>{ const he=getEntry(vaId,dt), ht=totals(he), hh=hoursBetween(he.signIn,he.signOut);
-      return `<div class="va-h${dt===d?' cur':''}"><button class="va-hd" data-day="${dt}">${dayTitle(dt)}</button>
+      return `<div class="va-h${dt===d?' cur':''}"><button class="va-hd" data-day="${dt}">${dayLabel(dt)}</button>
         <span>${he.signIn?hh.toFixed(1)+' h':'—'}</span><span>${ht.appts} appt · ${ht.dms} DMs</span><span>${checkinCell(va,dt)}</span>
         <span>${he.submitted?(he.verifiedByNoor?'<span class="tag verified">Verified</span>':'<span class="tag ok">Submitted</span>'):(he.signIn?'<span class="tag off">Open</span>':'')}</span>
         ${adminMode?`<span class="acts"><button class="ed" data-edit-time="${vaId}|${dt}">✎</button>${he.submitted?`<button class="ed danger" data-unsub="${vaId}|${dt}">↺</button>`:''}</span>`:''}</div>`; }).join('')}</div>`:''}`;
