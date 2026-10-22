@@ -804,30 +804,21 @@ button,input,select,textarea{font-family:inherit;}
 }
 
 /* ---- v16: passcode screen + iPhone form fixes ---- */
-.gt{max-width:420px;padding-top:clamp(8px,4vh,40px);}
-.gt-card{background:var(--ink);color:#fff;border-radius:24px;padding:28px 24px 22px;display:flex;flex-direction:column;gap:8px;}
-.gt-card.shake{animation:g2Shake .45s;}
-.gt-ico{width:52px;height:52px;border-radius:16px;background:#1C1C1A;display:grid;place-items:center;margin-bottom:10px;box-shadow:inset 0 0 0 1px #2A2A27;}
-.gt-ico svg{width:24px;height:24px;fill:none;stroke:var(--lime);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
-.gt-shackle{transition:transform .35s cubic-bezier(.3,1.6,.5,1);transform-origin:16px 11px;}
-.gt-card.ok .gt-shackle{transform:translateY(-3px) rotate(28deg);}
-.gt-card .db-eye{color:#A3A39C;}
-.gt-card h1{margin:2px 0 14px;font-size:30px;font-weight:700;letter-spacing:-.035em;line-height:1.1;}
-.gt-lbl{margin:0;font-size:13px;letter-spacing:0;text-transform:none;color:#A3A39C;}
+.gt{max-width:340px;margin:0 auto;padding:clamp(48px,16vh,140px) 0 40px;}
+.gt form{display:flex;flex-direction:column;gap:20px;}
+.gt form.shake{animation:g2Shake .45s;}
+.gt h1{margin:0;text-align:center;font-size:34px;font-weight:700;letter-spacing:-.035em;line-height:1.1;}
 .gt-field{position:relative;}
-.gt-field input{display:block;width:100%;box-sizing:border-box;height:56px;min-height:0;padding:0 56px 0 16px;border:1.5px solid #2A2A27;border-radius:14px;background:#141413;color:#fff;font-family:inherit;font-size:17px;outline:none;-webkit-appearance:none;appearance:none;}
-.gt-field input::placeholder{color:#6E6E68;font-family:inherit;font-size:15px;letter-spacing:0;text-transform:none;}
-.gt-field input:focus{border-color:var(--lime);box-shadow:0 0 0 3px rgba(216,255,41,.18);}
-.gt-field input.bad{border-color:#E0531F;}
-.gt-field input:disabled{background:#141413;color:#fff;}
-.gt-eye{position:absolute;right:6px;top:6px;width:44px;height:44px;border:0;border-radius:10px;background:transparent;color:#A3A39C;display:grid;place-items:center;cursor:pointer;}
-.gt-eye:hover{color:#fff;}
-.gt-eye svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
-.gt-err{margin:0;min-height:18px;font-size:13px;color:#FFB59A;}
-.gt-btn{height:56px;border:0;border-radius:16px;background:var(--lime);color:var(--ink);font-family:inherit;font-weight:700;font-size:16px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;}
-.gt-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;}
-.gt-card.ok .gt-btn{background:#fff;}
-.gt-note{margin:6px 0 0;text-align:center;font-size:12.5px;color:#8A8A84;}
+.gt-field input{display:block;width:100%;box-sizing:border-box;height:60px;min-height:0;padding:0 112px 0 20px;border:1px solid #E2E2DC;border-radius:18px;background:#fff;color:var(--ink);font-family:inherit;font-size:18px;outline:none;-webkit-appearance:none;appearance:none;transition:border-color .2s,box-shadow .2s;}
+.gt-field input::placeholder{color:#A3A39C;font-family:inherit;font-size:16px;letter-spacing:0;text-transform:none;}
+.gt-field input:focus{border-color:var(--ink);box-shadow:0 0 0 4px rgba(10,10,10,.06);}
+.gt-field input:disabled{background:#fff;color:var(--ink);}
+.gt-eye,.gt-go{position:absolute;top:8px;width:44px;height:44px;border:0;display:grid;place-items:center;cursor:pointer;}
+.gt-eye{right:60px;border-radius:12px;background:transparent;color:#8A8A84;} .gt-eye:hover{color:var(--ink);}
+.gt-go{right:8px;border-radius:13px;background:var(--ink);color:var(--lime);transition:background .2s,color .2s;}
+.gt-eye svg,.gt-go svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
+.gt form.ok .gt-go{background:var(--lime);color:var(--ink);}
+.gt-err{margin:-8px 0 0;min-height:18px;text-align:center;font-size:13.5px;color:#B3261E;}
 /* iPhone: plain buttons are blue by default, and date/time boxes ignore their column width and centre their text */
 button{color:inherit;}
 .te-mini{color:var(--ink);}
@@ -1522,39 +1513,35 @@ function renderDashboard(app){
 function renderGate(app, va){
   const EYE='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
   const EYEOFF='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.9 17.9A10.5 10.5 0 0 1 12 19C5.5 19 2 12 2 12a18 18 0 0 1 4.1-5.1M9.9 5.2A9.7 9.7 0 0 1 12 5c6.5 0 10 7 10 7a18 18 0 0 1-2.2 3.2M1 1l22 22"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>';
-  const wrap = document.createElement('div'); wrap.className = 'db gt';
+  const ARROW='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>', CHECK='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+  const wrap = document.createElement('div'); wrap.className = 'gt';
   wrap.innerHTML = `
-    <form class="gt-card" id="gateCard" autocomplete="off">
-      <span class="gt-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="3"/><path class="gt-shackle" d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>
-      <span class="db-eye">${esc(va.role==='supervisor'?'SUPERVISOR':va.shiftLabel.toUpperCase())}</span>
-      <h1>Hi, ${esc(va.name)}</h1>
-      <label for="gatePass" class="gt-lbl">Passcode</label>
+    <form id="gateCard" autocomplete="off">
+      <h1>${esc(va.name)}</h1>
       <div class="gt-field">
-        <input type="password" id="gatePass" placeholder="Enter your passcode" autocomplete="off" autocapitalize="off" spellcheck="false">
+        <input type="password" id="gatePass" placeholder="Passcode" aria-label="${esc(va.name)}'s passcode" autocomplete="off" autocapitalize="off" spellcheck="false">
         <button type="button" class="gt-eye" id="gateToggle" aria-label="Show passcode">${EYE}</button>
+        <button type="submit" class="gt-go" id="gateBtn" aria-label="Unlock">${ARROW}</button>
       </div>
       <p class="gt-err" id="gateErr" role="alert"></p>
-      <button type="submit" class="gt-btn" id="gateBtn"><span id="gateBtnTxt">Unlock</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
-      <p class="gt-note">Stays unlocked until you close or reload vibe.</p>
     </form>`;
   app.appendChild(wrap);
-  const card = wrap.querySelector('#gateCard'), input = wrap.querySelector('#gatePass'), err = wrap.querySelector('#gateErr'), btnTxt = wrap.querySelector('#gateBtnTxt');
+  const form = wrap.querySelector('#gateCard'), input = wrap.querySelector('#gatePass'), err = wrap.querySelector('#gateErr'), go = wrap.querySelector('#gateBtn');
   let busy = false;
-  card.onsubmit = ev=>{
+  form.onsubmit = ev=>{
     ev.preventDefault();
     if(busy) return;
     if(input.value === PASSCODES[va.id]){
       busy = true; input.disabled = true; err.textContent = '';
-      btnTxt.textContent = 'Unlocked'; card.classList.add('ok');
-      setTimeout(()=>{ unlockVa(va.id); render(); }, 600);
+      form.classList.add('ok'); go.innerHTML = CHECK;
+      setTimeout(()=>{ unlockVa(va.id); render(); }, 450);
     } else {
-      err.textContent = 'Wrong passcode — try again.';
-      input.classList.add('bad');
-      card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
+      err.textContent = 'Wrong passcode';
+      form.classList.remove('shake'); void form.offsetWidth; form.classList.add('shake');
       input.value = ''; input.focus();
     }
   };
-  input.oninput = ()=>{ input.classList.remove('bad'); err.textContent = ''; };
+  input.oninput = ()=>{ err.textContent = ''; };
   const tog = wrap.querySelector('#gateToggle');
   tog.onclick = ()=>{ const show = input.type==='password'; input.type = show?'text':'password'; tog.innerHTML = show?EYEOFF:EYE; tog.setAttribute('aria-label', show?'Hide passcode':'Show passcode'); input.focus(); };
   input.focus({preventScroll:true});
