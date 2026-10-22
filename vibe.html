@@ -670,6 +670,70 @@ button,input,select,textarea{font-family:inherit;}
   .db-pips{width:54px;}
 }
 @media (max-width:380px){ .db-more{padding-left:14px;} }
+
+/* ---- v13: VA page ("My shift") ---- */
+.db-due:focus:not(:focus-visible),.db-rb:focus:not(:focus-visible),.db-pb:focus:not(:focus-visible){outline:none;}
+.va{max-width:640px;}
+.va-tools{display:flex;gap:8px;align-items:center;}
+.va-lock{width:48px;height:48px;border-radius:12px;border:1px solid #E9E9E4;background:#fff;display:grid;place-items:center;cursor:pointer;color:var(--ink);flex-shrink:0;}
+.va-lock svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.va-shift{background:var(--ink);color:#fff;border-radius:22px;padding:20px;display:flex;flex-direction:column;gap:16px;}
+.va-sh-top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-size:13.5px;color:#C9C9C2;}
+.va-sh-top span{display:inline-flex;align-items:center;gap:8px;}
+.va-clock{font-family:var(--f-acc);font-weight:600;font-size:50px;line-height:1;letter-spacing:-.01em;font-variant-numeric:tabular-nums;}
+.va-track{position:relative;height:6px;border-radius:3px;background:#2A2A27;margin:4px 7px 8px;}
+.va-fill{position:absolute;left:0;top:0;bottom:0;border-radius:3px;background:#fff;}
+.va-track i{position:absolute;top:-4px;width:14px;height:14px;margin-left:-7px;border-radius:50%;box-sizing:border-box;border:3px solid var(--ink);background:#5E5E59;}
+.va-track i.s-done{background:#fff;} .va-track i.s-late,.va-track i.s-partial{background:#A3A39C;}
+.va-track i.s-open{background:var(--lime);} .va-track i.s-overdue,.va-track i.s-missed{background:#E0531F;}
+.va-ends{display:flex;justify-content:space-between;font-family:var(--f-acc);font-weight:600;font-size:12px;letter-spacing:.06em;color:#8A8A84;}
+.va-flag{margin:0;font-size:13px;color:#FFB59A;}
+.va-btns{display:flex;gap:8px;} .va-btns:empty{display:none;}
+.va-btn{height:52px;padding:0 20px;border-radius:14px;border:0;font-family:inherit;font-weight:700;font-size:15.5px;cursor:pointer;}
+.va-btns .va-btn{flex:1;}
+.va-btn.in{background:var(--lime);color:var(--ink);}
+.va-btn.out{background:#1C1C1A;color:#fff;box-shadow:inset 0 0 0 1px #34342F;}
+.va-btn.ghost{flex:0 0 auto!important;background:transparent;color:#fff;box-shadow:inset 0 0 0 1px #34342F;}
+.va-card{background:#fff;border:1px solid #E9E9E4;border-radius:20px;padding:16px 18px;}
+.va-ck-h{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+.va-ck-h b{font-size:16px;}
+.va-card .ck-hint{margin:10px 0 0;}
+.va-row{padding:14px 18px;display:flex;flex-direction:column;gap:10px;}
+.va-row + .va-row{border-top:1px solid #F1F1EC;}
+.va-acc{display:flex;align-items:baseline;gap:8px;min-width:0;}
+.va-acc b{font-size:15.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.va-acc span{font-size:12.5px;color:#5E5E59;}
+.va-acc .sl-x{margin-left:auto;align-self:center;}
+.va-ctrs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}
+.va-ctr{display:flex;align-items:center;background:#F6F6F3;border-radius:13px;padding:3px;}
+.va-ctr button{width:44px;height:44px;flex-shrink:0;border:0;border-radius:10px;background:transparent;font-family:inherit;font-size:22px;line-height:1;cursor:pointer;color:var(--ink);}
+.va-ctr button[data-step="1"]{background:#fff;box-shadow:0 1px 2px rgba(10,10,10,.08);}
+.va-ctr button:disabled{opacity:.3;cursor:default;}
+.va-ctr label{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;margin:0;text-transform:none;letter-spacing:0;color:var(--ink);}
+.va-ctr input{width:100%;max-width:80px;height:24px;min-height:0;padding:0;border:0;background:transparent;text-align:center;font-family:var(--f-acc);font-weight:600;font-size:20px;color:var(--ink);-moz-appearance:textfield;appearance:textfield;}
+.va-ctr input::-webkit-outer-spin-button,.va-ctr input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+.va-ctr input:focus{outline:2px solid var(--ink);outline-offset:2px;border-radius:6px;}
+.va-ctr input:disabled{background:transparent;color:var(--ink);}
+.va-ctr small{font-family:var(--f-acc);font-weight:600;font-size:9.5px;letter-spacing:.12em;color:#5E5E59;}
+.va-add{padding:12px 18px 16px;border-top:1px solid #F1F1EC;}
+.va-work .va-empty + .va-add{border-top:0;padding-top:0;}
+.va-add select{width:100%;height:48px;min-height:0;border:1.5px dashed #D6D6CF;border-radius:12px;background:#fff;font-family:inherit;font-size:14.5px;font-weight:600;padding:0 12px;color:#3A3A36;cursor:pointer;}
+.va-empty{margin:0;padding:18px;font-size:14px;color:#5E5E59;}
+.va-submit{position:sticky;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:5;display:flex;align-items:center;gap:10px;padding:10px 10px 10px 16px;background:rgba(255,255,255,.94);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid #E9E9E4;border-radius:18px;box-shadow:0 12px 30px -18px rgba(10,10,10,.35);}
+.va-submit > span{flex:1;font-size:13.5px;color:#5E5E59;}
+.va-submit > span.warn{color:#B3261E;font-weight:600;}
+.va-submit .va-btn{height:46px;background:var(--ink);color:#fff;}
+.va-submit .va-btn:disabled{background:#E9E9E4;color:#8A8A84;cursor:default;}
+.va-hist{padding:0 18px 8px;}
+.va-h{display:flex;align-items:center;gap:6px 14px;flex-wrap:wrap;padding:12px 0;border-top:1px solid #F1F1EC;font-size:13.5px;color:#3A3A36;}
+.va-h .tag{margin:0;}
+.va-h.cur .va-hd{text-decoration:underline;text-underline-offset:3px;}
+.va-hd{border:0;background:none;padding:6px 0;font-family:inherit;font-weight:700;font-size:14px;color:var(--ink);cursor:pointer;min-width:120px;text-align:left;}
+@media (max-width:700px){
+  .va-tools{width:100%;} .va-tools .db-step{flex:1;}
+  .va-clock{font-size:44px;}
+  .va-row{padding:12px 14px;} .va-add{padding:12px 14px 14px;} .va-hist{padding:0 14px 6px;}
+}
 </style>
 </head>
 <body>
@@ -1564,134 +1628,157 @@ function renderSupervisionPage(app, noor){
   app.appendChild(nHist);
 }
 
-// ---------- VA page ----------
-// ---------- per-member notifications (shown only on that member's own tab) ----------
-function mountMemberAlerts(parent, va){
-  if(va.shiftStart==null) return;
-  const d=todayKey(), e=getEntry(va.id,d), now=new Date(), nowMin=now.getHours()*60+now.getMinutes();
-  const list=[];
-  if(!e.signIn && nowMin>va.shiftStart*60+5) list.push({m:`You haven't signed in yet.`});
-  if(e.signIn && !e.signOut && nowMin>va.shiftEnd*60) list.push({m:`You're still clocked in past your shift end.`});
-  if(e.signIn && !e.submitted && nowMin>va.shiftEnd*60) list.push({m:`You haven't submitted today's log.`});
-  if(e.submitted && !e.verifiedByNoor) list.push({m:`Your day is submitted and awaiting verification.`,info:1});
-  checkinSlots(va,d).forEach(s=>{
-    if(s.state==='open') list.push({m:`Check-in ${s.n} is due by ${fmtMin(s.due)} — reply to all DMs and latest-post comments, then tick them off.`,ck:s.n});
-    if(s.state==='overdue') list.push({m:`Check-in ${s.n} (${fmtMin(s.due)}) is overdue.`,ck:s.n});
-  });
-  if(!list.length) return;
-  const al=document.createElement('div'); al.className='alerts'; al.style.marginBottom='14px';
-  al.innerHTML=list.map(a=>`<div class="alert ${a.info?'info':''}">${a.m}${a.ck?`<button class="ed" data-ck-open="${va.id}|${d}|${a.ck}">Check in</button>`:(adminMode&&!a.info?`<button class="ed" data-edit-time="${va.id}|${d}">✎ Fix time</button>`:'')}</div>`).join('');
-  parent.appendChild(al);
-}
-
+// ---------- VA page ("My shift") ----------
+const histOpen={};
+const SVG_CHEV_L='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>', SVG_CHEV_R='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>';
 function renderVaPage(app, vaId){
   const va = VAS.find(v=>v.id===vaId);
   if(!isUnlocked(vaId)){ renderGate(app, va); return; }
-  app.appendChild(clockBar());
-  if(va.role === 'supervisor'){ renderSupervisionPage(app, va); return; }
+  if(va.role === 'supervisor'){ app.appendChild(clockBar()); renderSupervisionPage(app, va); return; }
 
-  // the log follows the day picked on the card, so a missed day (e.g. after midnight) can still be finished
+  // the page follows the picked day, so a missed day (e.g. after midnight) can still be finished
   const today = todayKey(), back = new Date(); back.setDate(back.getDate()-LOG_BACK_DAYS);
-  const d = getViewDate(vaId), isToday = d === today;
+  const d = getViewDate(vaId), isToday = d === today, now = new Date(), nowMin = minOf(now);
   const tooOld = !adminMode && d < localKey(back);
-  const e = getEntry(vaId, d);
-  const t = totals(e);
+  const e = getEntry(vaId, d), t = totals(e);
   const locked = (e.submitted && !adminMode) || tooOld;
-  const dayName = isToday ? 'today' : (([y,m,dd]) => dd+' '+MONTH_NAMES[m-1].slice(0,3))(d.split('-').map(Number));
-  const status = !e.signIn ? 'not-in' : (!e.signOut ? 'working' : 'done');
-  const liveHrs = hoursBetween(e.signIn, e.signOut || (status==='working'&&isToday?new Date().toISOString():null));
+  const live = isToday && !!e.signIn && !e.signOut;
+  const ms = e.signIn ? ((e.signOut?new Date(e.signOut):(live?now:new Date(e.signIn))) - new Date(e.signIn)) : 0;
+  const [yy,mm,dd] = d.split('-').map(Number);
+  const dLabel = new Date(yy,mm-1,dd).toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'}).replace(',','').toUpperCase();
+  const start = va.shiftStart*60, end = va.shiftEnd*60;
+  const slots = checkinSlots(va, d);
+  const st = s => (e.signIn||s.rec) ? s.state : 'upcoming';
 
-  const minutesOfDay = dt => dt.getHours()*60 + dt.getMinutes();
-  const lateIn = e.signIn && minutesOfDay(new Date(e.signIn)) > va.shiftStart*60 + 5; // 5 min grace
-  const earlyOut = e.signOut && minutesOfDay(new Date(e.signOut)) < va.shiftEnd*60;
+  const wrap = document.createElement('div'); wrap.className = 'db va';
+  app.appendChild(wrap);
 
-  mountStatusCard(app, va, {actions:true});
-  mountMemberAlerts(app, va);
+  // head: greeting, day switcher, lock
+  const head = document.createElement('div'); head.className = 'db-head';
+  head.innerHTML = `
+    <div class="db-title"><span class="db-eye">${isToday?'TODAY · ':''}${dLabel} · ${esc(va.shiftLabel).toUpperCase()}</span><h1>Hi, ${esc(va.name)}</h1></div>
+    <div class="va-tools">
+      <div class="db-step">
+        <button id="vPrev" aria-label="Previous day">${SVG_CHEV_L}</button>
+        <label class="db-date"><span>${pad2(dd)} ${MONTH_NAMES[mm-1].slice(0,3).toUpperCase()}</span><input type="date" id="vDate" value="${d}" max="${today}" aria-label="Pick a day"></label>
+        <button id="vNext" aria-label="Next day" ${isToday?'disabled':''}>${SVG_CHEV_R}</button>
+        ${isToday?'':'<button id="vToday" class="db-today">Today</button>'}
+      </div>
+      <button class="va-lock" id="vLock" aria-label="Lock this tab" title="Lock this tab"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="3"/><path d="M8 11V8a4 4 0 018 0v3"/></svg></button>
+    </div>`;
+  wrap.appendChild(head);
 
-  const ckOn = remindOn(vaId);
-  const canTest = ckOn && 'Notification' in window && Notification.permission==='granted';
-  const ck = document.createElement('div');
-  ck.className='card';
+  // shift card
+  let statusText, dot = '';
+  if(live){ statusText = 'On shift'; dot = 'on'; }
+  else if(e.signIn && e.signOut){ statusText = 'Shift done'; dot = 'done'; }
+  else if(e.signIn){ statusText = 'No sign-out'; dot = 'warn'; }
+  else statusText = isToday ? (nowMin < start ? `Shift starts ${fmtMin(start)}` : 'Not signed in') : 'Not signed in';
+  const cur = live ? nowMin : e.signOut ? minOf(new Date(e.signOut)) : e.signIn ? minOf(new Date(e.signIn)) : start;
+  const pos = m => Math.max(0, Math.min(100, (m-start)/(end-start)*100));
+  const flags = [];
+  if(e.signIn && minOf(new Date(e.signIn)) > start+5) flags.push('Late sign-in');
+  if(e.signOut && minOf(new Date(e.signOut)) < end) flags.push('Early sign-out');
+  if(live && nowMin > end) flags.push(`Still clocked in after ${fmtMin(end)}`);
+  const shift = document.createElement('section'); shift.className = 'va-shift'; shift.setAttribute('aria-label','Shift');
+  shift.innerHTML = `
+    <div class="va-sh-top"><span><i class="db-dot ${dot}"></i>${statusText}</span><span>${e.signIn?`${fmt24(e.signIn)} → ${e.signOut?fmt24(e.signOut):'now'}`:''}</span></div>
+    <span class="va-clock live-hms" data-live="${live?1:0}" data-signin="${e.signIn||''}">${fmtHMS(ms)}</span>
+    <div>
+      <div class="va-track"><span class="va-fill" style="width:${e.signIn?pos(cur):0}%"></span>${slots.map(s=>`<i class="s-${st(s)}" style="left:${pos(s.due)}%" title="Check-in ${s.n} · ${fmtMin(s.due)}"></i>`).join('')}</div>
+      <div class="va-ends"><span>${fmtMin(start)}</span><span>${fmtMin(end)}</span></div>
+    </div>
+    ${flags.length?`<p class="va-flag">${flags.join(' · ')}</p>`:''}
+    <div class="va-btns">
+      ${isToday&&!e.signIn?'<button class="va-btn in" data-a="in">Sign in</button>':''}
+      ${live?'<button class="va-btn out" data-a="out">Sign out</button>':''}
+      ${adminMode?`<button class="va-btn ghost" data-edit-time="${vaId}|${d}">✎ Times</button>`:''}
+    </div>`;
+  wrap.appendChild(shift);
+  const bIn = shift.querySelector('[data-a=in]'); if(bIn) bIn.onclick = ()=>writeEntry(vaId, today, {signIn:new Date().toISOString()});
+  const bOut = shift.querySelector('[data-a=out]'); if(bOut) bOut.onclick = ()=>writeEntry(vaId, today, {signOut:new Date().toISOString()});
+
+  // check-ins that need doing now
+  if(isToday && e.signIn) slots.filter(s=>s.state==='open'||s.state==='overdue').forEach(s=>{
+    const b = document.createElement('button'); b.className = 'db-due'+(s.state==='overdue'?' late':'');
+    b.dataset.ckOpen = `${vaId}|${d}|${s.n}`;
+    b.innerHTML = `<span class="db-badge">${s.state==='overdue'?'OVERDUE':'DUE'}</span><span class="db-due-t"><b>Check-in ${s.n}</b> · reply to every DM and latest-post comment by ${fmtMin(s.due)}</span>${SVG_CHEV_R}`;
+    wrap.appendChild(b);
+  });
+
+  // check-ins + reminders
+  const ckOn = remindOn(vaId), canTest = ckOn && 'Notification' in window && Notification.permission==='granted';
+  const ck = document.createElement('section'); ck.className = 'va-card';
   ck.innerHTML = `
-    <div class="ck-head"><h2>Reply check-ins${isToday?'':' · '+dayName}</h2>
-      <span class="ck-btns">${canTest?'<button class="ed" id="ckTest">Test</button>':''}<button class="ed ${ckOn?'on':''}" data-remind="${vaId}">${ckOn?'🔔 Reminders on':'🔕 Turn on reminders'}</button></span></div>
-    <p class="muted">Three times a shift, go through every account: reply to all DMs and to the comments on the latest post, then tick each one off. Each check-in opens ${CHECKIN_EARLY} min before its time.</p>
-    ${ckOn?`<p class="ck-hint">${pushNote(vaId)}</p>`:''}
-    <div class="ck-slots">${slotTiles(va,d,true)}</div>`;
-  app.appendChild(ck);
+    <div class="va-ck-h"><b>Check-ins</b><span class="ck-btns">${canTest?'<button class="ed" id="ckTest">Test</button>':''}<button class="ed ${ckOn?'on':''}" data-remind="${vaId}">${ckOn?'🔔 Reminders on':'🔕 Reminders off'}</button></span></div>
+    <div class="ck-slots mini">${slotTiles(va,d,true)}</div>
+    ${ckOn?`<p class="ck-hint">${pushNote(vaId)}</p>`:''}`;
+  wrap.appendChild(ck);
   const ckTest = ck.querySelector('#ckTest');
   if(ckTest) ckTest.onclick = ()=>showNote('vibe test',{body:`Notifications work on this device, ${va.name}.`,tag:'vibe-test-'+vaId},vaId);
 
-  const form = document.createElement('div');
-  form.className='card';
-  form.innerHTML = `
-    <h2>Log ${isToday?"today's":dayName+"'s"} work</h2>
-    <p class="muted" style="margin-bottom:14px;">Add one row per account you worked on ${dayName}.${isToday?' Missed a day? Pick it in the date box above.':''}</p>
-    <div class="form-row">
-      <div><label>Platform</label><select id="fPlatform" ${locked?'disabled':''}>${PLATFORMS.map(p=>`<option>${p}</option>`).join('')}</select></div>
-      <div><label>Account</label><select id="fAccount" ${locked?'disabled':''}>${accountsFor(PLATFORMS[0]).map(a=>`<option>${a}</option>`).join('')}</select></div>
-      <div><label>Appointments</label><input type="number" inputmode="numeric" min="0" id="fAppts" value="0" ${locked?'disabled':''}></div>
-      <div><label>DMs answered</label><input type="number" inputmode="numeric" min="0" id="fDms" value="0" ${locked?'disabled':''}></div>
-      <div><button class="btn" id="addRow" ${locked?'disabled':''}>+ Add</button></div>
-    </div>
-    <div class="overflow">
-    <table class="rtable"><thead><tr><th>Platform</th><th>Account</th><th class="num">Appointments</th><th class="num">DMs</th>${locked?'':'<th></th>'}</tr></thead>
-    <tbody id="logRows">
-      ${e.logs.length===0 ? `<tr><td colspan="${locked?4:5}" class="muted">No entries yet.</td></tr>` : e.logs.map((l,i)=>`
-      <tr><td data-label="Platform">${l.platform}</td><td data-label="Account">${l.account}</td><td class="num" data-label="Appointments">${l.appts}</td><td class="num" data-label="DMs">${l.dms}</td>
-      ${locked?'':`<td><button class="rm" data-i="${i}">Remove</button></td>`}</tr>`).join('')}
-    </tbody></table>
-    </div>
-    <div class="grid3" style="margin-top:16px;">
-      <div class="stat"><b>${t.appts}</b><span>Appointments ${dayName}</span></div>
-      <div class="stat"><b>${t.dms}</b><span>DMs answered ${dayName}</span></div>
-      <div class="stat"><b>${liveHrs.toFixed(1)}</b><span>Hours worked ${dayName}</span></div>
-    </div>
-    <footer class="actions">
-      <button class="btn lime" id="submitDay" ${locked||e.logs.length===0?'disabled':''}>${e.submitted?'Re-submit day':'Submit day'}</button>
-      ${e.submitted&&adminMode?`<button class="btn ghost" data-unsub="${vaId}|${d}">↺ Unsubmit day</button>`:''}
-      ${tooOld && !e.submitted ? `<span class="lock-note">Older than ${LOG_BACK_DAYS} days — ask an admin to log this day.</span>` : ''}
-      ${e.submitted ? `<span class="lock-note">${locked ? 'Submitted — locked. Only an admin can edit this now.' : 'Admin mode: editing an already-submitted day.'}</span>` : ''}
-    </footer>`;
-  app.appendChild(form);
+  // work: one row per account with counters
+  const rows = [];
+  e.logs.forEach(l=>{ const r = rows.find(x=>x.platform===l.platform&&x.account===l.account);
+    if(r){ r.appts+=Number(l.appts||0); r.dms+=Number(l.dms||0); } else rows.push({platform:l.platform, account:l.account, appts:Number(l.appts||0), dms:Number(l.dms||0)}); });
+  const save = ()=>writeEntry(vaId, d, {logs: rows.map(r=>({...r}))});
+  const ctr = (r,i,f,label,aria)=>`<div class="va-ctr">
+      <button data-i="${i}" data-f="${f}" data-step="-1" aria-label="One fewer ${aria}" ${locked||!r[f]?'disabled':''}>−</button>
+      <label><input type="number" inputmode="numeric" min="0" data-i="${i}" data-f="${f}" value="${r[f]}" aria-label="${aria}s on ${esc(r.account)}" ${locked?'disabled':''}><small>${label}</small></label>
+      <button data-i="${i}" data-f="${f}" data-step="1" aria-label="One more ${aria}" ${locked?'disabled':''}>+</button></div>`;
+  const have = new Set(rows.map(r=>r.platform+'|'+r.account));
+  const work = document.createElement('section'); work.className = 'db-sec';
+  work.innerHTML = `
+    <div class="db-sh"><h2>${isToday?"Today's work":'Work'}</h2><span class="db-eye">${t.appts} APPTS · ${t.dms} DMS</span></div>
+    <div class="db-list va-work">
+      ${rows.length?rows.map((r,i)=>`<div class="va-row">
+        <div class="va-acc"><b>${esc(r.account)}</b><span>${r.platform}</span>${!locked&&!r.dms&&!r.appts?`<button class="sl-x" data-rm="${i}" aria-label="Remove ${esc(r.account)}">×</button>`:''}</div>
+        <div class="va-ctrs">${ctr(r,i,'dms','DMS','DM')}${ctr(r,i,'appts','APPTS','appointment')}</div>
+      </div>`).join(''):`<p class="va-empty">${locked?'Nothing was logged.':'Nothing logged yet — add the first account you work on.'}</p>`}
+      ${locked?'':`<div class="va-add"><select id="vAdd" aria-label="Add an account"><option value="">+ Add an account</option>${PLATFORMS.map(p=>`<optgroup label="${p}">${accountsFor(p).filter(a=>!have.has(p+'|'+a)).map(a=>`<option value="${esc(p+'|'+a)}">${esc(a)}</option>`).join('')}</optgroup>`).join('')}</select></div>`}
+    </div>`;
+  wrap.appendChild(work);
+  work.querySelectorAll('[data-step]').forEach(b=>b.onclick=()=>{ const r=rows[Number(b.dataset.i)]; r[b.dataset.f]=Math.max(0,r[b.dataset.f]+Number(b.dataset.step)); save(); });
+  work.querySelectorAll('input[data-f]').forEach(inp=>inp.onchange=()=>{ rows[Number(inp.dataset.i)][inp.dataset.f]=Math.max(0,Math.floor(Number(inp.value)||0)); save(); });
+  work.querySelectorAll('[data-rm]').forEach(b=>b.onclick=()=>{ rows.splice(Number(b.dataset.rm),1); save(); });
+  const add = work.querySelector('#vAdd');
+  if(add) add.onchange=()=>{ if(!add.value) return; const i=add.value.indexOf('|'); rows.push({platform:add.value.slice(0,i), account:add.value.slice(i+1), appts:0, dms:0}); save(); };
 
-  form.querySelector('#fPlatform').onchange = ev=>{
-    const fAccount = form.querySelector('#fAccount');
-    fAccount.innerHTML = accountsFor(ev.target.value).map(a=>`<option>${a}</option>`).join('');
-  };
-  form.querySelector('#addRow').onclick = ()=>{
-    const platform = form.querySelector('#fPlatform').value;
-    const account = form.querySelector('#fAccount').value;
-    const appts = Number(form.querySelector('#fAppts').value||0);
-    const dms = Number(form.querySelector('#fDms').value||0);
-    const logs = [...e.logs, {platform,account,appts,dms}];
-    writeEntry(vaId, d, { logs });
-  };
-  form.querySelectorAll('.rm').forEach(btn=>{
-    btn.onclick = ()=>{
-      const logs = e.logs.filter((_,idx)=> idx !== Number(btn.dataset.i));
-      writeEntry(vaId, d, { logs });
-    };
-  });
-  const submitBtn = form.querySelector('#submitDay');
-  if(submitBtn) submitBtn.onclick = ()=> writeEntry(vaId, d, { submitted: true });
+  // submit bar
+  let msg, warn = false;
+  if(tooOld && !e.submitted) msg = `Older than ${LOG_BACK_DAYS} days — ask an admin to log this day.`;
+  else if(e.submitted && e.verifiedByNoor) msg = 'Submitted · verified ✓';
+  else if(e.submitted) msg = adminMode ? 'Submitted · god mode can still edit' : 'Submitted · waiting for Noor';
+  else if(isToday && nowMin < end) msg = 'Submit when your shift ends';
+  else if(e.signIn){ msg = isToday ? 'Your shift has ended — submit your day' : 'Not submitted yet'; warn = true; }
+  else msg = 'Not submitted';
+  const bar = document.createElement('div'); bar.className = 'va-submit';
+  bar.innerHTML = `<span class="${warn?'warn':''}">${msg}</span>
+    ${e.submitted&&adminMode?`<button class="ed danger" data-unsub="${vaId}|${d}">↺ Unsubmit</button>`:''}
+    ${e.submitted&&!adminMode?'':`<button class="va-btn" id="vSubmit" ${locked||!rows.length?'disabled':''}>${e.submitted?'Re-submit':'Submit day'}</button>`}`;
+  wrap.appendChild(bar);
+  const sub = bar.querySelector('#vSubmit'); if(sub) sub.onclick = ()=>writeEntry(vaId, d, {submitted:true});
 
-  // history (last 7 days incl today)
-  const hist = document.createElement('div');
-  hist.className='card overflow';
-  const days = [...Array(7)].map((_,i)=>{
-    const dt = new Date(); dt.setDate(dt.getDate()-i);
-    return localKey(dt);
-  });
-  hist.innerHTML = `<h3>Last 7 days</h3>
-    <table class="rtable c3"><thead><tr><th>Date</th><th>Sign in</th><th>Sign out</th><th class="num">Hours</th><th class="num">Appts</th><th class="num">DMs</th><th>Check-ins</th><th>Status</th>${adminMode?'<th></th>':''}</tr></thead>
-    <tbody>${days.map(dt=>{
-      const he = getEntry(vaId, dt);
-      const ht = totals(he);
-      const hh = hoursBetween(he.signIn, he.signOut);
-      return `<tr><td data-label="Date">${dt}</td><td data-label="Sign in">${fmtTime(he.signIn)}</td><td data-label="Sign out">${fmtTime(he.signOut)}</td><td class="num" data-label="Hours">${hh.toFixed(1)}</td><td class="num" data-label="Appts">${ht.appts}</td><td class="num" data-label="DMs">${ht.dms}</td><td data-label="Check-ins">${checkinCell(va,dt)}</td><td data-label="Status" class="full">${he.submitted?'<span class="tag ok">Submitted</span>':(he.signIn?'<span class="tag off">Open</span>':'—')}</td>${adminMode?`<td class="acts"><button class="ed" data-edit-time="${vaId}|${dt}">✎ Edit</button>${he.submitted?`<button class="ed danger" data-unsub="${vaId}|${dt}">↺ Unsubmit</button>`:''}</td>`:''}</tr>`;
-    }).join('')}</tbody></table>`;
-  app.appendChild(hist);
+  // last 7 days (folded)
+  const days = [...Array(7)].map((_,i)=>shiftDay(today,-i)), open = !!histOpen[vaId];
+  const hist = document.createElement('section'); hist.className = 'db-plat'+(open?' open':'');
+  hist.innerHTML = `<button class="db-pb" aria-expanded="${open}"><b>Last 7 days</b><svg class="db-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+    ${open?`<div class="va-hist">${days.map(dt=>{ const he=getEntry(vaId,dt), ht=totals(he), hh=hoursBetween(he.signIn,he.signOut);
+      return `<div class="va-h${dt===d?' cur':''}"><button class="va-hd" data-day="${dt}">${dayTitle(dt)}</button>
+        <span>${he.signIn?hh.toFixed(1)+' h':'—'}</span><span>${ht.appts} appt · ${ht.dms} DMs</span><span>${checkinCell(va,dt)}</span>
+        <span>${he.submitted?(he.verifiedByNoor?'<span class="tag verified">Verified</span>':'<span class="tag ok">Submitted</span>'):(he.signIn?'<span class="tag off">Open</span>':'')}</span>
+        ${adminMode?`<span class="acts"><button class="ed" data-edit-time="${vaId}|${dt}">✎</button>${he.submitted?`<button class="ed danger" data-unsub="${vaId}|${dt}">↺</button>`:''}</span>`:''}</div>`; }).join('')}</div>`:''}`;
+  wrap.appendChild(hist);
+  hist.querySelector('.db-pb').onclick = ()=>{ histOpen[vaId]=!open; render(); };
+  hist.querySelectorAll('[data-day]').forEach(b=>b.onclick=()=>{ viewDates[vaId]=b.dataset.day; render(); window.scrollTo({top:0}); });
+
+  // head controls
+  const go = k=>{ viewDates[vaId] = k>=today ? today : k; render(); };
+  head.querySelector('#vPrev').onclick = ()=>go(shiftDay(d,-1));
+  head.querySelector('#vNext').onclick = ()=>go(shiftDay(d,1));
+  head.querySelector('#vDate').onchange = ev=>{ if(ev.target.value) go(ev.target.value); };
+  const vt = head.querySelector('#vToday'); if(vt) vt.onclick = ()=>go(today);
+  head.querySelector('#vLock').onclick = ()=>{ lockVa(vaId); render(); };
 }
 
 // ---------- settings: Supreme Leader → Settings writes vibe_settings/main; anything missing falls back to the defaults at the top ----------
