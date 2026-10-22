@@ -746,6 +746,61 @@ button,input,select,textarea{font-family:inherit;}
 .nt{cursor:default;} .nt:hover{background:none;}
 .nh{display:inline-flex;align-items:center;gap:6px;} .nh .tag{margin:0;}
 @media (max-width:700px){ .n-head{flex-direction:row!important;align-items:flex-end;} .n-head .va-tools{width:auto;} .nq{padding-right:12px;} .nq-main{padding-left:14px;gap:12px;} .nq-more{padding-left:14px;} }
+
+/* ---- v15: Supreme Leader in the new look ---- */
+.sl{max-width:920px;}
+.sl-tabs{display:flex;gap:2px;background:#fff;border:1px solid #E9E9E4;border-radius:14px;padding:4px;overflow-x:auto;scrollbar-width:none;}
+.sl-tabs::-webkit-scrollbar{display:none;}
+.sl-tabs button{flex:1 0 auto;height:42px;padding:0 16px;border:0;border-radius:10px;background:none;font-family:inherit;font-size:14px;font-weight:600;color:#5E5E59;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap;}
+.sl-tabs button:hover{color:var(--ink);}
+.sl-tabs button.on{background:var(--ink);color:#fff;}
+.sl-tabs .n{font-family:var(--f-acc);font-size:11px;font-weight:700;background:var(--lime);color:var(--ink);padding:1px 7px;border-radius:999px;}
+.sl-in{display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap;padding:14px 18px;}
+.sl-in + .sl-in{border-top:1px solid #F1F1EC;}
+.sl-k{width:10px;height:10px;border-radius:50%;flex-shrink:0;background:var(--ink);}
+.sl-k.late{background:#C2410C;} .sl-k.info{background:var(--lime);box-shadow:inset 0 0 0 1.5px var(--ink);}
+.sl-it{flex:1 1 220px;min-width:0;display:flex;flex-direction:column;}
+.sl-it b{font-size:15px;} .sl-it span{font-size:13px;color:#5E5E59;}
+.sl-ia{display:flex;gap:8px;margin-left:auto;}
+.sl .ed{min-height:40px;padding:0 14px;border-radius:11px;font-size:13.5px;font-family:inherit;}
+.sl-pri{min-height:40px;padding:0 16px;border:0;border-radius:11px;background:var(--ink);color:#fff;font-family:inherit;font-size:13.5px;font-weight:700;cursor:pointer;}
+.sl-pri:hover{background:#2A2A27;}
+.sl-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:12px;}
+.sl-p2{display:flex;flex-direction:column;gap:14px;}
+.sl-p2h{display:flex;align-items:center;gap:12px;}
+.sl-p2h .db-who > span{font-size:12.5px;}
+.sl-p2m{display:flex;align-items:baseline;gap:8px;}
+.sl-p2m b{font-family:var(--f-acc);font-size:30px;font-weight:600;letter-spacing:-.01em;}
+.sl-p2m span{font-size:13px;color:#5E5E59;}
+.sl-p2s{display:flex;align-items:center;gap:22px;}
+.sl-p2s > span:not(.db-pips){display:flex;flex-direction:column;gap:2px;}
+.sl-p2s b{font-family:var(--f-acc);font-size:19px;font-weight:600;}
+.sl-p2s small{font-family:var(--f-acc);font-size:10px;font-weight:600;letter-spacing:.12em;color:#5E5E59;}
+.sl-p2s .db-pips{margin-left:auto;}
+.sl-p2a{display:flex;gap:8px;margin-top:auto;}
+.sl-p2a > *{flex:1;white-space:nowrap;padding:0 10px;}
+.sl-ia > *,.sl .sl-foot .btn{white-space:nowrap;}
+/* Edit / Reports / Settings: same cards, type and buttons */
+.sl .card{border:1px solid #E9E9E4;border-radius:20px;padding:20px;background:#fff;margin:0;}
+.sl .sl-sec{font-family:var(--f-acc);font-size:11px;letter-spacing:.13em;color:#5E5E59;}
+.sl .btn{min-height:48px;padding:0 20px;border-radius:14px;font-family:inherit;font-weight:700;font-size:14.5px;}
+.sl .btn.lime{background:var(--ink);color:#fff;}
+.sl .btn.ghost{background:#fff;border:1px solid #E9E9E4;}
+.sl .te-mini{border-radius:11px;font-family:inherit;}
+.sl .te input[type=time],.sl .te input[type=date],.sl .te select,.sl .te input[type=text],.sl .te input[type=email],.sl .te input[type=password],.sl .te input[type=number]{border-radius:12px;font-family:inherit;}
+.sl .sl-box{border:1px solid #E9E9E4;border-radius:16px;background:#FAFAF7;}
+.sl .sl-ph b{font-size:18px;}
+.sl .mn-nums b{font-family:var(--f-acc);font-size:30px;font-weight:600;}
+.sl .mn-nums span{font-family:var(--f-acc);font-size:10px;letter-spacing:.12em;}
+.sl .rtable th{font-family:var(--f-acc);font-size:10px;letter-spacing:.12em;}
+.sl .rtable td.num{font-family:var(--f-acc);font-weight:600;}
+.sl .sl-ck .tag,.sl .sl-ck b{font-family:inherit;}
+.sl textarea.sl-ta{font-family:inherit;font-size:14px;border-radius:12px;}
+@media (max-width:700px){
+  .sl-tabs button{padding:0 12px;font-size:13.5px;}
+  .sl-in{padding:14px;} .sl-ia{width:100%;margin-left:22px;} .sl-ia > *{flex:1;}
+  .sl .card{padding:16px;}
+}
 </style>
 </head>
 <body>
@@ -1758,68 +1813,74 @@ const ckLabel=s=>({done:'✓ on time', late:'✓ late', partial:`partial ${s.rec
 
 function renderLeader(app){
   if(!adminMode){ activeTab='dashboard'; renderDashboard(app); return; }
-  const bar=document.createElement('div'); bar.className='mn-bar';
-  bar.innerHTML=`<div><h2>👑 Supreme Leader</h2><span class="muted live-clock-time">${fmtNow(new Date())}</span></div>
-    <div class="sl-seg">${LEADER_VIEWS.map(([id,l])=>`<button data-sl="${id}" class="${leaderView===id?'on':''}">${l}</button>`).join('')}</div>`;
-  app.appendChild(bar);
-  bar.querySelectorAll('[data-sl]').forEach(b=>b.onclick=()=>{ leaderView=b.dataset.sl; render(); });
-  ({live:slLive, edit:slEdit, reports:slReports, settings:slSettings})[leaderView](app);
+  const now=new Date(), att=slAttention();
+  const dLabel=now.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'}).replace(',','').toUpperCase();
+  const wrap=document.createElement('div'); wrap.className='db sl';
+  app.appendChild(wrap);
+  const head=document.createElement('div'); head.className='db-head';
+  head.innerHTML=`<div class="db-title"><span class="db-eye">GOD MODE · ${dLabel} · <span class="live-clock-hm">${fmt24(now.toISOString())}</span></span><h1>Supreme Leader</h1></div>`;
+  wrap.appendChild(head);
+  const nav=document.createElement('nav'); nav.className='sl-tabs'; nav.setAttribute('aria-label','Supreme Leader');
+  nav.innerHTML=LEADER_VIEWS.map(([id,l])=>`<button data-sl="${id}" class="${leaderView===id?'on':''}" ${leaderView===id?'aria-current="page"':''}>${l}${id==='live'&&att.length?`<span class="n">${att.length}</span>`:''}</button>`).join('');
+  wrap.appendChild(nav);
+  nav.querySelectorAll('[data-sl]').forEach(b=>b.onclick=()=>{ leaderView=b.dataset.sl; render(); });
+  ({live:slLive, edit:slEdit, reports:slReports, settings:slSettings})[leaderView](wrap, att);
 }
 function slOpenDay(vaId, dk){ edPick={vaId,dk}; edDraft=null; leaderView='edit'; activeTab='leader'; render(); window.scrollTo({top:0}); }
 
-// --- Live: what needs attention + everyone right now
+// --- Live: what needs you + everyone right now
 function slAttention(){
   const today=todayKey(), nowMin=minOf(new Date()), out=[];
   VAS.forEach(va=>{
     const e=getEntry(va.id,today);
     if(va.shiftStart!=null){
-      if(!e.signIn && nowMin>va.shiftStart*60+5 && nowMin<va.shiftEnd*60) out.push({va,dk:today,m:`${va.name} hasn't signed in — shift started ${fmtMin(va.shiftStart*60)}.`,act:'in'});
-      if(e.signIn && !e.signOut && nowMin>va.shiftEnd*60+15) out.push({va,dk:today,m:`${va.name} is still clocked in after ${fmtMin(va.shiftEnd*60)}.`,act:'out'});
+      if(!e.signIn && nowMin>va.shiftStart*60+5 && nowMin<va.shiftEnd*60) out.push({va,dk:today,kind:'late',act:'in',title:`${va.name} hasn't signed in`,meta:`Shift started ${fmtMin(va.shiftStart*60)}`});
+      if(e.signIn && !e.signOut && nowMin>va.shiftEnd*60+15) out.push({va,dk:today,kind:'late',act:'out',title:`${va.name} is still clocked in`,meta:`Shift ended ${fmtMin(va.shiftEnd*60)}`});
     }
-    checkinSlots(va,today).filter(s=>s.state==='overdue').forEach(s=>out.push({va,dk:today,m:`${va.name}: check-in ${s.n} (${fmtMin(s.due)}) is overdue.`}));
+    if(e.signIn) checkinSlots(va,today).filter(s=>s.state==='overdue').forEach(s=>out.push({va,dk:today,kind:'late',title:`${va.name} — check-in ${s.n} is overdue`,meta:`Was due ${fmtMin(s.due)}`}));
     if(va.role!=='va') return;
     for(let i=1;i<=7;i++){
-      const dk=shiftDay(today,-i), pe=getEntry(va.id,dk);
-      if(pe.signIn && !pe.signOut) out.push({va,dk,m:`${va.name} never signed out on ${dayShort(dk)}.`});
-      if(pe.signIn && !pe.submitted) out.push({va,dk,m:`${va.name} never submitted ${dayShort(dk)}.`});
-      else if(pe.submitted && !pe.verifiedByNoor) out.push({va,dk,m:`${va.name}'s ${dayShort(dk)} is waiting to be verified.`,act:'verify',info:1});
+      const dk=shiftDay(today,-i), pe=getEntry(va.id,dk), when=dayLabel(dk);
+      if(pe.signIn && !pe.signOut) out.push({va,dk,kind:'late',title:`${va.name} never signed out`,meta:`${when} · signed in ${fmt24(pe.signIn)}`});
+      if(pe.signIn && !pe.submitted) out.push({va,dk,kind:'late',title:`${va.name} never submitted`,meta:`${when} · ${totals(pe).appts} appt · ${totals(pe).dms} DMs`});
+      else if(pe.submitted && !pe.verifiedByNoor) out.push({va,dk,kind:'info',act:'verify',title:`${va.name}'s day is waiting to be verified`,meta:`${when} · ${totals(pe).appts} appt · ${totals(pe).dms} DMs`});
     }
   });
   return out;
 }
-function slLive(app){
-  const att=slAttention(), today=todayKey();
-  const a=document.createElement('div'); a.className='card';
-  a.innerHTML=`<h3>Needs attention${att.length?` <span class="tag warn">${att.length}</span>`:''}</h3>${att.length
-    ? `<div class="alerts" style="margin-top:0">${att.map(x=>`<div class="alert ${x.info?'info':''}"><span>${esc(x.m)}</span><span class="acts sl-aa">
-        ${x.act==='verify'?`<button class="ed" data-slv="${x.va.id}|${x.dk}">✓ Verify</button>`:''}
-        ${x.act==='in'?`<button class="ed" data-slin="${x.va.id}">Sign in now</button>`:''}
-        ${x.act==='out'?`<button class="ed" data-slout="${x.va.id}">Sign out now</button>`:''}
-        <button class="ed" data-sled="${x.va.id}|${x.dk}">✎ Open</button></span></div>`).join('')}</div>`
-    : '<p class="muted" style="margin:0">All clear — nothing needs you right now.</p>'}`;
-  app.appendChild(a);
-  const grid=document.createElement('div'); grid.className='sl-people';
-  grid.innerHTML=VAS.map(va=>{
+function slLive(app, att){
+  att=att||slAttention();
+  const today=todayKey(), now=new Date();
+  const needs=document.createElement('section'); needs.className='db-sec';
+  needs.innerHTML=`<div class="db-sh"><h2>Needs you</h2><span class="db-eye">${att.length?att.length+(att.length===1?' THING':' THINGS'):'ALL CLEAR'}</span></div>
+    <div class="db-list">${att.length?att.map(x=>`<div class="sl-in">
+      <i class="sl-k ${x.kind}" aria-hidden="true"></i>
+      <div class="sl-it"><b>${esc(x.title)}</b><span>${esc(x.meta)}</span></div>
+      <div class="sl-ia">
+        <button class="ed" data-sled="${x.va.id}|${x.dk}">Open day</button>
+        ${x.act==='verify'?`<button class="sl-pri" data-slv="${x.va.id}|${x.dk}">Verify</button>`:''}
+        ${x.act==='in'?`<button class="sl-pri" data-slin="${x.va.id}">Sign in now</button>`:''}
+        ${x.act==='out'?`<button class="sl-pri" data-slout="${x.va.id}">Sign out now</button>`:''}
+      </div></div>`).join(''):'<p class="va-empty">Nothing needs you right now.</p>'}</div>`;
+  app.appendChild(needs);
+
+  const people=document.createElement('section'); people.className='db-sec';
+  people.innerHTML=`<div class="db-sh"><h2>Right now</h2></div><div class="sl-grid">${VAS.map(va=>{
     const e=getEntry(va.id,today), t=totals(e), live=!!e.signIn&&!e.signOut, isVa=va.role==='va';
-    const hrs=hoursBetween(e.signIn, e.signOut||(live?new Date().toISOString():null));
-    return `<div class="card sl-p">
-      <div class="sl-ph"><b>${esc(va.name)}</b><span class="muted">${esc(va.shiftLabel)}</span></div>
-      <div class="sl-pm">
-        <span><i class="sdot ${live?'on':(e.signIn?'done':'')}"></i>${live?'Working':(e.signIn?'Signed out':'Not signed in')}</span>
-        <span>${fmt24(e.signIn)} → ${e.signOut?fmt24(e.signOut):'—'}</span>
-        <span><b class="live-hours" data-signin="${e.signIn||''}" data-signout="${e.signOut||''}">${hrs.toFixed(2)}</b> h</span>
-        ${isVa?`<span><b>${t.appts}</b> appts · <b>${t.dms}</b> DMs</span>`:''}
-      </div>
-      ${va.checkins?`<div class="ck-slots mini">${slotTiles(va,today,false)}</div>`:''}
-      <div class="acts sl-pa">
+    const ms=e.signIn?((e.signOut?new Date(e.signOut):now)-new Date(e.signIn)):0;
+    const slots=va.checkins?checkinSlots(va,today):[];
+    const status=live?(isVa?'working':'supervising'):e.signIn?'signed out':(va.shiftStart!=null&&minOf(now)<va.shiftStart*60?`starts ${fmtMin(va.shiftStart*60)}`:'not signed in');
+    return `<div class="va-card sl-p2">
+      <div class="sl-p2h"><span class="db-av" aria-hidden="true">${esc(va.name[0])}</span><span class="db-who"><b>${esc(va.name)}</b><span>${esc(va.shiftLabel)}</span></span><i class="db-dot ${live?'on':e.signIn?'done':''}" aria-hidden="true"></i></div>
+      <div class="sl-p2m"><b class="${live?'live-hm':''}" data-signin="${e.signIn||''}">${fmtHM(ms)} h</b><span>${status}</span></div>
+      ${isVa?`<div class="sl-p2s"><span><b>${t.appts}</b><small>APPTS</small></span><span><b>${t.dms}</b><small>DMS</small></span><span class="db-pips" role="img" aria-label="Check-ins: ${slots.filter(s=>s.rec).length} of ${slots.length} done">${slots.map(s=>`<i class="s-${e.signIn||s.rec?s.state:'upcoming'}"></i>`).join('')}</span></div>`:''}
+      <div class="sl-p2a">
         ${!e.signIn?`<button class="ed" data-slin="${va.id}">Sign in now</button>`:''}
         ${live?`<button class="ed" data-slout="${va.id}">Sign out now</button>`:''}
-        ${isVa&&e.submitted&&!e.verifiedByNoor?`<button class="ed" data-slv="${va.id}|${today}">✓ Verify</button>`:''}
-        ${isVa&&e.submitted?`<span class="tag ${e.verifiedByNoor?'verified':'ok'}">${e.verifiedByNoor?'Verified':'Submitted'}</span>`:''}
-        <button class="ed sl-r" data-sled="${va.id}|${today}">✎ Edit day</button>
-      </div></div>`;
-  }).join('');
-  app.appendChild(grid);
+        ${isVa&&e.submitted&&!e.verifiedByNoor?`<button class="ed" data-slv="${va.id}|${today}">Verify</button>`:''}
+        <button class="sl-pri" data-sled="${va.id}|${today}">Edit day</button>
+      </div></div>`; }).join('')}</div>`;
+  app.appendChild(people);
 }
 
 // --- Edit any day: everything about one person's day, saved in one go
