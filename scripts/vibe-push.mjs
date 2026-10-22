@@ -62,6 +62,18 @@ if (testVa) {
   process.exit(0);
 }
 
+// test pushes requested from Supreme Leader (pushTests docs the page creates with status 'queued')
+const queued = (await db.collection('pushTests').where('status', '==', 'queued').limit(5).get()).docs;
+for (const doc of queued) {
+  const { vaId } = doc.data(), results = [];
+  for (const va of VAS.filter(v => v.checkins && (vaId === 'all' || v.id === vaId))) {
+    const r = await send(va, `vibe test for ${va.name}`, 'Sent from Supreme Leader. Check-in reminders will arrive like this.', `vibe-test-${va.id}`);
+    results.push({ vaId: va.id, ...r });
+    console.log(`queued test → ${va.name}: ${r.ok}/${r.devices} devices`);
+  }
+  await doc.ref.update({ status: 'sent', sentAt: new Date().toISOString(), results });
+}
+
 console.log(`${dk} ${fmtMin(nowMin)} (${process.env.TZ || 'UTC'})`);
 for (const va of VAS.filter(v => v.checkins)) {
   const e = (await db.collection('entries').doc(`${va.id}_${dk}`).get()).data() || {};

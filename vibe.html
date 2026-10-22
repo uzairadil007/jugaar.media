@@ -839,6 +839,13 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
 .sl-pick,.te-grid,.sl-times{align-items:start;}
 .sl .te select,.sl .te input[type=date],.sl .te input[type=time],.mdl .te select,.mdl .te input[type=date],.mdl .te input[type=time]{height:46px;box-sizing:border-box;}
 .sl-pick .sl-nav,.sl-times .sl-tq{align-self:end;}
+
+/* ---- v17: reminder tests ---- */
+.sl-rt{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;}
+.db-sh:has(.sl-rt){align-items:center;flex-wrap:wrap;gap:8px;}
+.sl-note{margin:2px 4px 0;font-size:12.5px;color:#5E5E59;line-height:1.5;}
+.sl .ed:disabled{opacity:.5;cursor:default;}
+@media (max-width:700px){ .sl-rt{width:100%;} .sl-rt > *{flex:1;} }
 </style>
 </head>
 <body>
@@ -1835,6 +1842,49 @@ const LEADER_VIEWS=[['live','Live'],['edit','Edit any day'],['reports','Reports'
 const ckLabel=s=>({done:'✓ on time', late:'✓ late', partial:`partial ${s.rec?s.rec.done.length:0}/${s.rec&&s.rec.total||CHECK_TOTAL}`,
   open:'due now', overdue:'overdue', upcoming:'upcoming', missed:'missed'}[s.state]) + (s.rec&&s.rec.byAdmin?' · by leader':'');
 
+// --- reminder tests: the page queues a pushTests doc, the GitHub job (scripts/vibe-push.mjs) sends it and writes the result back
+let pushTests=[], pushTestsSub=null, pushTestsErr=false;
+function watchPushTests(){
+  if(pushTestsSub || !db || !dbAvailable) return;
+  pushTestsSub=db.collection('pushTests').orderBy('requestedAt','desc').limit(20).onSnapshot(
+    s=>{ pushTests=s.docs.map(d=>({id:d.id,...d.data()})); pushTestsErr=false; if(activeTab==='leader'&&leaderView==='live') render(); },
+    e=>{ pushTestsErr=true; pushTestsSub=null; if(activeTab==='leader'&&leaderView==='live') render(); });
+}
+async function queuePushTest(vaId){
+  if(!db || !dbAvailable){ toast('Needs the online database'); return; }
+  try{ await db.collection('pushTests').add({vaId, status:'queued', requestedAt:new Date().toISOString()}); toast('Test queued — it goes out on the next run'); }
+  catch(e){ toast(e&&e.code==='permission-denied'?'Blocked — add the pushTests rule in Firestore':'Couldn\'t queue the test'); }
+}
+function pushTestStatus(vaId){
+  if(pushTestsErr) return {txt:'Can\'t read test results — add the pushTests rule in Firestore', bad:true};
+  const t=pushTests.find(x=>x.vaId===vaId||x.vaId==='all');
+  if(!t) return {txt:'No test sent yet'};
+  if(t.status==='queued') return {txt:`Queued ${fmt24(t.requestedAt)} · goes out on the next run, usually within 5–10 min`, wait:true};
+  const r=(t.results||[]).find(x=>x.vaId===vaId);
+  if(!r) return {txt:`Sent ${fmt24(t.sentAt)}`};
+  if(!r.devices) return {txt:`No phone has reminders turned on · ${fmt24(t.sentAt)}`, bad:true};
+  return {txt:`Delivered to ${r.ok} of ${r.devices} device${r.devices===1?'':'s'} · ${fmt24(t.sentAt)}`, bad:r.ok<r.devices, ok:r.ok===r.devices};
+}
+function slReminders(app){
+  const staff=VAS.filter(v=>v.checkins), canLocal='Notification' in window;
+  const sec=document.createElement('section'); sec.className='db-sec';
+  sec.innerHTML=`<div class="db-sh"><h2>Reminders</h2><span class="sl-rt"><button class="ed" id="ptLocal" ${canLocal?'':'disabled'}>Test this device</button><button class="sl-pri" data-ptest="all">Send test to all</button></span></div>
+    <div class="db-list">${staff.map(va=>{ const st=pushTestStatus(va.id);
+      return `<div class="sl-in"><i class="sl-k ${st.bad?'late':st.ok?'':'info'}" aria-hidden="true"></i>
+        <div class="sl-it"><b>${esc(va.name)}'s phone</b><span>${esc(st.txt)}</span></div>
+        <div class="sl-ia"><button class="ed" data-ptest="${va.id}" ${st.wait?'disabled':''}>${st.wait?'Waiting…':'Send test'}</button></div></div>`; }).join('')}</div>
+    <p class="sl-note">A test goes out through the same GitHub job as real reminders, so it proves the whole chain works. "Test this device" only checks notifications on the screen you're using now.</p>`;
+  app.appendChild(sec);
+  sec.querySelectorAll('[data-ptest]').forEach(b=>b.onclick=()=>queuePushTest(b.dataset.ptest));
+  sec.querySelector('#ptLocal').onclick=async()=>{
+    if(Notification.permission==='default'){ try{ await Notification.requestPermission(); }catch(e){} }
+    if(Notification.permission!=='granted'){ toast('Notifications are blocked on this device'); return; }
+    if(!swReg) await pushReady();
+    showNote('vibe test',{body:'Notifications work on this device.',tag:'vibe-test-leader'},'');
+    toast('Sent to this device');
+  };
+}
+
 function renderLeader(app){
   if(!adminMode){ activeTab='dashboard'; renderDashboard(app); return; }
   const now=new Date(), att=slAttention();
@@ -1848,6 +1898,7 @@ function renderLeader(app){
   nav.innerHTML=LEADER_VIEWS.map(([id,l])=>`<button data-sl="${id}" class="${leaderView===id?'on':''}" ${leaderView===id?'aria-current="page"':''}>${l}${id==='live'&&att.length?`<span class="n">${att.length}</span>`:''}</button>`).join('');
   wrap.appendChild(nav);
   nav.querySelectorAll('[data-sl]').forEach(b=>b.onclick=()=>{ leaderView=b.dataset.sl; render(); });
+  watchPushTests();
   ({live:slLive, edit:slEdit, reports:slReports, settings:slSettings})[leaderView](wrap, att);
 }
 function slOpenDay(vaId, dk){ edPick={vaId,dk}; edDraft=null; leaderView='edit'; activeTab='leader'; render(); window.scrollTo({top:0}); }
@@ -1905,6 +1956,7 @@ function slLive(app, att){
         <button class="sl-pri" data-sled="${va.id}|${today}">Edit day</button>
       </div></div>`; }).join('')}</div>`;
   app.appendChild(people);
+  slReminders(app);
 }
 
 // --- Edit any day: everything about one person's day, saved in one go
