@@ -1151,6 +1151,13 @@ select.cl-f{width:auto;max-width:170px;min-height:40px;padding:0 10px;font-size:
   .sl-ck{grid-template-columns:minmax(0,1fr) 128px;}
   .sl-cka{grid-column:1/-1;grid-template-columns:repeat(3,minmax(0,1fr));width:100%;}
 }
+
+/* ---- v22: calendar rows: one pill width, one-line dates ---- */
+.cl-row{grid-template-columns:96px minmax(0,1fr) 112px;}
+.cl-rows.list .cl-row{grid-template-columns:150px minmax(0,1fr) 112px;}
+.cl-row .d{white-space:nowrap;}
+.cl-row .cl-pill{display:block;width:100%;box-sizing:border-box;text-align:center;}
+@media (max-width:520px){ .cl-row,.cl-rows.list .cl-row{grid-template-columns:minmax(0,1fr) 112px;} }
 </style>
 </head>
 <body>
@@ -1856,7 +1863,7 @@ function renderCalendar(app){
     ${cal.view==='month'?`<div class="cl-cal"><div class="cl-dow">${['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(x=>`<div>${x}</div>`).join('')}</div><div class="cl-grid" id="clGrid">${cells}</div></div>`:''}
     <section class="cl-panel">
       <div class="cl-ph"><h3>${title}</h3>${edit?'<button class="cl-btn" id="clAdd">+ Add</button>':''}</div>
-      <div class="cl-rows" id="clRows">${list.length?list.map(p=>row(p,cal.view==='list')).join(''):`<div class="cl-empty"><strong>${!cal.loaded?'Loading…':cal.posts.length?'Nothing planned here':'The calendar is empty'}</strong>${edit?(cal.posts.length?'Tap + Add to plan a post for this day.':'Tap + New post to plan the first piece of content.'):''}</div>`}</div>
+      <div class="cl-rows${cal.view==='list'?' list':''}" id="clRows">${list.length?list.map(p=>row(p,cal.view==='list')).join(''):`<div class="cl-empty"><strong>${!cal.loaded?'Loading…':cal.posts.length?'Nothing planned here':'The calendar is empty'}</strong>${edit?(cal.posts.length?'Tap + Add to plan a post for this day.':'Tap + New post to plan the first piece of content.'):''}</div>`}</div>
     </section>
     <p class="cl-note">${note}</p>`;
   app.appendChild(wrap);
