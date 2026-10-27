@@ -1135,6 +1135,22 @@ select.cl-f{width:auto;max-width:170px;min-height:40px;padding:0 10px;font-size:
   .va-h,.va-h.nh-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr);}
   .va-h .acts{grid-column:1/-1;}
 }
+
+/* ---- v21: Supreme Leader rows keep fixed button positions ---- */
+.sl-ia{display:grid;grid-template-columns:112px 140px;gap:8px;margin-left:auto;}
+.sl-ia.one{grid-template-columns:140px;}
+.sl-ia > *{width:100%;}
+.sl-slot{display:block;}
+.sl-ck{display:grid;grid-template-columns:190px 150px minmax(0,1fr);align-items:center;gap:8px 12px;}
+.sl-ck .tag{justify-self:start;}
+.sl-cka{display:grid;grid-template-columns:repeat(3,108px);gap:8px;justify-content:end;margin-left:0;}
+.sl-cka > *{width:100%;}
+@media (max-width:700px){
+  .sl-ia,.sl-ia.one{width:100%;margin-left:22px;grid-template-columns:repeat(2,minmax(0,1fr));}
+  .sl-ia.one > *{grid-column:2;}
+  .sl-ck{grid-template-columns:minmax(0,1fr) 128px;}
+  .sl-cka{grid-column:1/-1;grid-template-columns:repeat(3,minmax(0,1fr));width:100%;}
+}
 </style>
 </head>
 <body>
@@ -2404,7 +2420,7 @@ function slReminders(app){
     <div class="db-list">${staff.map(va=>{ const st=pushTestStatus(va.id);
       return `<div class="sl-in"><i class="sl-k ${st.bad?'late':st.ok?'':'info'}" aria-hidden="true"></i>
         <div class="sl-it"><b>${esc(va.name)}'s phone</b><span>${esc(st.txt)}</span></div>
-        <div class="sl-ia"><button class="ed" data-ptest="${va.id}" ${st.wait?'disabled':''}>${st.wait?'Waiting…':'Send test'}</button></div></div>`; }).join('')}</div>
+        <div class="sl-ia one"><button class="ed" data-ptest="${va.id}" ${st.wait?'disabled':''}>${st.wait?'Waiting…':'Send test'}</button></div></div>`; }).join('')}</div>
     <p class="sl-note">A test goes out through the same GitHub job as real reminders, so it proves the whole chain works. "Test this device" only checks notifications on the screen you're using now.</p>`;
   app.appendChild(sec);
   sec.querySelectorAll('[data-ptest]').forEach(b=>b.onclick=()=>queuePushTest(b.dataset.ptest));
@@ -2468,6 +2484,7 @@ function slLive(app, att){
         ${x.act==='verify'?`<button class="sl-pri" data-slv="${x.va.id}|${x.dk}">Verify</button>`:''}
         ${x.act==='in'?`<button class="sl-pri" data-slin="${x.va.id}">Sign in now</button>`:''}
         ${x.act==='out'?`<button class="sl-pri" data-slout="${x.va.id}">Sign out now</button>`:''}
+        ${x.act?'':'<span class="sl-slot" aria-hidden="true"></span>'}
       </div></div>`).join(''):'<p class="va-empty">Nothing needs you right now.</p>'}</div>`;
   app.appendChild(needs);
 
@@ -2532,10 +2549,10 @@ function slEdit(app){
     <div class="sl-sec">Check-ins</div>
     ${slots.map(s=>`<div class="sl-ck"><b>Check-in ${s.n} · ${fmtMin(s.due)}</b>
       <span class="tag ${s.state==='done'?'ok':(s.rec?'warn':'off')}">${ckLabel(s)}</span>
-      <span class="acts">
-        ${cur.checkins&&cur.checkins[s.n]?`<button class="ed" data-ck-open="${va.id}|${d.dk}|${s.n}">View</button>`:''}
-        ${s.state==='done'?'':`<button class="ed" data-edck="${s.n}">Mark done</button>`}
-        ${s.rec?`<button class="ed danger" data-edclr="${s.n}">Clear</button>`:''}
+      <span class="acts sl-cka">
+        ${cur.checkins&&cur.checkins[s.n]?`<button class="ed" data-ck-open="${va.id}|${d.dk}|${s.n}">View</button>`:'<span class="sl-slot" aria-hidden="true"></span>'}
+        ${s.state==='done'?'<span class="sl-slot" aria-hidden="true"></span>':`<button class="ed" data-edck="${s.n}">Mark done</button>`}
+        ${s.rec?`<button class="ed danger" data-edclr="${s.n}">Clear</button>`:'<span class="sl-slot" aria-hidden="true"></span>'}
       </span></div>`).join('')}
 
     <div class="sl-sec">Status</div>
