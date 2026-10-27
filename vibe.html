@@ -1169,6 +1169,20 @@ select.cl-f{width:auto;max-width:170px;min-height:40px;padding:0 10px;font-size:
 /* ---- v24: lock screen: field and Face ID button share one box ---- */
 .gt-field input:focus{box-shadow:none;}
 .gt-bio{height:60px;}
+
+/* ---- v25: Settings lines up ---- */
+.sl .sl-box{display:flex;flex-direction:column;}
+.sl .sl-box [data-s=pass]{margin-top:0;}
+.sl .sl-box > label:last-of-type{margin-top:auto!important;padding-top:10px;}
+.sl .te input[type=text],.sl .te input[type=number],.sl .te input[type=email],.sl .te input[type=password],.sl .te input[type=time],.sl .te select{height:46px;min-height:0;box-sizing:border-box;}
+.sl .sl-cks .te-mini{height:46px;}
+.sl .sl-cks{align-items:center;}
+.sl-accts{grid-template-columns:repeat(2,minmax(0,1fr));}
+@media (max-width:700px){ .sl-accts{grid-template-columns:1fr;} }
+
+.sl .sl-box .te-grid{gap:6px;}
+.sl .sl-box .te-grid input[type=time]{padding:0 4px 0 7px;font-size:14px;}
+.sl .sl-box input[type=time]::-webkit-calendar-picker-indicator{margin-left:2px;padding:0;}
 </style>
 </head>
 <body>
@@ -2740,7 +2754,7 @@ function slSettings(app){
     <div class="te-grid"><div><label>Opens (min before)</label><input type="number" id="stEarly" min="0" max="180" value="${CHECKIN_EARLY}"></div>
       <div><label>On time until (min after)</label><input type="number" id="stGrace" min="0" max="120" value="${CHECKIN_GRACE}"></div></div>
     <div class="sl-sec">Accounts · one per line</div>
-    <div class="sl-grid2">${PLATFORMS.map(p=>`<div><label>${p}</label><textarea class="sl-ta" data-plat="${p}" spellcheck="false">${esc(accountsFor(p).join('\n'))}</textarea></div>`).join('')}</div>
+    <div class="sl-grid2 sl-accts">${PLATFORMS.map(p=>`<div><label>${p}</label><textarea class="sl-ta" data-plat="${p}" spellcheck="false">${esc(accountsFor(p).join('\n'))}</textarea></div>`).join('')}</div>
     <div class="sl-sec">God mode PIN (tap the logo)</div>
     <div class="sl-pin"><input type="text" inputmode="numeric" id="stPin" value="${esc(ADMIN_PIN)}" maxlength="8" autocomplete="off"></div>
     <div class="sl-foot"><button class="btn lime" id="stSave">Save settings</button><button class="btn ghost" id="stDef">Reset to defaults</button></div>
