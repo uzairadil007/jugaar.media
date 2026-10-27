@@ -1121,6 +1121,20 @@ select.cl-f{width:auto;max-width:170px;min-height:40px;padding:0 10px;font-size:
 .db-inl{gap:12px;}
 .db-inl span{width:84px;min-width:0;}
 .db-inl small{white-space:nowrap;}
+
+/* ---- v20: Noor page rows ---- */
+@media (hover:hover){ .db-row:not(.open) > .db-rb.nt:hover{background:transparent;} }
+.nt{cursor:default;}
+/* history rows: a real grid so every column starts at the same place on every line */
+.va-h{display:grid;grid-template-columns:minmax(110px,1.1fr) 70px minmax(0,1.4fr) minmax(0,1.3fr) minmax(0,1fr) auto;align-items:center;gap:6px 14px;}
+.va-h.nh-row{grid-template-columns:minmax(110px,1.1fr) 70px repeat(2,minmax(0,1fr)) auto;}
+.va-h > *{min-width:0;}
+.va-h .va-hd{min-width:0;}
+.nh{justify-content:flex-start;}
+@media (max-width:700px){
+  .va-h,.va-h.nh-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr);}
+  .va-h .acts{grid-column:1/-1;}
+}
 </style>
 </head>
 <body>
@@ -2158,7 +2172,7 @@ function renderSupervisionPage(app, noor){
   const hist=document.createElement('section'); hist.className='db-plat'+(open?' open':'');
   hist.innerHTML=`<button class="db-pb" aria-expanded="${open}"><b>Last 7 days</b><svg class="db-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
     ${open?`<div class="va-hist">${days.map(dt=>{ const he=getEntry(noor.id,dt);
-      return `<div class="va-h"><b class="va-hd">${dayLabel(dt)}</b><span>${he.signIn?hoursBetween(he.signIn,he.signOut).toFixed(1)+' h':'—'}</span>
+      return `<div class="va-h nh-row"><b class="va-hd">${dayLabel(dt)}</b><span>${he.signIn?hoursBetween(he.signIn,he.signOut||(dt===today?new Date().toISOString():null)).toFixed(1)+' h':'—'}</span>
         ${staff.map(v=>`<span class="nh">${esc(v.name)} ${tagFor(getEntry(v.id,dt))}</span>`).join('')}
         ${adminMode?`<span class="acts"><button class="ed" data-edit-time="${noor.id}|${dt}">✎</button></span>`:''}</div>`; }).join('')}</div>`:''}`;
   wrap.appendChild(hist);
