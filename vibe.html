@@ -1188,6 +1188,16 @@ select.cl-f{width:auto;max-width:170px;min-height:40px;padding:0 10px;font-size:
 .sl .sl-cks > span{display:flex;align-items:center;gap:4px;min-width:0;}
 .sl .sl-cks > span input[type=time]{flex:1;min-width:0;width:auto;}
 .sl .sl-cks .te-mini{width:100%;}
+
+/* ---- v26: Reports lines up ---- */
+.sl .sl-pick .te-mini{height:46px;}
+.sl-pre{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;}
+.sl-pre .te-mini{width:100%;height:40px;}
+.sl-kpis span{white-space:nowrap;}
+.sl-kpis small{display:block;margin-top:3px;font-family:var(--f-sans);font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+@media (max-width:700px){ .sl-pre{grid-template-columns:repeat(2,minmax(0,1fr));} }
+
+.sl-rep th.num{text-align:right;}
 </style>
 </head>
 <body>
@@ -2696,7 +2706,7 @@ function slReports(app){
       <div><label>To</label><input type="date" id="rpTo" value="${rep.to}" max="${today}"></div>
       <div class="sl-nav"><button class="te-mini" id="rpRef">↻ Refresh</button></div>
     </div>
-    <div class="te-quick" style="margin-top:10px">${presets.map(([l,f,t],i)=>`<button class="te-mini ${rep.from===f&&rep.to===t?'on':''}" data-pre="${i}">${l}</button>`).join('')}</div>
+    <div class="te-quick sl-pre" style="margin-top:10px">${presets.map(([l,f,t],i)=>`<button class="te-mini ${rep.from===f&&rep.to===t?'on':''}" data-pre="${i}">${l}</button>`).join('')}</div>
     <div id="rpBody"><p class="muted">Loading…</p></div>`;
   app.appendChild(card);
   const setRange=(f,t)=>{ if(f>t) [f,t]=[t,f]; rep.from=f; rep.to=t; render(); };
@@ -2712,10 +2722,10 @@ function slReports(app){
   const team=st.rows.filter(r=>r.va.role==='va').reduce((t,r)=>({appts:t.appts+r.appts,dms:t.dms+r.dms,hours:t.hours+r.hours,ckDone:t.ckDone+r.ckDone,ckExp:t.ckExp+r.ckExp,ckOn:t.ckOn+r.ckOn}),{appts:0,dms:0,hours:0,ckDone:0,ckExp:0,ckOn:0});
   card.querySelector('#rpBody').innerHTML=`
     <div class="mn-nums sl-kpis">
-      <div><b>${team.appts}</b><span>Appointments</span></div>
-      <div><b>${team.dms}</b><span>DMs · ${pc(team.appts,team.dms)} booked</span></div>
-      <div><b>${team.hours.toFixed(1)}</b><span>VA hours</span></div>
-      <div><b>${pc(team.ckDone,team.ckExp)}</b><span>Check-ins done · ${pc(team.ckOn,team.ckExp)} on time</span></div>
+      <div><b>${team.appts}</b><span>Appointments</span><small>${pc(team.appts,team.dms)} of DMs booked</small></div>
+      <div><b>${team.dms}</b><span>DMs answered</span><small>all VAs</small></div>
+      <div><b>${team.hours.toFixed(1)}</b><span>VA hours</span><small>${st.nDays} days</small></div>
+      <div><b>${pc(team.ckDone,team.ckExp)}</b><span>Check-ins done</span><small>${pc(team.ckOn,team.ckExp)} on time</small></div>
     </div>
     <div class="overflow"><table class="rtable sl-rep"><thead><tr><th>Person</th><th class="num">Days</th><th class="num">Hours</th><th class="num">Appts</th><th class="num">DMs</th><th class="num">Booked</th><th class="num">Check-ins</th><th class="num">On time</th><th class="num">Late in</th><th class="num">Not submitted</th><th class="num">Verified</th></tr></thead>
     <tbody>${st.rows.map(r=>{ const v=r.va.role==='va';
