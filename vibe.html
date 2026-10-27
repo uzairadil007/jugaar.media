@@ -1111,6 +1111,16 @@ select.cl-f{width:auto;max-width:170px;min-height:40px;padding:0 10px;font-size:
 @media (max-width:520px){ .cl-row{grid-template-columns:minmax(0,1fr) auto;} .cl-row .d{grid-column:1/-1;} }
 @media (max-width:460px){ .cl-form{grid-template-columns:1fr;} }
 @media (max-width:640px){ .brand .mascot{width:44px;} nav button{font-size:10px;padding:9px 9px;letter-spacing:.02em;} }
+
+/* ---- v19: open rows are one colour; hover only where there's a mouse; stat columns line up ---- */
+.db-rb:hover,.db-pb:hover,.nq-main:hover,.cl-row:hover{background:transparent;}
+@media (hover:hover){ .db-row:not(.open) > .db-rb:hover,.db-pb:hover,.nq-main:hover,.cl-row:hover{background:var(--surface-2);} }
+.db-row.open{background:var(--surface-2);}
+.db-row.open > .db-rb,.db-row.open > .db-more,.db-row.open .nq,.db-row.open .nq-main{background:transparent;}
+.db-row.open .db-tiles span,.db-row.open .db-av{background:var(--surface);}
+.db-inl{gap:12px;}
+.db-inl span{width:84px;min-width:0;}
+.db-inl small{white-space:nowrap;}
 </style>
 </head>
 <body>
@@ -1926,7 +1936,9 @@ function renderDashboard(app){
       </button>
       ${open?`<div class="db-more">
         <div class="db-tiles">${(sup?stats:[[t.appts,'APPTS'],[t.dms,'DMS'],[t.dms?Math.round(t.appts/t.dms*100)+'%':'—','BOOKED']]).map(([v,l])=>`<span><b>${v}</b><small>${l}</small></span>`).join('')}</div>
-        ${slots.length?`<p>Check-ins ${slots.map(s=>`${fmtMin(s.due).replace(':00','')} ${s.state==='done'?'✓':s.state==='late'?'✓ late':s.state==='partial'?'partial':s.state==='open'?'due':s.state==='overdue'?'overdue':s.state==='missed'?'missed':'·'}`).join(' · ')}</p>`:''}
+        ${slots.length?(e.signIn||slots.some(s=>s.rec)
+          ? `<p>Check-ins ${slots.map(s=>`${fmtMin(s.due).replace(':00','')} ${s.state==='done'?'✓':s.state==='late'?'✓ late':s.state==='partial'?'partial':s.state==='open'?'due':s.state==='overdue'?'overdue':s.state==='missed'?'missed':'·'}`).join(' · ')}</p>`
+          : `<p>Check-ins at ${slots.map(s=>fmtMin(s.due).replace(':00','')).join(' · ')}</p>`):''}
         ${!sup&&e.logs.length?`<p>${e.logs.map(l=>`${esc(l.account)} <span class="db-mut">${l.platform}</span> — ${l.appts} appt, ${l.dms} DMs`).join('<br>')}</p>`:''}
         ${sup?'':`<div class="db-tags">${e.submitted?'<span class="tag ok">Submitted</span>':''}${e.verifiedByNoor?'<span class="tag verified">Verified</span>':''}
           ${adminMode&&e.submitted&&!e.verifiedByNoor?`<button class="ed" data-vfy="${va.id}">✓ Verify</button>`:''}
