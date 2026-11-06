@@ -1,0 +1,75 @@
+{
+  "expo": {
+    "name": "plate.",
+    "slug": "plate",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "plate",
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#F5F2EC",
+    "ios": {
+      "bundleIdentifier": "media.jugaar.plate",
+      "supportsTablet": false
+    },
+    "android": {
+      "package": "media.jugaar.plate",
+      "adaptiveIcon": {
+        "backgroundColor": "#C1343F",
+        "foregroundImage": "./assets/images/android-icon-foreground.png",
+        "backgroundImage": "./assets/images/android-icon-background.png",
+        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+      },
+      "permissions": [
+        "android.permission.health.READ_STEPS",
+        "android.permission.health.READ_WEIGHT"
+      ],
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "output": "single",
+      "favicon": "./assets/images/favicon.png",
+      "backgroundColor": "#F5F2EC"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#C1343F",
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 120
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "minSdkVersion": 26
+          }
+        }
+      ],
+      [
+        "@kingstinct/react-native-healthkit",
+        {
+          "NSHealthShareUsageDescription": "plate. reads your steps and weight from Apple Health to show today's steps and how much you've lost.",
+          "NSHealthUpdateUsageDescription": false,
+          "background": false
+        }
+      ],
+      "react-native-health-connect",
+      [
+        "expo-image-picker",
+        {
+          "cameraPermission": "plate. uses the camera so you can snap a photo of your meal and log it.",
+          "photosPermission": "plate. lets you pick a meal photo to log it.",
+          "microphonePermission": false
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    }
+  }
+}
