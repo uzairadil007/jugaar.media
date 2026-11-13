@@ -198,13 +198,97 @@ const themes = [
   },
 ];
 
+// Real creator details. Each entry replaces the sample content of the theme with the same slug.
+// Only facts the creators supplied go here: no invented rates, numbers or reviews.
+const creators = {
+  "blush-ballet": {
+    file: "khizz", name: "Khizz", tag: "UGC", niche: "Faceless UGC creator · Pakistan",
+    lead: "Natural and engaging content around beauty, skincare and lifestyle that helps brands connect with their audience.",
+    aboutTitle: "Aesthetic, relatable, product-focused.",
+    about: [
+      "Hi! I’m Khizz, a faceless UGC creator from Pakistan, creating natural and engaging content around beauty, skincare and lifestyle.",
+      "I focus on aesthetic, relatable and product-focused content that helps brands connect with their audience.",
+    ],
+    chips: ["Faceless content", "Beauty", "Skincare", "Lifestyle"],
+    work: ["Skincare routine", "Product close-ups", "Makeup demo", "Unboxing", "Self-care moments", "Product review"],
+    brands: ["Nova Skin Care", "Maybelline", "Garnier"],
+    email: "khizrairfan160@gmail.com",
+  },
+  "strawberry-milk": {
+    file: "rehmat", name: "Rehmat", tag: "UGC", niche: "UGC creator",
+    lead: "Natural, engaging content that helps brands show their products to the right audience.",
+    aboutTitle: "Content made for brands.",
+    about: ["Hi, I’m Rehmat, a UGC creator. Get in touch to talk about a collaboration for your brand."],
+    chips: ["UGC videos", "Product content", "Brand collaborations"],
+    work: ["Product demo", "Unboxing", "Review", "Get ready with me", "Day in my life", "Product close-ups"],
+  },
+  "lavender-haze": {
+    file: "fatima-rajput", name: "Fatima", tag: "Rajput", niche: "UGC creator · Pakistan",
+    lead: "Content creator for Pakistani brands including So Zulf, Zouq.pk and Rawayat.",
+    aboutTitle: "Content that connects brands with people.",
+    about: ["Hi, I’m Fatima Rajput, a UGC creator working with Pakistani brands on content that shows their products the way real people use them."],
+    chips: ["UGC videos", "Product content", "Brand collaborations"],
+    work: ["Product demo", "Unboxing", "Routine", "Review", "Try-on", "Product close-ups"],
+    brands: ["So Zulf", "Whitening Essence", "Tuffy Organics", "Zouq.pk", "Rawayat"],
+    email: "fatimarajputdgk@gmail.com", phone: "0335 4128940", wa: "923354128940",
+  },
+  coquette: {
+    file: "amna", name: "Amna", tag: "UGC", niche: "UGC, fashion & lifestyle creator",
+    lead: "I help brands grow, reach the right audience and drive sales through high-quality, authentic and engaging content.",
+    aboutTitle: "Content that builds brands.",
+    about: [
+      "Hi, I’m Amna, a UGC, fashion and lifestyle content creator. I help brands grow their business, reach the right audience, promote their products and drive sales through high-quality, authentic and engaging content.",
+      "I’m passionate about creating content that connects with audiences and helps brands build a strong online presence.",
+    ],
+    chips: ["UGC", "Fashion", "Lifestyle", "Product promotion"],
+    work: ["Outfit of the day", "Try-on", "Product demo", "Styling ideas", "Unboxing", "Lifestyle moments"],
+    brands: ["Highfy", "Wisdom Pharma", "Revival Naturals", "Accufix Cosmetics"],
+  },
+  "peachy-keen": {
+    file: "saba", name: "Saba", tag: "UGC", niche: "Faceless creator · makeup, fashion & skincare",
+    lead: "Reviews, hauls and soft-spoken content for makeup, fashion and skincare brands. DM me 💌 for a collab.",
+    aboutTitle: "Soft-spoken reviews & hauls ✨🌼",
+    about: [
+      "Hi, I’m Saba ✨🌼, a faceless creator sharing makeup, fashion and skincare.",
+      "I make reviews, hauls and soft-spoken content. DM me 💌 for a collab.",
+    ],
+    chips: ["Faceless", "Makeup", "Fashion", "Skincare", "Reviews", "Hauls", "Soft-spoken"],
+    work: ["Makeup review", "Fashion haul", "Skincare routine", "Soft-spoken unboxing", "Product close-ups", "Haul try-on"],
+  },
+  "matcha-latte": {
+    file: "maryyam-hussain", name: "Maryyam", tag: "Hussain", niche: "Fashion & beauty influencer · Rawalpindi",
+    lead: "Authentic, aesthetic and high-converting content for beauty and fashion brands.",
+    aboutTitle: "Honest recommendations, made beautiful.",
+    about: [
+      "I’m a beauty, fashion & lifestyle UGC creator passionate about creating authentic, aesthetic and high-converting content. I specialise in voiceover reels, product demos, tutorials, unboxings, reviews, Instagram Stories, paid ad creatives and outfit shoots.",
+      "I collaborate with beauty & fashion brands to create engaging content that builds brand awareness, strengthens audience trust and drives conversions. My audience values my honest recommendations, making my content relatable, credible and impactful.",
+    ],
+    chips: ["Voiceover reels", "Product demos", "Tutorials", "Unboxings", "Reviews", "Instagram Stories", "Paid ad creatives", "Outfit shoots"],
+    stats: [["68", "Followers", ""], ["4.1K+", "Reach", "last 30 days"], ["9.4K+", "Impressions", "last 30 days"], ["870+", "Engagement", "last 30 days"]],
+    portrait: "img/maryyam-portrait.jpg",
+    photos: [["img/maryyam-1.jpg", "Lifestyle"], ["img/maryyam-2.jpg", "Skincare"], ["img/maryyam-3.jpg", "Fashion"]],
+    ig: "reviews_by_maryyam", email: "maryyamhussain013@gmail.com", phone: "+92 336 5740782", wa: "923365740782",
+    location: "Rawalpindi, Pakistan",
+    rates: {
+      packages: [
+        { name: "Package A", price: "PKR 14,000", items: ["1 reel", "1 carousel + 1 static post", "2 stories", "No ad usage rights"] },
+        { name: "Package B", price: "PKR 12,000", hot: true, items: ["2 reels", "2 carousels", "4 stories", "Ad usage rights for 15 days"] },
+        { name: "Package C", price: "PKR 25,000", items: ["8 reels", "1 carousel", "1 story", "No ad usage rights"] },
+      ],
+      addons: [["Single story", "PKR 1,500"], ["Static post", "PKR 2,000"], ["Carousel", "PKR 2,500"], ["Unboxing reel", "PKR 4,000"], ["Product filming", "PKR 6,000"], ["Voiceover reel", "PKR 5,000"], ["Ad usage rights (per month)", "PKR 3,000"]],
+    },
+  },
+};
+for (const t of themes) if (creators[t.slug]) Object.assign(t, creators[t.slug], { real: true });
+
 const services = (t) => [
   { name: "Starter", price: "$150", per: "1 video", items: ["1 × 15–30s vertical video", "1 hook variation", "Raw footage included", "1 round of edits"] },
   { name: "Signature", price: "$400", per: "3 videos", hot: true, items: ["3 × 15–60s vertical videos", "3 hooks per video", "Captions & on-screen text", "2 rounds of edits"] },
   { name: "Monthly", price: "$1,100", per: "per month", items: ["8 videos a month", "Photos for ads & product pages", "Script ideas for your brand", "Priority turnaround"] },
 ];
 
-const steps = ["Send your brief & product", "I script & plan the hooks", "Film, edit & deliver in 5–7 days", "Edits, then you post or run ads"];
+const sampleSteps = ["Send your brief & product", "I script & plan the hooks", "Film, edit & deliver in 5–7 days", "Edits, then you post or run ads"];
+const realSteps = ["Send your brief & product", "We agree on ideas & deliverables", "I create & share the content", "Final edits, then you post"];
 const marqueeWords = ["UGC videos", "Product photos", "Unboxings", "Voiceovers", "Hooks that convert", "Paid ad creatives", "Raw footage"];
 
 const phone = (t, i, extra = "", cls = "phone") => {
@@ -247,8 +331,8 @@ function heroHTML(t) {
       ${t.slug === "coquette" ? `<p class="divider">🎀 🎀 🎀</p>` : ""}
       <div class="ed-grid">
         <p class="lead">${t.lead}</p>
-        ${phone(t, 1)}
-        <div class="ed-side"><p class="eyebrow">Available for</p><p>Paid ads · Organic posts · Product pages · Launch campaigns</p>${cta}</div>
+        ${t.portrait ? `<img class="portrait" src="${t.portrait}" alt="${t.name} ${t.tag}">` : phone(t, 1)}
+        <div class="ed-side"><p class="eyebrow">${t.real ? "I create" : "Available for"}</p><p>${t.real ? t.chips.slice(0, 5).join(" · ") : "Paid ads · Organic posts · Product pages · Launch campaigns"}</p>${cta}</div>
       </div>
     </div>
   </header>`;
@@ -283,8 +367,8 @@ function page(t) {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${t.name} ${t.tag} — ${t.niche}</title>
-<meta name="description" content="${t.name} ${t.tag}: ${t.niche}. ${t.theme} UGC portfolio template by Jugaar Media.">
+<title>${t.real ? `${t.name} ${t.tag === "UGC" ? "" : t.tag + " "}— ${t.niche}` : `${t.name} ${t.tag} — ${t.niche}`}</title>
+<meta name="description" content="${t.real ? `${t.name}: ${t.niche}. ${t.lead}` : `${t.name} ${t.tag}: ${t.niche}. ${t.theme} UGC portfolio template by Jugaar Media.`}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="${fontHref}" rel="stylesheet">
@@ -377,6 +461,24 @@ function page(t) {
   form button{grid-column:1/-1;justify-self:center}
   footer{padding:40px 0;text-align:center;color:var(--mute);font-size:14px}
   footer .socials{display:flex;gap:20px;justify-content:center;margin-bottom:12px;font-weight:600;color:var(--ink)}
+  .about-box img,.portrait{width:100%;height:100%;object-fit:cover;object-position:center 30%}
+  .portrait{width:260px;height:380px;border-radius:999px 999px var(--r) var(--r);box-shadow:0 30px 60px -30px rgba(0,0,0,.35)}
+  img.ph{width:100%;object-fit:cover;display:block}
+  .loc{margin-top:18px;font-size:15px}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;max-width:900px;margin:0 auto}
+  .stat{background:var(--bg2);border-radius:var(--r);padding:30px 16px;text-align:center;border:1px solid var(--line)}
+  .stat b{display:block;font-family:var(--display);font-size:46px;color:var(--accent);line-height:1.1}
+  .stat span{font-weight:600}.stat small{display:block;color:var(--mute);font-size:13px}
+  .brands{display:flex;flex-wrap:wrap;justify-content:center;gap:16px}
+  .brands span{font-family:var(--display);font-size:clamp(20px,2.4vw,28px);padding:18px 30px;border:1px solid var(--line);border-radius:var(--r);background:var(--bg2)}
+  .addons{max-width:640px;margin:40px auto 0;background:var(--bg2);border-radius:var(--r);padding:30px 34px;border:1px solid var(--line)}
+  .addons h3{font-size:28px;margin-bottom:12px}
+  .addons div{display:flex;justify-content:space-between;gap:16px;padding:10px 0;border-bottom:1px solid var(--line)}
+  .addons b{color:var(--accent);white-space:nowrap}
+  .direct{display:flex;flex-wrap:wrap;justify-content:center;gap:12px 26px;margin-top:30px;font-weight:600}
+  .direct a{border-bottom:1px solid var(--accent)}
+  footer a{text-decoration:underline}
+  footer .socials a{text-decoration:none}
   ${t.css}
   @media (max-width:900px){
     nav ul{display:none}
@@ -384,6 +486,8 @@ function page(t) {
     .ed-grid .phone{margin:0 auto}
     .stack{min-height:380px}.stack .phone,.fan .phone{width:150px}
     .work,.pkgs{grid-template-columns:1fr 1fr}
+    .stats{grid-template-columns:1fr 1fr}
+    .portrait{margin:0 auto}
     .steps{grid-template-columns:1fr 1fr}
     .collage{padding:60px 0 80px;min-height:0}
     .collage-items{position:static;display:flex;justify-content:center;gap:12px;margin-bottom:40px;flex-wrap:wrap}
@@ -403,65 +507,83 @@ function page(t) {
 </style>
 </head>
 <body>
-  <div class="tpl">${t.theme} UGC template by <a href="index.html">Jugaar Media</a> · names, rates and links are placeholders</div>
+  ${t.real ? "" : `<div class="tpl">${t.theme} UGC template by <a href="index.html">Jugaar Media</a> · names, rates and links are placeholders</div>`}
   <nav><div class="wrap">
-    <a class="logo" href="#">${t.name} ${t.tag} ${t.motif}</a>
-    <ul><li><a href="#about">About</a></li><li><a href="#work">Portfolio</a></li><li><a href="#rates">Rates</a></li><li><a href="#process">Process</a></li></ul>
+    <a class="logo" href="#">${t.name}${t.tag === "UGC" && t.real ? "" : " " + t.tag} ${t.motif}</a>
+    <ul><li><a href="#about">About</a></li><li><a href="#work">${t.real ? "Content" : "Portfolio"}</a></li>${t.brands ? `<li><a href="#brands">Brands</a></li>` : ""}${!t.real || t.rates ? `<li><a href="#rates">Rates</a></li>` : ""}<li><a href="#contact">Contact</a></li></ul>
     <a class="btn sm" href="#contact">Let’s collab</a>
   </div></nav>
   ${heroHTML(t)}
-  <div class="marquee"><div>${[...marqueeWords, ...marqueeWords].map((w) => `<span>${w}</span><span>${t.motif}</span>`).join("")}</div></div>
+  <div class="marquee"><div>${(() => { const w = t.real ? t.chips : marqueeWords; return [...w, ...w, ...w, ...w].map((x) => `<span>${x}</span><span>${t.motif}</span>`).join(""); })()}</div></div>
 
   <section id="about"><div class="wrap about">
-    <div class="about-box">${t.motif}<small>Add your photo here</small></div>
+    <div class="about-box">${t.portrait ? `<img src="${t.portrait}" alt="${t.name} ${t.tag}">` : `${t.motif}${t.real ? "" : "<small>Add your photo here</small>"}`}</div>
     <div>
       <p class="eyebrow">Hi, I’m ${t.name}</p>
-      <h2>I make content that feels like a friend’s recommendation.</h2>
-      <p>I’m a UGC creator focused on ${t.niche.replace(" UGC", "").toLowerCase()}. Brands hire me for scroll-stopping videos they can run as ads, post on their own pages or use on product listings.</p>
-      <p>Every video is filmed in natural light, scripted around a strong hook and delivered ready to post: edited, captioned and in the right format.</p>
-      <div class="chips"><span>TikTok</span><span>Instagram Reels</span><span>YouTube Shorts</span><span>Meta ads</span><span>Amazon listings</span></div>
+      <h2>${t.real ? t.aboutTitle : "I make content that feels like a friend’s recommendation."}</h2>
+      ${t.real ? t.about.map((p) => `<p>${p}</p>`).join("") : `<p>I’m a UGC creator focused on ${t.niche.replace(" UGC", "").toLowerCase()}. Brands hire me for scroll-stopping videos they can run as ads, post on their own pages or use on product listings.</p>
+      <p>Every video is filmed in natural light, scripted around a strong hook and delivered ready to post: edited, captioned and in the right format.</p>`}
+      <div class="chips">${(t.real ? t.chips : ["TikTok", "Instagram Reels", "YouTube Shorts", "Meta ads", "Amazon listings"]).map((c) => `<span>${c}</span>`).join("")}</div>
+      ${t.location ? `<p class="loc">📍 ${t.location}</p>` : ""}
     </div>
   </div></section>
 
+  ${t.stats ? `<section class="stats-sec" style="padding-top:0"><div class="wrap">
+    <div class="sec-head"><p class="eyebrow">Instagram${t.ig ? ` · @${t.ig}` : ""}</p><h2 class="sec-title">Account insights</h2></div>
+    <div class="stats">${t.stats.map(([v, l, s]) => `<div class="stat"><b>${v}</b><span>${l}</span>${s ? `<small>${s}</small>` : ""}</div>`).join("")}</div>
+  </div></section>` : ""}
+
   <section id="work" style="padding-top:0"><div class="wrap">
-    <div class="sec-head"><p class="eyebrow">Portfolio</p><h2 class="sec-title">Recent content</h2><p>Replace these tiles with your own videos or embeds.</p></div>
-    <div class="work">${t.work.map((w, i) => `<div class="card"><div class="ph" style="background:linear-gradient(160deg,${t.tiles[i][0]},${t.tiles[i][1]})"><div class="play">▶</div></div><h3>${w}</h3><p>Vertical video · 9:16</p></div>`).join("")}</div>
+    <div class="sec-head"><p class="eyebrow">${t.real ? "What I create" : "Portfolio"}</p><h2 class="sec-title">${t.photos ? "My content" : t.real ? "Content I make" : "Recent content"}</h2>${t.real ? "" : "<p>Replace these tiles with your own videos or embeds.</p>"}</div>
+    <div class="work">${t.photos
+      ? t.photos.map(([src, label]) => `<div class="card"><img class="ph" src="${src}" alt="${label} content by ${t.name}"><h3>${label}</h3></div>`).join("")
+      : t.work.map((w, i) => `<div class="card"><div class="ph" style="background:linear-gradient(160deg,${t.tiles[i][0]},${t.tiles[i][1]})"><div class="play">▶</div></div><h3>${w}</h3><p>${t.real ? "Vertical video" : "Vertical video · 9:16"}</p></div>`).join("")}</div>
   </div></section>
 
-  <section id="rates" style="padding-top:0"><div class="wrap">
+  ${t.brands ? `<section id="brands" style="padding-top:0"><div class="wrap">
+    <div class="sec-head"><p class="eyebrow">${t.motif} Collaborations</p><h2 class="sec-title">Brands I’ve worked with</h2></div>
+    <div class="brands">${t.brands.map((b) => `<span>${b}</span>`).join("")}</div>
+  </div></section>` : ""}
+
+  ${!t.real ? `<section id="rates" style="padding-top:0"><div class="wrap">
     <div class="sec-head"><p class="eyebrow">Packages</p><h2 class="sec-title">Simple rates</h2><p>Every package includes product research, scripting and usage rights for organic posting.</p></div>
-    <div class="pkgs">${pk.map((p) => `<div class="pkg${p.hot ? " hot" : ""}"><h3>${p.name}</h3><div class="price">${p.price}</div><div class="per">${p.per}</div><ul>${p.items.map((i) => `<li>${i}</li>`).join("")}</ul><a class="btn${p.hot ? "" : " ghost"}" href="#contact">Book ${p.name}</a></div>`).join("")}</div>
+    <div class="pkgs">${services(t).map((p) => `<div class="pkg${p.hot ? " hot" : ""}"><h3>${p.name}</h3><div class="price">${p.price}</div><div class="per">${p.per}</div><ul>${p.items.map((i) => `<li>${i}</li>`).join("")}</ul><a class="btn${p.hot ? "" : " ghost"}" href="#contact">Book ${p.name}</a></div>`).join("")}</div>
     <p class="note">Sample rates. Paid-ad usage rights and whitelisting are quoted separately.</p>
-  </div></section>
+  </div></section>` : t.rates ? `<section id="rates" style="padding-top:0"><div class="wrap">
+    <div class="sec-head"><p class="eyebrow">Services & rates</p><h2 class="sec-title">Packages</h2></div>
+    <div class="pkgs">${t.rates.packages.map((p) => `<div class="pkg${p.hot ? " hot" : ""}"><h3>${p.name}</h3><div class="price">${p.price}</div><div class="per">&nbsp;</div><ul>${p.items.map((i) => `<li>${i}</li>`).join("")}</ul><a class="btn${p.hot ? "" : " ghost"}" href="#contact">Book ${p.name}</a></div>`).join("")}</div>
+    <div class="addons"><h3>Add-ons</h3>${t.rates.addons.map(([a, b]) => `<div><span>${a}</span><b>${b}</b></div>`).join("")}</div>
+  </div></section>` : ""}
 
   <section id="process" style="padding-top:0"><div class="wrap">
     <div class="sec-head"><p class="eyebrow">How it works</p><h2 class="sec-title">From brief to post</h2></div>
-    <div class="steps">${steps.map((s, i) => `<div class="step"><b>0${i + 1}</b>${s}</div>`).join("")}</div>
+    <div class="steps">${(t.real ? realSteps : sampleSteps).map((s, i) => `<div class="step"><b>0${i + 1}</b>${s}</div>`).join("")}</div>
   </div></section>
 
   <section id="contact" style="padding-top:0"><div class="wrap"><div class="contact">
     <p class="eyebrow">${t.motif} Let’s create together</p>
     <h2>Have a product to share?</h2>
-    <p>Tell me about your brand and I’ll reply within 48 hours with ideas and a quote.</p>
-    <form onsubmit="event.preventDefault();location.href='mailto:hello@example.com?subject='+encodeURIComponent('Collab: '+this.brand.value)+'&body='+encodeURIComponent(this.msg.value+'\\n\\n'+this.who.value+' · '+this.email.value)">
+    ${!t.real || t.email ? `<p>${t.real ? `Tell me about your brand and product and I’ll get back to you.` : `Tell me about your brand and I’ll reply within 48 hours with ideas and a quote.`}</p>
+    <form onsubmit="event.preventDefault();location.href='mailto:${t.email || "hello@example.com"}?subject='+encodeURIComponent('Collab: '+this.brand.value)+'&body='+encodeURIComponent(this.msg.value+'\\n\\n'+this.who.value+' · '+this.email.value)">
       <input name="who" placeholder="Your name" required>
       <input name="email" type="email" placeholder="Email" required>
       <input name="brand" class="full" placeholder="Brand / product" required>
       <textarea name="msg" placeholder="What would you like to create?"></textarea>
       <button class="btn" type="submit">Send enquiry</button>
-    </form>
+    </form>` : `<p>Contact details coming soon.</p>`}
+    ${t.real && (t.email || t.phone || t.ig) ? `<div class="direct">${t.email ? `<a href="mailto:${t.email}">✉️ ${t.email}</a>` : ""}${t.wa ? `<a href="https://wa.me/${t.wa}" target="_blank" rel="noopener">💬 WhatsApp ${t.phone}</a>` : ""}${t.ig ? `<a href="https://instagram.com/${t.ig}" target="_blank" rel="noopener">📸 @${t.ig}</a>` : ""}</div>` : ""}
   </div></div></section>
 
   <footer><div class="wrap">
-    <div class="socials"><a href="#">Instagram</a><a href="#">TikTok</a><a href="#">YouTube</a><a href="mailto:hello@example.com">Email</a></div>
-    <p>© ${new Date().getFullYear()} ${t.name} ${t.tag} · ${t.theme} template by Jugaar Media</p>
+    ${t.real ? (t.ig || t.email ? `<div class="socials">${t.ig ? `<a href="https://instagram.com/${t.ig}" target="_blank" rel="noopener">Instagram</a>` : ""}${t.email ? `<a href="mailto:${t.email}">Email</a>` : ""}</div>` : "") : `<div class="socials"><a href="#">Instagram</a><a href="#">TikTok</a><a href="#">YouTube</a><a href="mailto:hello@example.com">Email</a></div>`}
+    <p>© ${new Date().getFullYear()} ${t.real ? `${t.name}${t.tag === "UGC" ? "" : " " + t.tag} · Website by <a href="https://jugaar.media">Jugaar Media</a>` : `${t.name} ${t.tag} · ${t.theme} template by Jugaar Media`}</p>
   </div></footer>
 </body>
 </html>
 `;
 }
 
-for (const t of themes) writeFileSync(join(out, `${t.slug}.html`), page(t));
+for (const t of themes) writeFileSync(join(out, `${t.file || t.slug}.html`), page(t));
 
 // Gallery page
 const gallery = `<!doctype html>
@@ -492,9 +614,9 @@ const gallery = `<!doctype html>
 </style>
 </head>
 <body>
-  <header><h1>10 <em>girly</em> UGC websites</h1><p>Creator portfolio templates by Jugaar Media. Click one to open it.</p></header>
+  <header><h1>UGC <em>creator</em> websites</h1><p>Creator portfolio websites by Jugaar Media. Click one to open it.</p></header>
   <div class="grid">
-    ${themes.map((t, i) => `<a class="t" href="${t.slug}.html"><div class="sw" style="background:linear-gradient(135deg,${t.c.bg2},${t.c.accent2})">${t.motif}<i>${[t.c.bg, t.c.accent, t.c.accent2, t.c.ink].map((x) => `<b style="background:${x}"></b>`).join("")}</i></div><div class="meta"><h2>${String(i + 1).padStart(2, "0")} · ${t.theme}</h2><p>${t.niche}</p></div></a>`).join("")}
+    ${themes.map((t, i) => `<a class="t" href="${t.file || t.slug}.html"><div class="sw" style="background:linear-gradient(135deg,${t.c.bg2},${t.c.accent2})">${t.motif}<i>${[t.c.bg, t.c.accent, t.c.accent2, t.c.ink].map((x) => `<b style="background:${x}"></b>`).join("")}</i></div><div class="meta"><h2>${String(i + 1).padStart(2, "0")} · ${t.real ? t.name + (t.tag === "UGC" ? "" : " " + t.tag) : t.theme}</h2><p>${t.real ? t.niche : t.niche + " · template"}</p></div></a>`).join("")}
   </div>
 </body>
 </html>
