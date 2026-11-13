@@ -115,7 +115,7 @@ const themes = [
     css: `
       .hero h1{font-weight:400;letter-spacing:-.03em}
       .hero h1 em{color:var(--accent)}
-      .card,.pkg,.step,.about-box{border:1px solid var(--line);background:#faf8f2!important;box-shadow:none}
+      .card,.pkg,.step,.about-box{border:1px solid var(--line);background:color-mix(in srgb,var(--bg) 50%,#fff)!important;box-shadow:none}
       .sec-title{font-weight:400}
       .marquee{background:var(--ink);color:var(--bg)}
     `,
@@ -264,7 +264,10 @@ const creators = {
       "I collaborate with beauty & fashion brands to create engaging content that builds brand awareness, strengthens audience trust and drives conversions. My audience values my honest recommendations, making my content relatable, credible and impactful.",
     ],
     chips: ["Voiceover reels", "Product demos", "Tutorials", "Unboxings", "Reviews", "Instagram Stories", "Paid ad creatives", "Outfit shoots"],
-    stats: [["68", "Followers", ""], ["4.1K+", "Reach", "last 30 days"], ["9.4K+", "Impressions", "last 30 days"], ["870+", "Engagement", "last 30 days"]],
+    stats: [["4.1K+", "Reach", "last 30 days"], ["9.4K+", "Impressions", "last 30 days"], ["870+", "Engagement", "last 30 days"]],
+    // Lilac & plum, matching her media kit
+    motif: "🌸",
+    c: { bg: "#fbf0f9", bg2: "#f4dff1", ink: "#4d1238", mute: "#85587a", accent: "#94408a", accent2: "#e3b6df", line: "#ead0e6", onAccent: "#fff" },
     portrait: "img/maryyam-portrait.jpg",
     photos: [["img/maryyam-1.jpg", "Lifestyle"], ["img/maryyam-2.jpg", "Skincare"], ["img/maryyam-3.jpg", "Fashion"]],
     ig: "reviews_by_maryyam", email: "maryyamhussain013@gmail.com", phone: "+92 336 5740782", wa: "923365740782",
@@ -465,7 +468,7 @@ function page(t) {
   .portrait{width:260px;height:380px;border-radius:999px 999px var(--r) var(--r);box-shadow:0 30px 60px -30px rgba(0,0,0,.35)}
   img.ph{width:100%;object-fit:cover;display:block}
   .loc{margin-top:18px;font-size:15px}
-  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;max-width:900px;margin:0 auto}
+  .stats{display:flex;flex-wrap:wrap;justify-content:center;gap:20px;max-width:900px;margin:0 auto}.stat{flex:1 1 200px;max-width:270px}
   .stat{background:var(--bg2);border-radius:var(--r);padding:30px 16px;text-align:center;border:1px solid var(--line)}
   .stat b{display:block;font-family:var(--display);font-size:46px;color:var(--accent);line-height:1.1}
   .stat span{font-weight:600}.stat small{display:block;color:var(--mute);font-size:13px}
@@ -478,6 +481,7 @@ function page(t) {
   .direct{display:flex;flex-wrap:wrap;justify-content:center;gap:12px 26px;margin-top:30px;font-weight:600}
   .direct a{border-bottom:1px solid var(--accent)}
   footer a{text-decoration:underline}
+  ${t.real ? ".pkg.hot::before{display:none}" : ""}
   footer .socials a{text-decoration:none}
   ${t.css}
   @media (max-width:900px){
@@ -486,7 +490,6 @@ function page(t) {
     .ed-grid .phone{margin:0 auto}
     .stack{min-height:380px}.stack .phone,.fan .phone{width:150px}
     .work,.pkgs{grid-template-columns:1fr 1fr}
-    .stats{grid-template-columns:1fr 1fr}
     .portrait{margin:0 auto}
     .steps{grid-template-columns:1fr 1fr}
     .collage{padding:60px 0 80px;min-height:0}
