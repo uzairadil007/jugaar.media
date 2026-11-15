@@ -36,8 +36,8 @@ main{max-width:1040px;margin:0 auto;padding:22px 20px 40px;width:100%;flex:1 0 a
 .site-footer a{color:var(--ink);font-weight:700;text-decoration:none;}
 
 /* ---------- shared components ---------- */
-.banner{background:#fff7e0;border:1px solid #f0dca0;color:#6b5400;font-size:12.5px;padding:10px 14px;border-radius:10px;margin-bottom:18px;line-height:1.5;}
-.banner.err{background:#fff0f0;border-color:#f3bcbc;color:#8a1c1c;}
+.banner{background:#fbffe6;border:1px solid #d8ff29;color:#2c3300;font-size:12.5px;padding:10px 14px;border-radius:10px;margin-bottom:18px;line-height:1.5;}
+.banner.err{background:#f6f6f6;border-color:#0a0a0a;color:#0a0a0a;}
 .banner.ok{background:#f6ffd1;border-color:#d8ff29;color:#2c3300;}
 .banner button{margin-left:8px;}
 .card{border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:18px;background:#fff;}
@@ -123,7 +123,7 @@ main.client{max-width:640px;font-size:17px;padding-top:30px;}
 .empty{border:1.5px dashed var(--line);border-radius:16px;padding:28px 18px;text-align:center;color:var(--sub);font-size:15px;line-height:1.55;}
 .fine{font-size:13px;color:var(--sub);margin-top:10px;line-height:1.5;}
 .hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0;}
-.err-msg{color:#c00;font-size:15px;font-weight:700;margin:0 0 14px;min-height:0;}
+.err-msg{color:#0a0a0a;font-size:15px;font-weight:700;margin:0 0 14px;min-height:0;}
 .err-msg:empty{display:none;}
 .codebox{font-family:"Silkscreen",monospace;font-size:26px;letter-spacing:.2em;background:var(--ink);color:var(--lime);border-radius:14px;padding:12px 20px;display:inline-block;}
 a.btn{display:inline-block;text-decoration:none;background:var(--ink);color:#fff;border-radius:10px;padding:12px 20px;font-weight:700;font-size:13.5px;}
@@ -306,9 +306,9 @@ table.sheet td input:focus,table.sheet td select:focus{outline:2px solid var(--i
 table.sheet td .cell.st-paid,table.sheet td .cell.st-completed{background:var(--lime);font-weight:700;}
 table.sheet td .cell.st-proof{background:#111;color:#fff;font-weight:700;}
 table.sheet td .cell.st-blocked{background:#e9e9e9;font-weight:700;}
-table.sheet td .cell.st-no-show{background:#ffe3e3;}
+table.sheet td .cell.st-no-show{background:#ebebe4;}
 table.sheet td.del{width:44px;text-align:center;}
-.rm{background:none;border:0;color:#b00;cursor:pointer;font-size:15px;padding:8px 10px;}
+.rm{background:none;border:0;color:#0a0a0a;cursor:pointer;font-size:15px;padding:8px 10px;}
 
 /* ---------- availability editor ---------- */
 .wk{display:grid;grid-template-columns:110px 70px 1fr 1fr;gap:10px;align-items:center;margin-bottom:8px;}
@@ -337,6 +337,12 @@ table.sheet td.del{width:44px;text-align:center;}
   button.btn{width:100%;}
   .actions .btn{width:auto;}
 }
+/* brand alerts: errors and remove buttons stand out in black + lime */
+.banner.err{background:#d8ff29;border:2px solid #0a0a0a;color:#0a0a0a;font-weight:700;box-shadow:4px 4px 0 #0a0a0a;}
+.err-msg:not(:empty){display:inline-block;background:#d8ff29;color:#0a0a0a;padding:6px 10px;border:2px solid #0a0a0a;font-weight:800;}
+.rm{border:2px solid #0a0a0a;border-radius:8px;font-weight:800;}
+.rm:hover{background:#d8ff29;}
+
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

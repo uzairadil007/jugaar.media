@@ -7,8 +7,8 @@
 <style>
   :root{
     --bg:#0a0a0a; --panel:#111310; --panel-2:#15170f; --line:#232720;
-    --accent:#ceff00; --accent-dim:#9db300; --white:#f5f6f2; --muted:#8b8f86;
-    --down:#ff7a59; --ff:'Helvetica Neue',Helvetica,Arial,sans-serif;
+    --accent:#d8ff29; --accent-dim:#9db300; --white:#f5f6f2; --muted:#8b8f86;
+    --down:#f5f6f2; --ff:'Helvetica Neue',Helvetica,Arial,sans-serif;
   }
   *{margin:0;padding:0;box-sizing:border-box}
   body{background:var(--bg);color:var(--white);font-family:var(--ff);line-height:1.5}
@@ -38,7 +38,7 @@
 
   /* ---- Upload dropzone ---- */
   .drop{border:1.5px dashed var(--line);border-radius:14px;padding:40px 24px;text-align:center;cursor:pointer;transition:.2s}
-  .drop:hover,.drop.drag{border-color:var(--accent);background:rgba(206,255,0,.04)}
+  .drop:hover,.drop.drag{border-color:var(--accent);background:rgba(216,255,41,.04)}
   .drop .big{font-weight:800;font-size:15px}
   .drop .small{color:var(--muted);font-size:12.5px;margin-top:6px}
   .drop input{display:none}
@@ -76,7 +76,7 @@
   .toolbar{position:fixed;bottom:0;left:230px;right:0;background:rgba(10,10,10,.92);backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:14px 40px;display:flex;justify-content:space-between;align-items:center;gap:16px;z-index:20}
   .btn{font-weight:700;font-size:14px;padding:11px 20px;border-radius:999px;border:1px solid transparent;cursor:pointer;font-family:var(--ff)}
   .btn-primary{background:var(--accent);color:#0a0a0a}
-  .btn-primary:hover{box-shadow:0 0 0 4px rgba(206,255,0,.18)}
+  .btn-primary:hover{box-shadow:0 0 0 4px rgba(216,255,41,.18)}
   .btn-ghost{background:none;border:1px solid var(--line);color:var(--white)}
   .btn-ghost:hover{border-color:var(--accent)}
   .btn:disabled{opacity:.4;cursor:not-allowed}
@@ -113,6 +113,10 @@
     .toolbar .btn{flex:1 1 auto;white-space:nowrap}
     .card-head{flex-wrap:wrap;gap:8px}
   }
+  /* brand alerts: remove buttons stand out */
+  .rmv{border:2px solid var(--white);color:var(--white);font-weight:800;text-transform:uppercase}
+  .rmv:hover{background:var(--accent);border-color:var(--accent);color:#0a0a0a}
+
 </style>
 </head>
 <body>
@@ -835,7 +839,7 @@
   }
   document.getElementById('addCreator').addEventListener('click', () => {
     const nextRank = data.leaderboard.length + 1;
-    data.leaderboard.push({ rank: nextRank, name: 'New Creator', handle: '@handle', followers: '0', engagement: '0%', points: 0, trend: 'flat', color: '#ceff00' });
+    data.leaderboard.push({ rank: nextRank, name: 'New Creator', handle: '@handle', followers: '0', engagement: '0%', points: 0, trend: 'flat', color: '#d8ff29' });
     renderLeaderboard(); saveDraft();
   });
 
