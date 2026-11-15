@@ -6,7 +6,7 @@
 <title>Jugaar Media — From idea to influence</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
 <meta name="theme-color" content="#ffffff">
 <style>
   :root{
@@ -16,7 +16,7 @@
     --accent-ink:#5f7d00; --candle-up:#5f7d00; --candle-dn:#0a0a0a;
     --st-script:#8d5cf0; --ok:#15803d; --danger:#d23030;
     --f-sans:"Helvetica Neue",Helvetica,Arial,sans-serif;
-    --f-serif:"Instrument Serif",Georgia,"Times New Roman",serif;
+    --f-serif:"Helvetica Neue",Helvetica,Arial,sans-serif;
     --f-pixel:"Silkscreen","Courier New",monospace;
     --bg-2:var(--surface); --panel:var(--surface); --accent:var(--lime); --accent-dim:var(--fg); --white:var(--fg);
     --ff-display:var(--f-sans); --ff-body:var(--f-sans);
@@ -443,14 +443,14 @@ img,svg,video{max-width:100%;height:auto}
 /* =====================================================================
    Jugaar brand layer — same style as vibe. and the content calendar:
    dark by default, light on light-mode devices, square corners, 2px
-   borders, lime offset shadows, Instrument Serif italics, Silkscreen labels
+   borders, lime offset shadows, Helvetica Neue italics, Silkscreen labels
    ===================================================================== */
 *,*::before,*::after{border-radius:0!important}
 body{background:var(--bg);color:var(--fg)}
 body::before{display:none}
 :focus-visible{outline:2px solid var(--lime);outline-offset:2px}
 h1,h2,h3,h4{color:var(--fg)}
-.ital{font-family:var(--f-serif);font-style:italic;font-weight:400;letter-spacing:0}
+.ital{font-family:var(--f-serif);font-style:italic;font-weight:800;letter-spacing:0}
 .accent{color:var(--accent-ink)}
 .eyebrow{font-family:var(--f-pixel);font-weight:400;font-size:11px;letter-spacing:.08em;color:var(--muted);margin-bottom:22px}
 .eyebrow::before{width:28px;height:2px;background:var(--fg)}
@@ -485,7 +485,7 @@ header.nav,header.nav.scrolled{background:color-mix(in srgb,var(--bg) 90%,transp
 .hero p.sub,.about p,.proj p,.plan .pdesc,.comm p,.step p,.cta-box p{color:var(--muted)}
 .about b{color:var(--fg)}
 .marquee-sec{background:var(--surface);border-top:2px solid var(--fg);border-bottom:2px solid var(--fg)}
-.marquee span{font-family:var(--f-serif);font-style:italic;font-weight:400;font-size:32px;letter-spacing:0;color:var(--muted-2)}
+.marquee span{font-family:var(--f-serif);font-style:italic;font-weight:800;font-size:32px;letter-spacing:0;color:var(--muted-2)}
 .marquee span.on{color:var(--fg)}
 
 /* cards: one surface, one border, offset-shadow hover */
@@ -513,7 +513,7 @@ header.nav,header.nav.scrolled{background:color-mix(in srgb,var(--bg) 90%,transp
 .mini-metrics .s{font-family:var(--f-pixel);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
 
 /* projects */
-.proj .thumb{font-family:var(--f-serif);font-weight:400;font-size:48px;color:#0a0a0a;border-bottom:2px solid var(--fg)}
+.proj .thumb{font-family:var(--f-serif);font-weight:800;font-size:48px;color:#0a0a0a;border-bottom:2px solid var(--fg)}
 .proj .thumb::after{display:none}
 .p1{background:#d8ff29}.p2{background:#6fc3ff}.p3{background:#ff9f5a}.p4{background:#c9a7ff}.p5{background:#ffd84a}.p6{background:#ff8fb1}
 .proj .cat,.comm .tag{font-family:var(--f-pixel);font-weight:400;font-size:10px;letter-spacing:.06em;color:var(--accent-ink)}
@@ -552,7 +552,7 @@ header.nav,header.nav.scrolled{background:color-mix(in srgb,var(--bg) 90%,transp
 .up{color:var(--ok)} .down{color:var(--danger)} .flat{color:var(--muted)}
 
 /* process + contact */
-.step .n{font-family:var(--f-serif);font-weight:400;font-size:52px;color:var(--muted-2)}
+.step .n{font-family:var(--f-serif);font-weight:800;font-size:52px;color:var(--muted-2)}
 .cta-box{box-shadow:8px 8px 0 var(--lime)}
 
 /* footer + floating buttons */
