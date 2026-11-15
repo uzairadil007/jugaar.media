@@ -12,7 +12,7 @@
 :root{--lime:#d8ff29;--ink:#0a0a0a;--paper:#ffffff;--line:#e8e8e8;--sub:#6b6b6b;--soft:#f6f6f6;}
 *{box-sizing:border-box;}
 html,body{height:100%;}
-body{margin:0;background:var(--paper);color:var(--ink);font-family:Helvetica,Arial,sans-serif;
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
   padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
   display:flex;flex-direction:column;min-height:100vh;}
 button,input,select,textarea{font-family:inherit;}
@@ -125,7 +125,7 @@ main.client{max-width:640px;font-size:17px;padding-top:30px;}
 .hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0;}
 .err-msg{color:#c00;font-size:15px;font-weight:700;margin:0 0 14px;min-height:0;}
 .err-msg:empty{display:none;}
-.codebox{font-family:'SFMono-Regular',Consolas,'Courier New',monospace;font-size:26px;letter-spacing:.2em;background:var(--ink);color:var(--lime);border-radius:14px;padding:12px 20px;display:inline-block;}
+.codebox{font-family:"Silkscreen",monospace;font-size:26px;letter-spacing:.2em;background:var(--ink);color:var(--lime);border-radius:14px;padding:12px 20px;display:inline-block;}
 a.btn{display:inline-block;text-decoration:none;background:var(--ink);color:#fff;border-radius:10px;padding:12px 20px;font-weight:700;font-size:13.5px;}
 a.btn.lime{background:var(--lime);color:var(--ink);}
 a.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line);}
@@ -338,6 +338,9 @@ table.sheet td.del{width:44px;text-align:center;}
   .actions .btn{width:auto;}
 }
 </style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
 <header>
