@@ -1198,6 +1198,16 @@ select.cl-f{width:auto;max-width:170px;min-height:40px;padding:0 10px;font-size:
 @media (max-width:700px){ .sl-pre{grid-template-columns:repeat(2,minmax(0,1fr));} }
 
 .sl-rep th.num{text-align:right;}
+/* ---- brand alerts: errors and delete buttons stand out in black + lime ---- */
+.admin-pin-err:not(:empty),.gate-err:not(:empty),.g2-err:not(:empty),.pin-err:not(:empty),.sl-msg.bad:not(:empty),.gt-err:not(:empty),.va-flag:not(:empty),.te-sum.bad,.vc-flag,.sl-dirty,.ck-x,.va-submit > span.warn,.flag{background:var(--lime);color:#0a0a0a!important;font-weight:800;padding:3px 8px;border-radius:4px;}
+.alert{background:var(--lime);color:#0a0a0a;border:2px solid #0a0a0a;font-weight:700;}
+button.ed.danger,.cl-del{background:transparent;border:2px solid var(--fg);color:var(--fg);font-weight:800;text-transform:uppercase;letter-spacing:.04em;}
+button.ed.danger:hover,.cl-del:hover{background:var(--lime);border-color:#0a0a0a;color:#0a0a0a;}
+button.btn.danger,.cl-del.armed{background:var(--fg);border:2px solid var(--fg);color:var(--bg);font-weight:800;box-shadow:4px 4px 0 var(--lime);}
+button.btn.danger:hover,.cl-del.armed:hover{background:var(--lime);color:#0a0a0a;border-color:#0a0a0a;box-shadow:4px 4px 0 var(--fg);}
+.rm,.sl-x{border:2px solid var(--fg);color:var(--fg);font-weight:800;border-radius:6px;}
+.rm:hover,.sl-x:hover{background:var(--lime);border-color:#0a0a0a;color:#0a0a0a;}
+
 </style>
 </head>
 <body>
