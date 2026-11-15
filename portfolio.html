@@ -8,19 +8,19 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  :root{--bg:#eeeee8;--ink:#0d0d0d;--blue:#2337ff;--red:#ff3b1f;--mute:#555}
+  :root{--bg:#eeeee8;--ink:#0d0d0d;--blue:#5f7d00;--red:#d8ff29;--lime:#d8ff29;--mute:#555}
   *{box-sizing:border-box;margin:0;padding:0}
   body{background:var(--bg);color:var(--ink);font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;line-height:1.5}
   a{color:inherit;text-decoration:none}
   .mono{font-family:"Silkscreen",monospace}
   .wrap{max-width:1200px;margin:0 auto;padding:0 24px}
-  .bar{background:var(--blue);color:#fff;font-family:"Silkscreen",monospace;font-size:12px;padding:8px 0;text-align:center;letter-spacing:.06em}
+  .bar{background:var(--ink);color:var(--lime);font-family:"Silkscreen",monospace;font-size:12px;padding:8px 0;text-align:center;letter-spacing:.06em}
   nav{border-bottom:3px solid var(--ink)}
   nav .wrap{display:flex;justify-content:space-between;align-items:stretch;height:70px}
   .logo{display:flex;align-items:center;font-weight:700;font-size:22px}
   nav ul{display:flex;list-style:none}
   nav li a{display:flex;align-items:center;height:100%;padding:0 22px;border-left:3px solid var(--ink);font-family:"Silkscreen",monospace;font-size:13px;text-transform:uppercase}
-  nav li a:hover{background:var(--blue);color:#fff}
+  nav li a:hover{background:var(--lime);color:var(--ink)}
   nav li:last-child a{border-right:3px solid var(--ink);background:var(--ink);color:#fff}
   header{border-bottom:3px solid var(--ink)}
   header .wrap{display:grid;grid-template-columns:1.4fr 1fr;min-height:560px}
@@ -29,7 +29,7 @@
   h1{font-size:clamp(52px,8vw,112px);font-weight:700;line-height:.9;letter-spacing:-.05em;text-transform:uppercase}
   h1 span{color:var(--blue)}
   .hr{display:grid;grid-template-rows:1fr auto}
-  .vid{background:var(--blue);display:grid;place-items:center;position:relative;color:#fff}
+  .vid{background:var(--ink);display:grid;place-items:center;position:relative;color:#fff}
   .code{font-family:"Silkscreen",monospace;font-size:14px;line-height:1.9;padding:60px 28px 50px;width:100%;max-width:420px}
   .code i{font-style:normal;opacity:.6}
   .code b{color:var(--ink);background:#fff;padding:0 4px}
@@ -40,7 +40,7 @@
   .vid .tc{position:absolute;bottom:18px;right:18px;font-family:"Silkscreen",monospace;font-size:12px}
   .hr p{padding:28px;border-top:3px solid var(--ink);font-size:17px}
   .btn{display:inline-block;background:var(--ink);color:#fff;padding:16px 26px;font-family:"Silkscreen",monospace;font-size:14px;text-transform:uppercase;border:3px solid var(--ink);transition:all .15s}
-  .btn:hover{background:var(--blue);border-color:var(--blue)}
+  .btn:hover{background:var(--lime);border-color:var(--ink);color:var(--ink)}
   .btn.o{background:transparent;color:var(--ink)}
   .btn.o:hover{background:var(--ink);color:#fff;border-color:var(--ink)}
   .cta{display:flex;gap:12px;flex-wrap:wrap}
@@ -58,7 +58,7 @@
   .table{border-top:3px solid var(--ink)}
   .row{display:grid;grid-template-columns:90px 1fr 1.4fr 60px;padding:26px 0;border-bottom:1px solid var(--ink);align-items:center;gap:16px;transition:background .15s,padding .15s}
   .row:last-child{border-bottom:none;padding-bottom:60px}
-  .row:hover{background:var(--blue);color:#fff;padding-left:16px;padding-right:16px}
+  .row:hover{background:var(--lime);color:var(--ink);padding-left:16px;padding-right:16px}
   .row .mono{font-size:13px}
   .row h3{font-size:28px;letter-spacing:-.02em}
   .row p{font-size:15px;opacity:.8}

@@ -14,7 +14,7 @@
     --bg:#ffffff; --surface:#f5f5f0; --surface-2:#ebebe4; --line:#d9d9d0;
     --fg:#0a0a0a; --muted:#5f5f57; --muted-2:#b4b4ac; --lime:#d8ff29; --on-lime:#0a0a0a;
     --accent-ink:#5f7d00; --candle-up:#5f7d00; --candle-dn:#0a0a0a;
-    --st-script:#8d5cf0; --ok:#15803d; --danger:#d23030;
+    --st-script:#5f7d00; --ok:#5f7d00; --danger:#0a0a0a;
     --f-sans:"Helvetica Neue",Helvetica,Arial,sans-serif;
     --f-serif:"Helvetica Neue",Helvetica,Arial,sans-serif;
     --f-pixel:"Silkscreen","Courier New",monospace;
@@ -35,7 +35,7 @@
   body::before{
     content:"";
     position:fixed;inset:0;
-    background-image:radial-gradient(rgba(206,255,0,.05) 1px, transparent 1px);
+    background-image:radial-gradient(rgba(216,255,41,.05) 1px, transparent 1px);
     background-size:34px 34px;
     pointer-events:none;z-index:0;
   }
@@ -78,7 +78,7 @@
     transition:.2s;cursor:pointer;border:1px solid transparent;
   }
   .btn-primary{background:var(--accent);color:#0a0a0a}
-  .btn-primary:hover{box-shadow:0 0 0 4px rgba(206,255,0,.18);transform:translateY(-2px)}
+  .btn-primary:hover{box-shadow:0 0 0 4px rgba(216,255,41,.18);transform:translateY(-2px)}
   .btn-ghost{border:1px solid var(--line);color:var(--white)}
   .btn-ghost:hover{border-color:var(--accent)}
   .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px}
@@ -128,7 +128,7 @@
 
   /* ============ KPI STATS ============ */
   .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:60px}
-  .stat{border:1px solid var(--line);border-radius:16px;padding:30px 26px;background:linear-gradient(180deg,rgba(206,255,0,.02),transparent)}
+  .stat{border:1px solid var(--line);border-radius:16px;padding:30px 26px;background:linear-gradient(180deg,rgba(216,255,41,.02),transparent)}
   .stat .num{font-family:var(--ff-display);font-weight:900;font-size:52px;color:var(--accent-ink);letter-spacing:-.03em;line-height:1}
   .stat .lbl{color:var(--muted);margin-top:10px;font-size:15px}
 
@@ -150,7 +150,7 @@
   .stock-label{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;font-weight:600}
   .stock-value{font-family:var(--ff-display);font-weight:900;font-size:34px;color:var(--white);line-height:1;margin-top:8px}
   .stock-value .unit{font-size:18px;color:var(--muted);font-weight:600;margin-left:6px}
-  .stock-change{font-family:var(--ff-display);font-weight:700;font-size:14px;padding:6px 10px;border-radius:8px;background:rgba(74,222,128,.12);color:#4ade80;display:flex;align-items:center;gap:4px}
+  .stock-change{font-family:var(--ff-display);font-weight:700;font-size:14px;padding:6px 10px;border-radius:8px;background:rgba(216,255,41,.18);color:#5f7d00;display:flex;align-items:center;gap:4px}
   .stock-chart{width:100%;line-height:0;position:relative}
   .stock-chart svg{width:100%;height:auto;display:block;overflow:visible}
   .candle{opacity:0;transform:translateY(6px);transition:opacity .5s ease,transform .5s ease;transform-box:fill-box;transform-origin:center;cursor:pointer}
@@ -176,12 +176,12 @@
   .proj:hover{transform:translateY(-6px);border-color:var(--accent)}
   .proj .thumb{height:180px;display:grid;place-items:center;font-family:var(--ff-display);font-weight:900;font-size:40px;font-style:italic;color:#0a0a0a;position:relative;overflow:hidden}
   .proj .thumb::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 70% 20%,rgba(255,255,255,.25),transparent 60%)}
-  .p1{background:linear-gradient(135deg,#ceff00,#8db300)}
-  .p2{background:linear-gradient(135deg,#00e0b8,#0a8f7a)}
-  .p3{background:linear-gradient(135deg,#ff7a59,#c23b1e)}
-  .p4{background:linear-gradient(135deg,#a78bfa,#6d28d9)}
-  .p5{background:linear-gradient(135deg,#38bdf8,#1d4ed8)}
-  .p6{background:linear-gradient(135deg,#f472b6,#be185d)}
+  .p1{background:linear-gradient(135deg,#d8ff29,#8db300)}
+  .p2{background:#ebebe4}
+  .p3{background:#d8ff29}
+  .p4{background:#ebebe4}
+  .p5{background:#d8ff29}
+  .p6{background:#ebebe4}
   .proj .body{padding:22px}
   .proj .cat{font-size:12px;color:var(--accent-ink);letter-spacing:.12em;text-transform:uppercase;font-weight:600}
   .proj h4{font-size:22px;margin:8px 0 6px}
@@ -194,7 +194,7 @@
   .plans{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:56px}
   .plan{border:1px solid var(--line);border-radius:22px;padding:34px 30px;background:var(--panel);position:relative;transition:.3s;display:flex;flex-direction:column}
   .plan:hover{transform:translateY(-6px)}
-  .plan.feat{border-color:var(--accent);background:linear-gradient(180deg,rgba(206,255,0,.06),var(--panel))}
+  .plan.feat{border-color:var(--accent);background:linear-gradient(180deg,rgba(216,255,41,.06),var(--panel))}
   .plan .badge{position:absolute;top:-12px;left:30px;background:var(--accent);color:#0a0a0a;font-size:11px;font-weight:700;padding:5px 12px;border-radius:999px;letter-spacing:.08em}
   .plan .pname{font-family:var(--ff-display);font-weight:800;font-size:26px}
   .plan .pdesc{color:var(--muted);font-size:14px;margin:8px 0 22px;min-height:40px}
@@ -202,7 +202,7 @@
   .plan .price span{font-size:16px;color:var(--muted);font-weight:500;font-family:var(--ff-body)}
   .plan ul{list-style:none;margin:24px 0 28px;display:flex;flex-direction:column;gap:12px;flex:1}
   .plan li{font-size:14px;color:var(--muted);display:flex;gap:10px;align-items:flex-start}
-  .plan li::before{content:"";width:16px;height:16px;flex:none;margin-top:2px;border-radius:50%;background:rgba(206,255,0,.14);
+  .plan li::before{content:"";width:16px;height:16px;flex:none;margin-top:2px;border-radius:50%;background:rgba(216,255,41,.14);
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ceff00' stroke-width='3'%3E%3Cpath d='M20 6L9 17l-5-5'/%3E%3C/svg%3E");
     background-size:11px;background-repeat:no-repeat;background-position:center}
   .plan .btn{width:100%;justify-content:center}
@@ -213,9 +213,9 @@
   .comm:hover{border-color:var(--accent);transform:translateY(-5px)}
   .comm .glow{position:absolute;width:260px;height:260px;border-radius:50%;filter:blur(70px);opacity:.16;top:-80px;right:-60px}
   .comm.inf .glow{background:var(--accent)}
-  .comm.club .glow{background:#a78bfa}
+  .comm.club .glow{background:#d8ff29}
   .comm .tag{font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:var(--accent-ink)}
-  .comm.club .tag{color:#c4b5fd}
+  .comm.club .tag{color:#d8ff29}
   .comm h3{font-size:32px;margin:12px 0}
   .comm p{color:var(--muted);font-size:15px;margin-bottom:20px}
   .comm ul{list-style:none;display:flex;flex-direction:column;gap:11px;margin-bottom:26px}
@@ -223,7 +223,7 @@
   .comm li b{color:var(--white);font-weight:600}
   .comm .meta{display:flex;gap:24px;margin-bottom:26px}
   .comm .meta .mn{font-family:var(--ff-display);font-weight:800;font-size:24px;color:var(--accent-ink)}
-  .comm.club .meta .mn{color:#c4b5fd}
+  .comm.club .meta .mn{color:#d8ff29}
   .comm .meta .ml{font-size:12px;color:var(--muted)}
 
   /* ============ LEADERBOARD / CHALLENGE ============ */
@@ -237,11 +237,11 @@
 
   .podium{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:48px 0 30px;align-items:end}
   .pod{border:1px solid var(--line);border-radius:18px;padding:26px;text-align:center;background:var(--panel);position:relative}
-  .pod.first{border-color:var(--accent);background:linear-gradient(180deg,rgba(206,255,0,.08),var(--panel));transform:translateY(-14px)}
+  .pod.first{border-color:var(--accent);background:linear-gradient(180deg,rgba(216,255,41,.08),var(--panel));transform:translateY(-14px)}
   .pod .rank{font-family:var(--ff-display);font-weight:900;font-size:20px;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;margin:0 auto 14px}
   .pod.first .rank{background:var(--accent);color:#0a0a0a}
   .pod.second .rank{background:#c9cdc2;color:#0a0a0a}
-  .pod.third .rank{background:#b0703f;color:#0a0a0a}
+  .pod.third .rank{background:#0a0a0a;color:#d8ff29}
   .pod .av{width:70px;height:70px;border-radius:50%;margin:0 auto 14px;display:grid;place-items:center;font-family:var(--ff-display);font-weight:900;font-size:26px;color:#0a0a0a}
   .pod .h{font-family:var(--ff-display);font-weight:800;font-size:19px}
   .pod .handle{font-size:13px;color:var(--muted);margin-bottom:14px}
@@ -265,7 +265,7 @@
   .lb-pts{text-align:right}
   .lb-pts .p{font-family:var(--ff-display);font-weight:900;font-size:18px;color:var(--accent-ink)}
   .lb-trend{font-size:11px}
-  .up{color:#4ade80}.down{color:#f87171}.flat{color:var(--muted)}
+  .up{color:#5f7d00}.down{color:#0a0a0a}.flat{color:var(--muted)}
   .chal-cta{text-align:center;margin-top:36px}
 
   /* ============ PROCESS ============ */
@@ -277,7 +277,7 @@
   .step p{color:var(--muted);font-size:14px}
 
   /* ============ CTA / CONTACT ============ */
-  .cta-box{border:1px solid var(--accent-dim);border-radius:28px;padding:70px 40px;text-align:center;background:linear-gradient(180deg,rgba(206,255,0,.06),var(--panel));position:relative;overflow:hidden}
+  .cta-box{border:1px solid var(--accent-dim);border-radius:28px;padding:70px 40px;text-align:center;background:linear-gradient(180deg,rgba(216,255,41,.06),var(--panel));position:relative;overflow:hidden}
   .cta-box .glow{position:absolute;width:400px;height:400px;border-radius:50%;background:var(--accent);filter:blur(120px);opacity:.1;bottom:-200px;left:50%;transform:translateX(-50%)}
   .cta-box h2{font-size:clamp(38px,6vw,64px)}
   .cta-box p{color:var(--muted);max-width:480px;margin:20px auto 34px;font-size:17px}
@@ -285,7 +285,7 @@
   .cta-actions .btn{padding:16px 30px;font-size:16px}
   .btn-wa{background:var(--accent);color:#0a0a0a}
   .btn-ig{background:var(--panel);color:var(--accent-ink);border:1px solid var(--accent-dim)}
-  .btn-wa:hover{transform:translateY(-2px);box-shadow:0 0 0 4px rgba(206,255,0,.18)}
+  .btn-wa:hover{transform:translateY(-2px);box-shadow:0 0 0 4px rgba(216,255,41,.18)}
   .btn-ig:hover{transform:translateY(-2px);border-color:var(--accent)}
 
   /* ============ FOOTER ============ */
@@ -515,7 +515,7 @@ header.nav,header.nav.scrolled{background:color-mix(in srgb,var(--bg) 90%,transp
 /* projects */
 .proj .thumb{font-family:var(--f-serif);font-weight:800;font-size:48px;color:#0a0a0a;border-bottom:2px solid var(--fg)}
 .proj .thumb::after{display:none}
-.p1{background:#d8ff29}.p2{background:#6fc3ff}.p3{background:#ff9f5a}.p4{background:#c9a7ff}.p5{background:#ffd84a}.p6{background:#ff8fb1}
+.p1{background:#d8ff29}.p2{background:#ebebe4}.p3{background:#d8ff29}.p4{background:#ebebe4}.p5{background:#d8ff29}.p6{background:#ebebe4}
 .proj .cat,.comm .tag{font-family:var(--f-pixel);font-weight:400;font-size:10px;letter-spacing:.06em;color:var(--accent-ink)}
 .proj .res{border-top:1px solid var(--line)}
 .proj .res div .rn{color:var(--fg)}
@@ -589,7 +589,7 @@ footer{border-top:2px solid var(--fg)}
     </nav>
     <div class="nav-cta">
       <a href="https://instagram.com/jugaar.media" target="_blank" class="icon-btn" aria-label="Instagram">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#ceff00" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="#ceff00" stroke="none"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="#d8ff29" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="#d8ff29" stroke="none"/></svg>
       </a>
       <a href="https://wa.me/923100056684" target="_blank" class="btn btn-primary">Start a project <span>→</span></a>
       <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
@@ -816,7 +816,7 @@ footer{border-top:2px solid var(--fg)}
     <div class="podium" id="podiumRow">
       <div class="pod second reveal">
         <div class="rank">2</div>
-        <div class="av" style="background:linear-gradient(135deg,#00e0b8,#0a8f7a)">AH</div>
+        <div class="av" style="background:#ebebe4">AH</div>
         <div class="h">Ayesha Haider</div>
         <div class="handle">@ayeshacreates</div>
         <div class="score">9,140</div>
@@ -825,7 +825,7 @@ footer{border-top:2px solid var(--fg)}
       <div class="pod first reveal d1">
         <div class="crown">👑</div>
         <div class="rank">1</div>
-        <div class="av" style="background:linear-gradient(135deg,#ceff00,#8db300)">BK</div>
+        <div class="av" style="background:linear-gradient(135deg,#d8ff29,#8db300)">BK</div>
         <div class="h">Bilal Khan</div>
         <div class="handle">@bilalonreels</div>
         <div class="score">9,880</div>
@@ -833,7 +833,7 @@ footer{border-top:2px solid var(--fg)}
       </div>
       <div class="pod third reveal d2">
         <div class="rank">3</div>
-        <div class="av" style="background:linear-gradient(135deg,#ff7a59,#c23b1e)">ZM</div>
+        <div class="av" style="background:#ebebe4">ZM</div>
         <div class="h">Zara Malik</div>
         <div class="handle">@zaravibes</div>
         <div class="score">8,760</div>
@@ -887,7 +887,7 @@ footer{border-top:2px solid var(--fg)}
           Message on WhatsApp
         </a>
         <a href="https://instagram.com/jugaar.media" target="_blank" class="btn btn-ig">
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#ceff00" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="#ceff00" stroke="none"/></svg>
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#d8ff29" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="#d8ff29" stroke="none"/></svg>
           <span class="ig-handle-text">@jugaar.media</span>
         </a>
       </div>
@@ -1245,7 +1245,7 @@ footer{border-top:2px solid var(--fg)}
       "engagement": "11.2%",
       "points": 9880,
       "trend": "up",
-      "color": "#ceff00"
+      "color": "#d8ff29"
     },
     {
       "rank": 2,
@@ -1255,7 +1255,7 @@ footer{border-top:2px solid var(--fg)}
       "engagement": "9.8%",
       "points": 9140,
       "trend": "up",
-      "color": "#00e0b8"
+      "color": "#ebebe4"
     },
     {
       "rank": 3,
@@ -1265,7 +1265,7 @@ footer{border-top:2px solid var(--fg)}
       "engagement": "7.4%",
       "points": 8760,
       "trend": "down",
-      "color": "#ff7a59"
+      "color": "#d8ff29"
     },
     {
       "rank": 4,
@@ -1275,7 +1275,7 @@ footer{border-top:2px solid var(--fg)}
       "engagement": "10.1%",
       "points": 8420,
       "trend": "up",
-      "color": "#a78bfa"
+      "color": "#ebebe4"
     },
     {
       "rank": 5,
@@ -1285,7 +1285,7 @@ footer{border-top:2px solid var(--fg)}
       "engagement": "8.6%",
       "points": 8090,
       "trend": "flat",
-      "color": "#38bdf8"
+      "color": "#d8ff29"
     },
     {
       "rank": 6,
@@ -1295,7 +1295,7 @@ footer{border-top:2px solid var(--fg)}
       "engagement": "9.3%",
       "points": 7650,
       "trend": "up",
-      "color": "#f472b6"
+      "color": "#ebebe4"
     },
     {
       "rank": 7,
@@ -1305,7 +1305,7 @@ footer{border-top:2px solid var(--fg)}
       "engagement": "7.0%",
       "points": 7210,
       "trend": "down",
-      "color": "#fbbf24"
+      "color": "#d8ff29"
     },
     {
       "rank": 8,
@@ -1315,7 +1315,7 @@ footer{border-top:2px solid var(--fg)}
       "engagement": "8.9%",
       "points": 6980,
       "trend": "up",
-      "color": "#34d399"
+      "color": "#ebebe4"
     },
     {
       "rank": 9,
@@ -1325,7 +1325,7 @@ footer{border-top:2px solid var(--fg)}
       "engagement": "6.8%",
       "points": 6540,
       "trend": "flat",
-      "color": "#60a5fa"
+      "color": "#d8ff29"
     },
     {
       "rank": 10,
@@ -1335,7 +1335,7 @@ footer{border-top:2px solid var(--fg)}
       "engagement": "7.7%",
       "points": 6120,
       "trend": "up",
-      "color": "#f87171"
+      "color": "#ebebe4"
     }
   ],
   "countdownDays": 30
@@ -1525,7 +1525,7 @@ footer{border-top:2px solid var(--fg)}
     candles.forEach((c, i) => {
       const x = i * slot + slot / 2;
       const up = c.c >= c.o;
-      const color = up ? '#ceff00' : '#f5f6f2';
+      const color = up ? '#d8ff29' : '#f5f6f2';
       const yO = scaleY(c.o), yC = scaleY(c.c), yH = scaleY(c.h), yL = scaleY(c.l);
       const bodyTop = Math.min(yO, yC);
       const bodyH = Math.max(2, Math.abs(yO - yC));
